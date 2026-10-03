@@ -6,118 +6,7 @@
   <meta name="description" content="Complete Hindu mantra and sloka library. Hanuman Chalisa, Vishnu Sahasranamam, Lalitha Sahasranamam, Ganesh Mantras, Durga Mantras in Sanskrit with Telugu and transliteration." />
   <link rel="canonical" href="https://dharmajyothivedika.com/mantras/" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root{--clr-primary:#7A2419;--clr-primary-light:#9B3128;--clr-primary-faint:#F9EDE9;--clr-secondary:#C89432;--clr-accent:#E7B75A;--clr-secondary-faint:#FDF5E3;--clr-secondary-dark:#9A7020;--clr-bg:#FFF9F0;--clr-dark:#241914;--clr-text:#2C1A14;--clr-text-secondary:#6B4C3B;--clr-text-muted:#A08070;--clr-border:#E8D5C4;--clr-white:#FFFFFF;--font-primary:'Poppins',sans-serif;--font-heading:'Playfair Display',Georgia,serif;--font-telugu:'Noto Sans Telugu',sans-serif;--shadow-sm:0 2px 8px rgba(122,36,25,.08);--shadow-md:0 4px 16px rgba(122,36,25,.12);--shadow-lg:0 8px 32px rgba(122,36,25,.18);--radius-md:.5rem;--radius-lg:.875rem;--radius-xl:1.25rem;--radius-2xl:1.75rem;--radius-full:9999px;--transition-base:250ms cubic-bezier(.4,0,.2,1);--header-h:70px}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}body{font-family:var(--font-primary);background:var(--clr-bg);color:var(--clr-text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--clr-secondary);border-radius:9999px}
-    a{color:var(--clr-primary);text-decoration:none;transition:color var(--transition-base)}
-    .site-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);z-index:200;background:rgba(255,249,240,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,148,50,.18);transition:box-shadow var(--transition-base)}
-    .site-header.scrolled{box-shadow:0 4px 24px rgba(122,36,25,.10)}
-    .header-inner{max-width:1280px;margin:0 auto;padding:0 1.5rem;height:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-    .site-logo{display:flex;align-items:center;gap:.625rem;text-decoration:none}
-    .brand-en{font-weight:700;font-size:.875rem;color:var(--clr-primary)}.brand-te{font-family:var(--font-telugu);font-size:.65rem;color:var(--clr-secondary-dark);font-weight:500;display:block}
-    .header-nav{display:flex;align-items:center;gap:.125rem}
-    .nav-link{padding:.4rem .7rem;font-size:.8rem;font-weight:500;color:var(--clr-text-secondary);border-radius:var(--radius-md);transition:all var(--transition-base)}
-    .nav-link:hover,.nav-link.active{color:var(--clr-primary);background:var(--clr-primary-faint)}
-    .header-today-btn{display:flex;align-items:center;gap:.375rem;padding:.45rem .875rem;font-size:.8rem;font-weight:600;background:var(--clr-primary);color:white;border:none;border-radius:var(--radius-full);cursor:pointer;text-decoration:none;transition:all var(--transition-base)}
-    .header-today-btn:hover{background:#5C1A11;transform:translateY(-1px)}
-    .container{max-width:1280px;margin:0 auto;padding:0 1.5rem}
-
-    /* PAGE HERO */
-    .page-hero{padding-top:calc(var(--header-h) + 2.5rem);padding-bottom:3rem;background:linear-gradient(150deg,#1A0A06,#3D1A10,#2A1205);position:relative;overflow:hidden}
-    .page-hero::after{content:'ॐ';position:absolute;right:8%;bottom:-15%;font-size:clamp(8rem,18vw,16rem);font-family:var(--font-heading);color:rgba(200,148,50,.06);pointer-events:none;user-select:none;line-height:1}
-    .ph-inner{position:relative;z-index:1}
-    .breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:1rem}
-    .breadcrumb a{color:rgba(255,255,255,.5)}
-    .ph-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(200,148,50,.15);border:1px solid rgba(200,148,50,.3);color:var(--clr-accent);padding:.3rem .875rem;border-radius:9999px;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
-    .ph-title{font-family:var(--font-heading);font-size:clamp(1.875rem,5vw,3rem);font-weight:700;color:white;margin-bottom:.5rem;line-height:1.15}
-    .ph-sub{font-family:var(--font-telugu);color:var(--clr-accent);font-size:1.1rem;margin-bottom:.875rem}
-    .ph-desc{font-size:.9375rem;color:rgba(255,255,255,.65);max-width:580px;line-height:1.75}
-
-    /* Search + Filter */
-    .search-filter-bar{background:white;border:1px solid var(--clr-border);border-radius:var(--radius-2xl);padding:1.25rem 1.5rem;box-shadow:var(--shadow-lg);margin:2rem 0 1.5rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
-    .search-input-wrap{flex:1;min-width:220px;position:relative}
-    .search-input-wrap input{width:100%;padding:.625rem 1rem .625rem 2.5rem;border:1px solid var(--clr-border);border-radius:var(--radius-full);font-size:.9rem;font-family:var(--font-primary);color:var(--clr-text);background:var(--clr-bg);transition:border-color var(--transition-base),box-shadow var(--transition-base);outline:none}
-    .search-input-wrap input:focus{border-color:var(--clr-secondary);box-shadow:0 0 0 3px rgba(200,148,50,.12)}
-    .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--clr-text-muted);font-size:.875rem;pointer-events:none}
-    .filter-chips{display:flex;flex-wrap:wrap;gap:.5rem}
-    .filter-chip{padding:.375rem .875rem;background:var(--clr-bg);border:1px solid var(--clr-border);border-radius:9999px;font-size:.8rem;font-weight:600;color:var(--clr-text-secondary);cursor:pointer;transition:all var(--transition-base);font-family:var(--font-primary)}
-    .filter-chip:hover{border-color:var(--clr-primary);color:var(--clr-primary)}
-    .filter-chip.active{background:var(--clr-primary);color:white;border-color:var(--clr-primary)}
-    .filter-chip[data-filter="all"].active{background:var(--clr-primary)}
-
-    /* Mantra Grid */
-    .mantras-section{padding:0 0 4rem}
-    .section-header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}
-    .section-title{font-family:var(--font-heading);font-size:1.5rem;color:var(--clr-dark)}
-    .section-count{font-size:.8rem;color:var(--clr-text-muted)}
-    .mantra-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem}
-    .mantra-card{background:white;border:1px solid var(--clr-border);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-sm);transition:all var(--transition-base);display:flex;flex-direction:column}
-    .mantra-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:rgba(200,148,50,.3)}
-    .mc-head{padding:1.25rem 1.25rem .875rem;display:flex;align-items:flex-start;gap:.875rem}
-    .mc-deity-icon{width:52px;height:52px;border-radius:.875rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-    .mc-deity-icon.ganesh{background:linear-gradient(135deg,#FF8A50,#FF5722)}
-    .mc-deity-icon.vishnu{background:linear-gradient(135deg,#3D6BC4,#1A3A8C)}
-    .mc-deity-icon.shiva{background:linear-gradient(135deg,#546E7A,#263238)}
-    .mc-deity-icon.durga{background:linear-gradient(135deg,#E91E63,#880E4F)}
-    .mc-deity-icon.hanuman{background:linear-gradient(135deg,#F97316,#7A2419)}
-    .mc-deity-icon.lakshmi{background:linear-gradient(135deg,#FFC107,#FF8F00)}
-    .mc-deity-icon.saraswati{background:linear-gradient(135deg,#AB47BC,#6A1B9A)}
-    .mc-deity-icon.surya{background:linear-gradient(135deg,#FF8F00,#E65100)}
-    .mc-deity-icon.navagraha{background:linear-gradient(135deg,#5C6BC0,#1A237E)}
-    .mc-meta{flex:1;min-width:0}
-    .mc-tag{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .6rem;background:var(--clr-secondary-faint);color:var(--clr-secondary-dark);border-radius:9999px;font-size:.7rem;font-weight:600;margin-bottom:.375rem}
-    .mc-name{font-family:var(--font-heading);font-size:1.0625rem;font-weight:600;color:var(--clr-dark);line-height:1.25;margin-bottom:.25rem}
-    .mc-name-te{font-family:var(--font-telugu);font-size:.8rem;color:var(--clr-text-muted);display:block}
-    .mc-preview{padding:0 1.25rem;margin-bottom:.75rem;flex:1}
-    .mc-sanskrit{font-family:var(--font-heading);font-size:.9375rem;line-height:1.7;color:var(--clr-dark);margin-bottom:.4rem;font-style:italic}
-    .mc-telugu{font-family:var(--font-telugu);font-size:.8125rem;color:var(--clr-text-secondary);line-height:1.7;margin-bottom:.375rem}
-    .mc-meaning{font-size:.78rem;color:var(--clr-text-muted);line-height:1.6}
-    .mc-footer{padding:.875rem 1.25rem;border-top:1px solid var(--clr-border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;background:var(--clr-bg)}
-    .mc-chant-info{font-size:.75rem;color:var(--clr-text-muted);display:flex;align-items:center;gap:.35rem}
-    .mc-read-btn{padding:.4rem .875rem;background:var(--clr-primary);color:white;border:none;border-radius:var(--radius-full);font-size:.78rem;font-weight:600;cursor:pointer;font-family:var(--font-primary);text-decoration:none;transition:all var(--transition-base);display:inline-flex;align-items:center;gap:.3rem}
-    .mc-read-btn:hover{background:#5C1A11;color:white;transform:translateY(-1px)}
-    .mc-fav-btn{width:32px;height:32px;border-radius:9999px;background:transparent;border:1px solid var(--clr-border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.875rem;transition:all var(--transition-base)}
-    .mc-fav-btn:hover{background:var(--clr-primary-faint);border-color:var(--clr-primary)}
-    .mc-fav-btn.active{background:#FFF0F0;border-color:#FFB3B3}
-
-    /* Category Section Dividers */
-    .category-heading{font-family:var(--font-heading);font-size:1.25rem;color:var(--clr-dark);margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:2px solid var(--clr-secondary-faint);display:flex;align-items:center;gap:.625rem}
-
-    /* Featured mantra */
-    .featured-mantra{background:linear-gradient(135deg,var(--clr-primary) 0%,#4A1510 100%);border-radius:var(--radius-2xl);padding:2rem;margin-bottom:2.5rem;position:relative;overflow:hidden;color:white}
-    .featured-mantra::before{content:'ॐ';position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);font-size:6rem;font-family:var(--font-heading);color:rgba(200,148,50,.08);line-height:1;pointer-events:none}
-    .fm-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(200,148,50,.2);border:1px solid rgba(200,148,50,.3);color:var(--clr-accent);padding:.25rem .75rem;border-radius:9999px;font-size:.72rem;font-weight:700;letter-spacing:.08em;margin-bottom:.875rem}
-    .fm-title{font-family:var(--font-heading);font-size:1.625rem;font-weight:700;margin-bottom:.25rem}
-    .fm-title-te{font-family:var(--font-telugu);font-size:.9rem;color:var(--clr-accent);display:block;margin-bottom:1rem}
-    .fm-text{font-family:var(--font-heading);font-size:1.0625rem;line-height:1.9;margin-bottom:.625rem;opacity:.92;position:relative;z-index:1}
-    .fm-meaning{font-size:.8125rem;color:rgba(255,255,255,.65);line-height:1.75;margin-bottom:1.25rem}
-    .fm-actions{display:flex;gap:.625rem;flex-wrap:wrap;position:relative;z-index:1}
-    .fm-btn{padding:.5rem 1.125rem;border:none;border-radius:9999px;font-size:.825rem;font-weight:600;cursor:pointer;font-family:var(--font-primary);transition:all var(--transition-base);text-decoration:none;display:inline-flex;align-items:center;gap:.35rem}
-    .fm-btn-primary{background:var(--clr-accent);color:var(--clr-dark)}
-    .fm-btn-primary:hover{background:white;color:var(--clr-dark)}
-    .fm-btn-outline{background:transparent;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.2)}
-    .fm-btn-outline:hover{background:rgba(255,255,255,.08);color:white}
-
-    /* Footer */
-    .site-footer{background:var(--clr-dark);padding:2rem 0}
-    .footer-simple{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-    .footer-brand-name{font-weight:700;font-size:.9rem;color:white}
-    .footer-brand-te{font-family:var(--font-telugu);font-size:.75rem;color:var(--clr-accent)}
-    .footer-links-row a{font-size:.8rem;color:rgba(255,255,255,.45);margin-left:1rem}
-    .footer-copy{text-align:center;font-size:.72rem;color:rgba(255,255,255,.3);padding-top:1rem;margin-top:1rem;border-top:1px solid rgba(255,255,255,.08)}
-
-    @media(max-width:768px){.mantra-grid{grid-template-columns:1fr}.header-nav{display:none}.search-filter-bar{flex-direction:column}}
-    @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .mantra-card{animation:fadeInUp .4s ease both}
-    .mantra-card:nth-child(2){animation-delay:.06s}.mantra-card:nth-child(3){animation-delay:.12s}
-    .mantra-card:nth-child(4){animation-delay:.18s}.mantra-card:nth-child(5){animation-delay:.24s}
-    .mantra-card:nth-child(6){animation-delay:.3s}
-
-    /* Hidden state for filter */
-    .mantra-card[data-hidden="true"]{display:none}
-  </style>
+  
 </head>
 <body>
 
@@ -542,5 +431,8 @@
   };
 })();
 </script>
+
+<djv-footer></djv-footer>
+<script src="../assets/js/components/footer-component.js"></script>
 </body>
 </html>
