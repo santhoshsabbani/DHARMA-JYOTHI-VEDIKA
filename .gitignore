@@ -1,0 +1,104 @@
+# ============================================================
+# DHARMA JYOTHI VEDIKA — .gitignore
+# ============================================================
+
+# ── Node.js ─────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+.pnp.*
+.pnp.js
+package-lock.json
+yarn.lock
+
+# ── Build outputs ────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# ── Environment & Secrets ────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+*.secret
+config/secrets.php
+wp-config.php
+wp-config-local.php
+
+# ── WordPress (do NOT commit WP core itself) ─────────────────
+# Only the plugin code is tracked; WP core is installed separately
+wordpress/wordpress-core/
+wordpress/wp-admin/
+wordpress/wp-includes/
+wordpress/wp-content/uploads/
+wordpress/wp-content/cache/
+wordpress/wp-content/backup-db/
+wordpress/wp-content/advanced-cache.php
+wordpress/wp-content/object-cache.php
+wordpress/wp-content/db.php
+
+# ── WordPress plugin cache / generated ───────────────────────
+wordpress/plugins/djv-core/cache/
+wordpress/plugins/djv-core/tmp/
+wordpress/plugins/djv-core/languages/*.mo
+
+# ── Logs ─────────────────────────────────────────────────────
+logs/
+*.log
+php_error.log
+error_log
+debug.log
+
+# ── OS files ─────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ── IDE / Editor ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.code-workspace
+
+# ── PHP Composer ─────────────────────────────────────────────
+vendor/
+composer.lock
+
+# ── Testing ──────────────────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+
+# ── Mobile (Phase 4 — React Native / Expo) ───────────────────
+mobile/.expo/
+mobile/ios/
+mobile/android/
+mobile/.env
+
+# ── Temporary / Misc ─────────────────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.patch
+*.rej
