@@ -94,22 +94,24 @@ class DJVHeader extends HTMLElement {
 </div>
     `;
 
-    // Fix links for local file system viewing (file:// protocol)
+    // Fix links to work smoothly whether hosted at the domain root, in a /website/ subfolder, or viewed locally
     const isLocal = window.location.protocol === 'file:';
-    if (isLocal) {
+    const pathParts = window.location.pathname.split('/');
+    const websiteIndex = pathParts.lastIndexOf('website');
+    
+    if (websiteIndex !== -1 || isLocal) {
       let rootPath = '';
-      const pathParts = window.location.pathname.split('/');
-      const websiteIndex = pathParts.lastIndexOf('website');
       if (websiteIndex !== -1) {
         rootPath = pathParts.slice(0, websiteIndex + 1).join('/');
       }
+      
       this.querySelectorAll('a').forEach(a => {
         let href = a.getAttribute('href');
         if (href && href.startsWith('/')) {
           if (href === '/') {
-            a.href = rootPath + '/index.html';
+            a.href = rootPath + (isLocal ? '/index.html' : '/');
           } else if (href.endsWith('/')) {
-            a.href = rootPath + href + 'index.html';
+            a.href = rootPath + href + (isLocal ? 'index.html' : '');
           } else {
             a.href = rootPath + href;
           }
