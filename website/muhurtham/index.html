@@ -1,1 +1,87 @@
-<html><head><title>muhurtham</title></head><body><h1>muhurtham</h1><p>Coming soon...</p><a href='../index.html'>Back to Home</a></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muhurtham — Dharma Jyothi Vedika</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* Inline base styles for placeholder to ensure it works beautifully */
+    :root {
+      --clr-primary: #7A2419;
+      --clr-secondary: #C89432;
+      --clr-accent: #E7B75A;
+      --clr-bg: #FFF9F0;
+      --clr-dark: #241914;
+      --clr-white: #FFFFFF;
+      --font-primary: 'Poppins', sans-serif;
+      --font-heading: 'Playfair Display', Georgia, serif;
+    }
+    body { font-family: var(--font-primary); background: var(--clr-bg); margin: 0; padding: 0; }
+    .placeholder-hero {
+      min-height: 100vh;
+      background: var(--clr-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--clr-white);
+      position: relative;
+      overflow: hidden;
+    }
+    .placeholder-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,148,50,0.07) 0%, transparent 70%);
+    }
+    .placeholder-content {
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+    }
+    .placeholder-title {
+      font-family: var(--font-heading);
+      font-size: 3.5rem;
+      color: var(--clr-white);
+      margin-bottom: 1rem;
+      text-transform: capitalize;
+    }
+    .placeholder-desc {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+    }
+    .btn-primary {
+      display: inline-flex;
+      padding: 0.875rem 2rem;
+      background: linear-gradient(135deg, var(--clr-secondary), var(--clr-accent));
+      color: var(--clr-dark);
+      font-weight: 700;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+
+<djv-header></djv-header>
+<script src="../assets/js/components/header-component.js"></script>
+
+<main class="placeholder-hero">
+  <div class="placeholder-bg"></div>
+  <div class="placeholder-content">
+    <h1 class="placeholder-title">muhurtham</h1>
+    <p class="placeholder-desc">This section is currently under development. Please check back soon!</p>
+    <a href="../index.html" class="btn-primary">Return Home</a>
+  </div>
+</main>
+
+</body>
+</html>
