@@ -326,55 +326,83 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
 
         <!-- ── Related Festivals & Poojas (Reciprocal Internal Link Graph) ── -->
         <?php
-        $rel_festivals = new WP_Query([
+        $mantra_slug = get_post_field( 'post_name', $post_id );
+
+        // 1. Query festivals prioritizing both mantra relationship and matching deity
+        $fest_args = [
           'post_type'      => 'djv_festival',
           'posts_per_page' => 2,
           'post_status'    => 'publish',
           'meta_query'     => [
             [
               'key'     => '_djv_related_mantras',
-              'value'   => get_post_field( 'post_name', $post_id ),
+              'value'   => $mantra_slug,
               'compare' => 'LIKE',
             ]
           ]
-        ]);
-        if ( ! $rel_festivals->have_posts() && ! empty( $deity ) ) {
+        ];
+        if ( ! empty( $deity ) ) {
+          $fest_args['tax_query'] = [
+            [
+              'taxonomy' => 'djv_deity',
+              'field'    => 'name',
+              'terms'    => $deity,
+            ]
+          ];
+        }
+        $rel_festivals = new WP_Query( $fest_args );
+
+        // Fallback: if no deity-specific festival matched, query any festival referencing this mantra
+        if ( ! $rel_festivals->have_posts() ) {
           $rel_festivals = new WP_Query([
             'post_type'      => 'djv_festival',
             'posts_per_page' => 2,
             'post_status'    => 'publish',
-            'tax_query'      => [
+            'meta_query'     => [
               [
-                'taxonomy' => 'djv_deity',
-                'field'    => 'name',
-                'terms'    => $deity,
+                'key'     => '_djv_related_mantras',
+                'value'   => $mantra_slug,
+                'compare' => 'LIKE',
               ]
             ]
           ]);
         }
 
-        $rel_poojas = new WP_Query([
+        // 2. Query poojas prioritizing both mantra relationship and matching deity
+        $pooja_args = [
           'post_type'      => 'djv_pooja',
           'posts_per_page' => 2,
           'post_status'    => 'publish',
           'meta_query'     => [
             [
               'key'     => '_djv_related_mantras',
-              'value'   => get_post_field( 'post_name', $post_id ),
+              'value'   => $mantra_slug,
               'compare' => 'LIKE',
             ]
           ]
-        ]);
-        if ( ! $rel_poojas->have_posts() && ! empty( $deity ) ) {
+        ];
+        if ( ! empty( $deity ) ) {
+          $pooja_args['tax_query'] = [
+            [
+              'taxonomy' => 'djv_deity',
+              'field'    => 'name',
+              'terms'    => $deity,
+            ]
+          ];
+        }
+        $rel_poojas = new WP_Query( $pooja_args );
+
+        // Fallback: if no deity-specific pooja matched, query any pooja referencing this mantra
+        if ( ! $rel_poojas->have_posts() ) {
           $rel_poojas = new WP_Query([
             'post_type'      => 'djv_pooja',
             'posts_per_page' => 2,
             'post_status'    => 'publish',
-            'tax_query'      => [
+            'meta_query'     => [
               [
-                'taxonomy' => 'djv_deity',
-                'field'    => 'name',
-                'terms'    => $deity,
+                'key'     => '_djv_related_mantras',
+                'value'   => $mantra_slug,
+                'compare' => 'LIKE',
               ]
             ]
           ]);
