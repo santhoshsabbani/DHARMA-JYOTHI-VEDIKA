@@ -1,0 +1,129 @@
+/* ============================================================
+   DHARMA JYOTHI VEDIKA — DJV Design System v1.0
+   Central design token file. All colors, typography, spacing,
+   shadows, radii, and animation tokens are defined here.
+   Change here to update the entire platform.
+   ============================================================ */
+
+/* ─── Google Fonts ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap');
+
+/* ─── CSS Custom Properties (Design Tokens) ────────────────── */
+:root {
+  /* — Brand Colors — */
+  --clr-primary:        #7A2419;
+  --clr-primary-light:  #9B3128;
+  --clr-primary-dark:   #5C1A11;
+  --clr-primary-faint:  #F9EDE9;
+
+  --clr-secondary:      #C89432;
+  --clr-secondary-light:#E7B75A;
+  --clr-secondary-dark: #9A7020;
+  --clr-secondary-faint:#FDF5E3;
+
+  --clr-accent:         #E7B75A;
+  --clr-accent-glow:    rgba(231, 183, 90, 0.25);
+
+  /* — Neutrals — */
+  --clr-bg:             #FFF9F0;
+  --clr-bg-card:        #FFFFFF;
+  --clr-bg-section:     #FFF4E6;
+  --clr-dark:           #241914;
+  --clr-dark-soft:      #3D2A22;
+  --clr-text:           #2C1A14;
+  --clr-text-secondary: #6B4C3B;
+  --clr-text-muted:     #A08070;
+  --clr-border:         #E8D5C4;
+  --clr-border-strong:  #C4A882;
+  --clr-white:          #FFFFFF;
+
+  /* — Semantic — */
+  --clr-success:        #2E7D5B;
+  --clr-warning:        #C87A1E;
+  --clr-error:          #B5241A;
+  --clr-info:           #1A5F8A;
+
+  /* — Typography — */
+  --font-primary:       'Poppins', 'Inter', sans-serif;
+  --font-heading:       'Playfair Display', Georgia, serif;
+  --font-telugu:        'Noto Sans Telugu', sans-serif;
+
+  /* — Font Sizes — */
+  --fs-xs:   clamp(0.6875rem, 1.5vw, 0.75rem);
+  --fs-sm:   clamp(0.8125rem, 1.8vw, 0.875rem);
+  --fs-base: clamp(0.9375rem, 2vw, 1rem);
+  --fs-md:   clamp(1rem, 2.2vw, 1.125rem);
+  --fs-lg:   clamp(1.125rem, 2.5vw, 1.25rem);
+  --fs-xl:   clamp(1.25rem, 3vw, 1.5rem);
+  --fs-2xl:  clamp(1.5rem, 4vw, 2rem);
+  --fs-3xl:  clamp(1.875rem, 5vw, 2.5rem);
+  --fs-4xl:  clamp(2.25rem, 6vw, 3rem);
+  --fs-5xl:  clamp(2.5rem, 7vw, 3.75rem);
+
+  /* — Font Weights — */
+  --fw-light:   300;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold:600;
+  --fw-bold:    700;
+
+  /* — Line Heights — */
+  --lh-tight:   1.2;
+  --lh-snug:    1.35;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;
+
+  /* — Letter Spacing — */
+  --ls-tight:   -0.015em;
+  --ls-normal:  0;
+  --ls-wide:    0.04em;
+  --ls-wider:   0.08em;
+  --ls-widest:  0.15em;
+
+  /* — Spacing — */
+  --sp-1:   0.25rem;
+  --sp-2:   0.5rem;
+  --sp-3:   0.75rem;
+  --sp-4:   1rem;
+  --sp-5:   1.25rem;
+  --sp-6:   1.5rem;
+  --sp-8:   2rem;
+  --sp-10:  2.5rem;
+  --sp-12:  3rem;
+  --sp-16:  4rem;
+  --sp-20:  5rem;
+  --sp-24:  6rem;
+
+  /* — Border Radius — */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.875rem;
+  --radius-xl:   1.25rem;
+  --radius-2xl:  1.75rem;
+  --radius-full: 9999px;
+
+  /* — Shadows — */
+  --shadow-xs:  0 1px 3px rgba(36,25,20,0.06);
+  --shadow-sm:  0 2px 8px rgba(122,36,25,0.08), 0 1px 4px rgba(36,25,20,0.05);
+  --shadow-md:  0 4px 16px rgba(122,36,25,0.12), 0 2px 8px rgba(36,25,20,0.06);
+  --shadow-lg:  0 8px 32px rgba(122,36,25,0.15), 0 4px 16px rgba(36,25,20,0.08);
+  --shadow-xl:  0 16px 48px rgba(122,36,25,0.18), 0 8px 24px rgba(36,25,20,0.10);
+  --shadow-glow:0 0 24px rgba(231,183,90,0.35);
+
+  /* — Transitions — */
+  --transition-fast:   150ms cubic-bezier(0.4,0,0.2,1);
+  --transition-base:   250ms cubic-bezier(0.4,0,0.2,1);
+  --transition-slow:   400ms cubic-bezier(0.4,0,0.2,1);
+  --transition-spring: 500ms cubic-bezier(0.34,1.56,0.64,1);
+
+  /* — Z-index — */
+  --z-dropdown:100;
+  --z-sticky:  200;
+  --z-modal:   300;
+  --z-toast:   400;
+
+  /* — Layout — */
+  --container-xl:  1280px;
+  --container-2xl: 1440px;
+  --header-h:      70px;
+}

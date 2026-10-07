@@ -56,6 +56,11 @@ add_action( 'init', 'djv_init_textdomain', 5 );
 
 add_action( 'init', [ 'DJV_Post_Types', 'register' ] );
 
+// Disable WordPress Admin Bar on the Frontend for all users (including Administrators)
+add_filter( 'show_admin_bar', function( $show ) {
+	return is_admin() ? $show : false;
+}, 999 );
+
 /* ─── Cron ───────────────────────────────────────────────────── */
 function djv_add_cron_schedules( $schedules ) {
 	if ( ! is_array( $schedules ) ) {
@@ -70,14 +75,15 @@ function djv_add_cron_schedules( $schedules ) {
 add_filter( 'cron_schedules', 'djv_add_cron_schedules' );
 
 function djv_run_nightly_precalculate(): void {
+	if ( empty( get_option('djv_engine_api_url') ) ) {
+		error_log('[DJV] Nightly cron skipped: Panchangam engine API URL is not configured.');
+		return;
+	}
 	$lat      = floatval( get_option( 'djv_default_lat', 17.3850 ) );
 	$lon      = floatval( get_option( 'djv_default_lon', 78.4867 ) );
 	$timezone = sanitize_text_field( get_option( 'djv_default_tz', 'Asia/Kolkata' ) );
 	$panchangam = new DJV_Panchangam();
-	for ( $i = 0; $i < 7; $i++ ) {
-		$date = date( 'Y-m-d', strtotime( "+{$i} days" ) );
-		$panchangam->get_panchangam( $date, $lat, $lon, $timezone );
-	}
+	$panchangam->precalculate_next_30_days( $lat, $lon, $timezone );
 }
 
 /* ─── Activation ─────────────────────────────────────────────── */

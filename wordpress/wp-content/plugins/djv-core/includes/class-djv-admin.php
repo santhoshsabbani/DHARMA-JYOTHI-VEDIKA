@@ -158,7 +158,7 @@ class DJV_Admin {
                 🗑️ <?php _e( 'Clear All Cache', 'djv-core' ); ?>
               </button>
               <button class="djv-action-btn" id="djv-prewarm" data-nonce="<?php echo wp_create_nonce('djv_precalculate'); ?>">
-                🔥 <?php _e( 'Pre-warm This Month', 'djv-core' ); ?>
+                🔥 <?php _e( 'Pre-warm Cache', 'djv-core' ); ?>
               </button>
               <a href="<?php echo esc_url( admin_url( 'admin.php?page=djv-validator' ) ); ?>" class="djv-action-btn">
                 ✅ <?php _e( 'Open Engine Validator', 'djv-core' ); ?>
@@ -246,7 +246,7 @@ class DJV_Admin {
               year: new Date().getFullYear(),
               month: new Date().getMonth() + 1
             }, function(res) {
-              $btn.prop('disabled', false).text('🔥 Pre-warm This Month');
+              $btn.prop('disabled', false).text('🔥 Pre-warm Cache');
               $('#djv-engine-output').show();
               $('#djv-engine-output-pre').text(JSON.stringify(res.data, null, 2));
             });
@@ -475,7 +475,13 @@ class DJV_Admin {
             update_option( 'djv_default_city',    sanitize_text_field( $_POST['djv_default_city'] ?? 'Hyderabad' ) );
             update_option( 'djv_default_lat',     floatval( $_POST['djv_default_lat'] ?? 17.3850 ) );
             update_option( 'djv_default_lon',     floatval( $_POST['djv_default_lon'] ?? 78.4867 ) );
-            update_option( 'djv_default_tz',      floatval( $_POST['djv_default_tz']  ?? 5.5 ) );
+            
+            $tz = sanitize_text_field( $_POST['djv_default_tz'] ?? 'Asia/Kolkata' );
+            if ( in_array( $tz, timezone_identifiers_list(), true ) ) {
+                update_option( 'djv_default_tz', $tz );
+            }
+            
+            update_option( 'djv_engine_api_url',  esc_url_raw( $_POST['djv_engine_api_url'] ?? '' ) );
             update_option( 'djv_ayanamsa',        sanitize_text_field( $_POST['djv_ayanamsa'] ?? 'lahiri' ) );
             update_option( 'djv_month_system',    sanitize_text_field( $_POST['djv_month_system'] ?? 'amanta' ) );
             update_option( 'djv_cache_enabled',   isset( $_POST['djv_cache_enabled'] ) ? 1 : 0 );
@@ -490,7 +496,10 @@ class DJV_Admin {
               <tr><th><?php _e('Default City', 'djv-core'); ?></th><td><input type="text" name="djv_default_city" value="<?php echo esc_attr(get_option('djv_default_city','Hyderabad')); ?>" class="regular-text" /></td></tr>
               <tr><th><?php _e('Default Latitude', 'djv-core'); ?></th><td><input type="number" name="djv_default_lat" value="<?php echo esc_attr(get_option('djv_default_lat',17.3850)); ?>" step="0.0001" class="small-text" /></td></tr>
               <tr><th><?php _e('Default Longitude', 'djv-core'); ?></th><td><input type="number" name="djv_default_lon" value="<?php echo esc_attr(get_option('djv_default_lon',78.4867)); ?>" step="0.0001" class="small-text" /></td></tr>
-              <tr><th><?php _e('Default TZ Offset', 'djv-core'); ?></th><td><input type="number" name="djv_default_tz" value="<?php echo esc_attr(get_option('djv_default_tz',5.5)); ?>" step="0.25" min="-14" max="14" class="small-text" /><p class="description"><?php _e('Hours from UTC (IST = 5.5)', 'djv-core'); ?></p></td></tr>
+              <tr><th><?php _e('Default Timezone', 'djv-core'); ?></th><td><input type="text" name="djv_default_tz" value="<?php echo esc_attr(get_option('djv_default_tz','Asia/Kolkata')); ?>" class="regular-text" /><p class="description"><?php _e('IANA timezone identifier (e.g. Asia/Kolkata)', 'djv-core'); ?></p></td></tr>
+              <tr><th><?php _e('Engine API URL', 'djv-core'); ?></th><td><input type="url" name="djv_engine_api_url" value="<?php echo esc_url(get_option('djv_engine_api_url','')); ?>" class="regular-text" /><p class="description"><?php _e('URL of the external Node.js Panchangam engine (e.g. https://api.yoursite.com)', 'djv-core'); ?></p>
+              <button type="button" class="button" id="djv-test-engine-btn" data-nonce="<?php echo wp_create_nonce('djv_test_engine'); ?>">Test Connection</button> <span id="djv-engine-test-result"></span>
+              </td></tr>
               <tr><th><?php _e('Ayanamsa', 'djv-core'); ?></th><td><select name="djv_ayanamsa"><option value="lahiri" <?php selected(get_option('djv_ayanamsa','lahiri'),'lahiri'); ?>>Lahiri (Chitrapaksha)</option><option value="raman" <?php selected(get_option('djv_ayanamsa'),'raman'); ?>>B.V. Raman</option></select></td></tr>
               <tr><th><?php _e('Month System', 'djv-core'); ?></th><td><select name="djv_month_system"><option value="amanta" <?php selected(get_option('djv_month_system','amanta'),'amanta'); ?>>Amanta (South Indian)</option><option value="purnimanta" <?php selected(get_option('djv_month_system'),'purnimanta'); ?>>Purnimanta (North Indian)</option></select></td></tr>
               <tr><th><?php _e('Enable Cache', 'djv-core'); ?></th><td><input type="checkbox" name="djv_cache_enabled" <?php checked(get_option('djv_cache_enabled',1)); ?> /> <span class="description"><?php _e('Recommended: ON. Disabling causes live calculation on every request.', 'djv-core'); ?></span></td></tr>
@@ -498,6 +507,29 @@ class DJV_Admin {
             <p class="submit"><input type="submit" name="djv_save_settings" class="button-primary" value="<?php _e('Save Settings', 'djv-core'); ?>" /></p>
           </form>
         </div>
+        
+        <script>
+        jQuery(document).ready(function($){
+            $('#djv-test-engine-btn').click(function(){
+                var url = $('input[name="djv_engine_api_url"]').val();
+                if(!url) { $('#djv-engine-test-result').html('<span style="color:red">Please enter a URL first and save settings.</span>'); return; }
+                $('#djv-engine-test-result').html('Testing...');
+                $.post(ajaxurl, {
+                    action: 'djv_test_engine',
+                    nonce: $(this).data('nonce'),
+                    url: url
+                }, function(res) {
+                    if(res.success) {
+                        $('#djv-engine-test-result').html('<strong style="color:green">CONNECTED</strong>');
+                    } else {
+                        $('#djv-engine-test-result').html('<strong style="color:red">NOT CONNECTED</strong> (' + res.data + ')');
+                    }
+                }).fail(function() {
+                    $('#djv-engine-test-result').html('<strong style="color:red">NOT CONNECTED</strong>');
+                });
+            });
+        });
+        </script>
         <?php
     }
 
@@ -519,7 +551,7 @@ class DJV_Admin {
               <tr><td><strong><?php _e('WordPress Version', 'djv-core'); ?></strong></td><td><?php echo esc_html($wp_version); ?></td></tr>
               <tr><td><strong><?php _e('DJV Plugin Version', 'djv-core'); ?></strong></td><td><?php echo esc_html(DJV_VERSION); ?></td></tr>
               <tr><td><strong><?php _e('Node.js Version', 'djv-core'); ?></strong></td><td><?php echo $node_version ? esc_html(trim($node_version)) . ' ✅' : '❌ Not found — install Node.js on server'; ?></td></tr>
-              <tr><td><strong><?php _e('Engine Runner Script', 'djv-core'); ?></strong></td><td><?php echo $runner_exists ? '✅ Found' : '❌ Not found at expected path'; ?></td></tr>
+              <tr><td><strong><?php _e('Engine Runner Script', 'djv-core'); ?></strong></td><td><?php echo '✅ N/A (Using External API)'; ?></td></tr>
               <tr><td><strong><?php _e('proc_open() available', 'djv-core'); ?></strong></td><td><?php echo function_exists('proc_open') ? '✅ Yes' : '❌ No — required for live engine'; ?></td></tr>
               <tr><td><strong><?php _e('WP Cron enabled', 'djv-core'); ?></strong></td><td><?php echo !defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON ? '✅ Yes' : '⚠️ Disabled — use server cron'; ?></td></tr>
               <tr><td><strong><?php _e('Upload Dir Writable', 'djv-core'); ?></strong></td><td><?php $ud=wp_upload_dir(); echo is_writable($ud['basedir']) ? '✅ Yes' : '❌ No'; ?></td></tr>
@@ -534,20 +566,32 @@ class DJV_Admin {
 
     public function ajax_test_engine() {
         check_ajax_referer( 'djv_test_engine', 'nonce' );
-        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error([ 'message' => 'Access denied.' ]);
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error('Access denied.');
 
-        $date = sanitize_text_field( $_POST['date'] ?? date('Y-m-d') );
-        $lat  = floatval( $_POST['lat'] ?? 17.3850 );
-        $lon  = floatval( $_POST['lon'] ?? 78.4867 );
-        $tz   = floatval( $_POST['tz']  ?? 5.5 );
+        $url = esc_url_raw( $_POST['url'] ?? '' );
+        if ( empty( $url ) ) {
+            wp_send_json_error( 'URL is empty.' );
+        }
 
-        $panchangam = new DJV_Panchangam();
-        $result = $panchangam->get_panchangam( $date, $lat, $lon, $tz );
+        $health_url = rtrim( $url, '/' ) . '/health';
+        $response = wp_remote_get( $health_url, [ 'timeout' => 10 ] );
 
-        if ( is_wp_error( $result ) ) {
-            wp_send_json_error([ 'message' => $result->get_error_message() ]);
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( $response->get_error_message() );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( $code !== 200 ) {
+            wp_send_json_error( 'HTTP Error ' . $code );
+        }
+
+        $body = wp_remote_retrieve_body( $response );
+        $data = json_decode( $body, true );
+
+        if ( isset( $data['status'] ) && $data['status'] === 'healthy' ) {
+            wp_send_json_success( 'CONNECTED' );
         } else {
-            wp_send_json_success( $result );
+            wp_send_json_error( 'Invalid health check response.' );
         }
     }
 
@@ -572,16 +616,18 @@ class DJV_Admin {
         check_ajax_referer( 'djv_precalculate', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error([ 'message' => 'Access denied.' ]);
 
-        $year  = intval( $_POST['year']  ?? date('Y') );
-        $month = intval( $_POST['month'] ?? date('n') );
+        if ( empty( get_option('djv_engine_api_url') ) ) {
+            wp_send_json_error([ 'message' => 'Engine API URL not configured.' ]);
+        }
+
         $lat   = floatval( $_POST['lat'] ?? 17.3850 );
         $lon   = floatval( $_POST['lon'] ?? 78.4867 );
-        $tz    = floatval( $_POST['tz']  ?? 5.5 );
+        $tz    = sanitize_text_field( $_POST['tz'] ?? 'Asia/Kolkata' );
 
         set_time_limit( 120 ); // Allow longer execution for pre-warm
 
         $panchangam = new DJV_Panchangam();
-        $result = $panchangam->precalculate_month( $year, $month, $lat, $lon, $tz );
+        $result = $panchangam->precalculate_next_30_days( $lat, $lon, $tz );
 
         wp_send_json_success( $result );
     }
@@ -609,10 +655,10 @@ class DJV_Admin {
 
     private function render_status_alerts( $stats ) {
         if ( $stats['engine_status'] !== 'online' ) {
-            echo '<div class="notice notice-error"><p><strong>⚠️ Node.js not found.</strong> The Panchangam engine requires Node.js on the server. Install Node.js or define <code>DJV_NODE_PATH</code> in wp-config.php.</p></div>';
+            echo '<div class="notice notice-error"><p><strong>❌ Panchangam Engine API Not Configured.</strong> The external Node.js microservice API URL is required. Please set it in DJV Settings before pre-warming cache or running calculations.</p></div>';
         }
-        if ( $stats['cached_dates'] === 0 ) {
-            echo '<div class="notice notice-warning"><p><strong>📭 No cached data.</strong> The Panchangam cache is empty. Run "Pre-warm This Month" to populate it.</p></div>';
+        if ( $stats['cached_dates'] === 0 && $stats['engine_status'] === 'online' ) {
+            echo '<div class="notice notice-warning"><p><strong>⚠️ No cached data.</strong> The Panchangam cache is empty. You may now run "Pre-warm Cache" to populate the next 30 days.</p></div>';
         }
     }
 

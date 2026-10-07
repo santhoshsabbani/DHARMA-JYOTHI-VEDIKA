@@ -29,6 +29,13 @@ class DJV_REST_API {
 			'args'                => self::panchangam_args(),
 		] );
 
+		register_rest_route( $ns, '/today', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_today' ],
+			'permission_callback' => '__return_true',
+			'args'                => self::panchangam_args(),
+		] );
+
 		// ── Festivals ─────────────────────────────────────────────
 		register_rest_route( $ns, '/festivals', [
 			'methods'             => WP_REST_Server::READABLE,
@@ -99,6 +106,27 @@ class DJV_REST_API {
 			'args'                => [
 				'category' => [ 'type' => 'string', 'default' => '' ],
 				'per_page' => [ 'type' => 'integer', 'default' => 10, 'maximum' => 50 ],
+			],
+		] );
+
+		// ── Services ──────────────────────────────────────────────
+		register_rest_route( $ns, '/services', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_services' ],
+			'permission_callback' => '__return_true',
+			'args'                => [
+				'per_page' => [ 'type' => 'integer', 'default' => 20, 'maximum' => 50 ],
+			],
+		] );
+
+		// ── Global Multi-CPT Search ───────────────────────────────
+		register_rest_route( $ns, '/search', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'search_all' ],
+			'permission_callback' => '__return_true',
+			'args'                => [
+				's'        => [ 'type' => 'string', 'required' => true ],
+				'per_page' => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
 			],
 		] );
 
@@ -178,13 +206,17 @@ class DJV_REST_API {
 		], 200 );
 	}
 
-	private static function respond_error( $message, $status = 400, $code = 'error' ): WP_REST_Response {
+	private static function respond_error( $message, $status = 400, $code = 'error', $details = null ): WP_REST_Response {
+		$error_payload = [
+			'code'    => $code,
+			'message' => $message,
+		];
+		if ( ! empty( $details ) ) {
+			$error_payload['details'] = $details;
+		}
 		return new WP_REST_Response( [
 			'success' => false,
-			'error'   => [
-				'code'    => $code,
-				'message' => $message,
-			]
+			'error'   => $error_payload,
 		], $status );
 	}
 
@@ -224,9 +256,12 @@ class DJV_REST_API {
 
 		// Calculate via Panchangam engine (handles caching internally)
 		$panchangam_engine = new DJV_Panchangam();
-		$result = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz );
+		$result = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz, $region ?: 'telugu', $language ?: 'en' );
 		if ( is_wp_error( $result ) ) {
-			return self::respond_error( $result->get_error_message(), $result->get_error_data()['status'] ?? 500, $result->get_error_code() );
+			$err_data = $result->get_error_data();
+			$status   = is_array( $err_data ) && isset( $err_data['status'] ) ? (int) $err_data['status'] : 500;
+			$details  = is_array( $err_data ) && isset( $err_data['details'] ) ? $err_data['details'] : null;
+			return self::respond_error( $result->get_error_message(), $status, $result->get_error_code(), $details );
 		}
 
 		$meta = $result['meta'] ?? [];
@@ -296,7 +331,10 @@ class DJV_REST_API {
 		$panchangam_engine = new DJV_Panchangam();
 		$panchangam = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz );
 		if ( is_wp_error( $panchangam ) ) {
-			return self::respond_error( $panchangam->get_error_message(), $panchangam->get_error_data()['status'] ?? 500, $panchangam->get_error_code() );
+			$err_data = $panchangam->get_error_data();
+			$status   = is_array( $err_data ) && isset( $err_data['status'] ) ? (int) $err_data['status'] : 500;
+			$details  = is_array( $err_data ) && isset( $err_data['details'] ) ? $err_data['details'] : null;
+			return self::respond_error( $panchangam->get_error_message(), $status, $panchangam->get_error_code(), $details );
 		}
 
 		// Extract muhurtham-relevant timings from Panchangam
@@ -494,6 +532,67 @@ class DJV_REST_API {
 	}
 
 	/**
+	 * GET /djv/v1/services — Vedic Services list
+	 */
+	public static function get_services( WP_REST_Request $req ): WP_REST_Response {
+		$posts = get_posts([
+			'post_type'      => 'djv_service',
+			'posts_per_page' => (int) ($req->get_param( 'per_page' ) ?: 20),
+			'post_status'    => 'publish',
+		]);
+
+		$services = array_map( function( WP_Post $p ) {
+			return [
+				'id'           => $p->ID,
+				'slug'         => $p->post_name,
+				'title'        => get_the_title( $p ),
+				'excerpt'      => get_the_excerpt( $p ),
+				'content'      => apply_filters( 'the_content', $p->post_content ),
+				'service_type' => get_post_meta( $p->ID, '_djv_service_type', true ),
+				'price'        => get_post_meta( $p->ID, '_djv_price', true ),
+				'duration'     => get_post_meta( $p->ID, '_djv_duration', true ),
+				'contact'      => get_post_meta( $p->ID, '_djv_contact', true ),
+				'thumbnail'    => get_the_post_thumbnail_url( $p, 'medium' ),
+				'link'         => get_permalink( $p ),
+			];
+		}, $posts );
+
+		return self::respond( $services, [ 'count' => count( $services ) ] );
+	}
+
+	/**
+	 * GET /djv/v1/search — Unified Search across all DJV post types
+	 */
+	public static function search_all( WP_REST_Request $req ): WP_REST_Response {
+		$s = sanitize_text_field( $req->get_param( 's' ) );
+		if ( empty( $s ) ) {
+			return self::respond( [], [ 'count' => 0 ] );
+		}
+
+		$query = new WP_Query([
+			's'              => $s,
+			'post_type'      => [ 'post', 'djv_festival', 'djv_temple', 'djv_pooja', 'djv_mantra', 'djv_muhurtham', 'djv_service' ],
+			'posts_per_page' => (int) ($req->get_param( 'per_page' ) ?: 20),
+			'post_status'    => 'publish',
+		]);
+
+		$results = [];
+		foreach ( $query->posts as $p ) {
+			$results[] = [
+				'id'        => $p->ID,
+				'slug'      => $p->post_name,
+				'title'     => get_the_title( $p ),
+				'excerpt'   => get_the_excerpt( $p ),
+				'post_type' => $p->post_type,
+				'thumbnail' => get_the_post_thumbnail_url( $p, 'medium' ),
+				'link'      => get_permalink( $p ),
+			];
+		}
+
+		return self::respond( $results, [ 'count' => count( $results ) ] );
+	}
+
+	/**
 	 * GET /djv/v1/today — Aggregated endpoint for home screen
 	 */
 	public static function get_today( WP_REST_Request $req ): WP_REST_Response {
@@ -506,7 +605,10 @@ class DJV_REST_API {
 		$panchangam_engine = new DJV_Panchangam();
 		$panchangam = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz );
 		if ( is_wp_error( $panchangam ) ) {
-			return self::respond_error( $panchangam->get_error_message(), $panchangam->get_error_data()['status'] ?? 500, $panchangam->get_error_code() );
+			$err_data = $panchangam->get_error_data();
+			$status   = is_array( $err_data ) && isset( $err_data['status'] ) ? (int) $err_data['status'] : 500;
+			$details  = is_array( $err_data ) && isset( $err_data['details'] ) ? $err_data['details'] : null;
+			return self::respond_error( $panchangam->get_error_message(), $status, $panchangam->get_error_code(), $details );
 		}
 
 		// Today's festivals
@@ -521,7 +623,32 @@ class DJV_REST_API {
 		} );
 
 		// Daily mantra (cycle through based on day of year)
-		$daily_mantra = $panchangam_engine->get_daily_mantra( $date );
+		$mantra_count = (int) (wp_count_posts('djv_mantra')->publish ?? 0);
+		$daily_mantra = null;
+		if ( $mantra_count > 0 ) {
+			$day_of_year = (int) date( 'z', strtotime( $date ) );
+			$offset = $day_of_year % $mantra_count;
+			$mantra_posts = get_posts([
+				'post_type'      => 'djv_mantra',
+				'posts_per_page' => 1,
+				'post_status'    => 'publish',
+				'offset'         => $offset,
+			]);
+			if ( ! empty( $mantra_posts ) ) {
+				$p = $mantra_posts[0];
+				$daily_mantra = [
+					'id'              => $p->ID,
+					'slug'            => $p->post_name,
+					'title'           => get_the_title( $p ),
+					'original_text'   => get_post_meta( $p->ID, '_djv_original_text', true ),
+					'transliteration' => get_post_meta( $p->ID, '_djv_transliteration', true ),
+					'meaning'         => get_post_meta( $p->ID, '_djv_meaning', true ),
+					'audio_url'       => get_post_meta( $p->ID, '_djv_audio_url', true ),
+					'deity'           => wp_get_post_terms( $p->ID, 'djv_deity', [ 'fields' => 'names' ] ),
+					'link'            => get_permalink( $p ),
+				];
+			}
+		}
 
 		// Latest articles (3)
 		$articles = self::get_articles( new WP_REST_Request() )->get_data()['data'] ?? [];
