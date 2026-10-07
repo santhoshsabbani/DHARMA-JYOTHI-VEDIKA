@@ -38,6 +38,8 @@ require_once DJV_PLUGIN_DIR . 'includes/class-djv-post-types.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-rest-api.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-panchangam.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-admin.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-festivals.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-poojas.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
 function djv_load(): void {

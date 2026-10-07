@@ -182,7 +182,7 @@ class DJV_Post_Types {
 	private static function register_taxonomies(): void {
 
 		// Deity taxonomy (Ganesh, Shiva, Vishnu, etc.)
-		register_taxonomy( 'djv_deity', [ 'djv_mantra', 'djv_pooja', 'djv_temple' ], [
+		register_taxonomy( 'djv_deity', [ 'djv_mantra', 'djv_pooja', 'djv_temple', 'djv_festival' ], [
 			'labels' => [
 				'name'          => __( 'Deities', 'djv-core' ),
 				'singular_name' => __( 'Deity', 'djv-core' ),
@@ -215,6 +215,36 @@ class DJV_Post_Types {
 			'show_in_rest' => true,
 			'hierarchical' => true,
 			'rewrite'      => [ 'slug' => 'festival-type' ],
+		] );
+
+		// Festival Category taxonomy (Major Festivals, Shiva, Vishnu, Krishna, Ganesha, Hanuman, Devi, Lakshmi, Saraswati, Navagraha, Sankranti, Regional, Fasting, Purnima, Ekadashi, Pradosham)
+		register_taxonomy( 'djv_festival_cat', [ 'djv_festival' ], [
+			'labels' => [
+				'name'          => __( 'Festival Categories', 'djv-core' ),
+				'singular_name' => __( 'Festival Category', 'djv-core' ),
+				'all_items'     => __( 'All Categories', 'djv-core' ),
+				'edit_item'     => __( 'Edit Category', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Category', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'festival-category' ],
+		] );
+
+		// Pooja Category taxonomy (Popular Poojas, Festival Poojas, Daily Poojas, Deity Poojas, Vratam)
+		register_taxonomy( 'djv_pooja_cat', [ 'djv_pooja' ], [
+			'labels' => [
+				'name'          => __( 'Pooja Categories', 'djv-core' ),
+				'singular_name' => __( 'Pooja Category', 'djv-core' ),
+				'all_items'     => __( 'All Categories', 'djv-core' ),
+				'edit_item'     => __( 'Edit Category', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Category', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'pooja-category' ],
 		] );
 
 		// Language taxonomy (English, Telugu, Hindi, etc.)
@@ -270,6 +300,18 @@ class DJV_Post_Types {
 		if ( $mantras_version < 3 || ( isset( $_GET['djv_sync_mantras'] ) && current_user_can( 'manage_options' ) ) ) {
 			self::sync_mantras_data();
 			update_option( 'djv_mantras_db_version', 3 );
+		}
+
+		$festivals_version = intval( get_option( 'djv_festivals_db_version', 0 ) );
+		if ( $festivals_version < 2 || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
+			self::sync_festivals_data();
+			update_option( 'djv_festivals_db_version', 2 );
+		}
+
+		$pooja_version = intval( get_option( 'djv_pooja_db_version', 0 ) );
+		if ( $pooja_version < 2 || ( isset( $_GET['djv_sync_pooja'] ) && current_user_can( 'manage_options' ) ) ) {
+			self::sync_pooja_data();
+			update_option( 'djv_pooja_db_version', 2 );
 		}
 	}
 
@@ -344,6 +386,193 @@ class DJV_Post_Types {
 
 		return [
 			'total'   => count( $mantras ),
+			'updated' => $updated,
+			'created' => $created,
+		];
+	}
+
+	/**
+	 * Canonical Festivals Sync: Updates existing festivals and inserts new ones without duplicates.
+	 */
+	public static function sync_festivals_data(): array {
+		require_once __DIR__ . '/data-festivals.php';
+		$festivals = djv_get_canonical_festivals();
+		$updated = 0;
+		$created = 0;
+
+		foreach ( $festivals as $f ) {
+			$existing = get_page_by_path( $f['slug'], OBJECT, 'djv_festival' );
+			if ( $existing ) {
+				$post_id = $existing->ID;
+				wp_update_post([
+					'ID'           => $post_id,
+					'post_title'   => $f['title'],
+					'post_name'    => $f['slug'],
+					'post_content' => $f['content_en'],
+					'post_excerpt' => $f['excerpt'],
+					'post_status'  => 'publish',
+				]);
+				$updated++;
+			} else {
+				$post_id = wp_insert_post([
+					'post_title'   => $f['title'],
+					'post_name'    => $f['slug'],
+					'post_content' => $f['content_en'],
+					'post_excerpt' => $f['excerpt'],
+					'post_status'  => 'publish',
+					'post_type'    => 'djv_festival',
+				]);
+				$created++;
+			}
+
+			if ( $post_id && ! is_wp_error( $post_id ) ) {
+				// Trilingual titles & contents
+				update_post_meta( $post_id, '_djv_title_en', $f['title_en'] );
+				update_post_meta( $post_id, '_djv_title_te', $f['title_te'] );
+				update_post_meta( $post_id, '_djv_title_hi', $f['title_hi'] );
+				update_post_meta( $post_id, '_djv_telugu_name', $f['title_te'] ); // legacy key
+
+				update_post_meta( $post_id, '_djv_content_en', $f['content_en'] );
+				update_post_meta( $post_id, '_djv_content_te', $f['content_te'] );
+				update_post_meta( $post_id, '_djv_content_hi', $f['content_hi'] );
+
+				update_post_meta( $post_id, '_djv_description_en', $f['excerpt'] );
+				update_post_meta( $post_id, '_djv_description_te', $f['content_te'] );
+				update_post_meta( $post_id, '_djv_description_hi', $f['content_hi'] );
+
+				// Details
+				update_post_meta( $post_id, '_djv_significance', $f['significance'] );
+				update_post_meta( $post_id, '_djv_history', $f['history'] );
+				update_post_meta( $post_id, '_djv_puja_timings', $f['puja_timings'] );
+				update_post_meta( $post_id, '_djv_samagri', $f['samagri'] );
+				update_post_meta( $post_id, '_djv_naivedyam', $f['naivedyam'] );
+				update_post_meta( $post_id, '_djv_vrat_rules', $f['vrat_rules'] );
+				update_post_meta( $post_id, '_djv_dos', $f['dos'] );
+				update_post_meta( $post_id, '_djv_donts', $f['donts'] );
+
+				update_post_meta( $post_id, '_djv_month', $f['month'] );
+				update_post_meta( $post_id, '_djv_tithi_rule', $f['tithi_rule'] );
+				update_post_meta( $post_id, '_djv_festival_date', $f['date_default'] );
+				update_post_meta( $post_id, '_djv_is_major', ! empty( $f['is_major'] ) ? '1' : '0' );
+				update_post_meta( $post_id, '_djv_is_telugu', ! empty( $f['is_telugu'] ) ? '1' : '0' );
+
+				// Relationships
+				update_post_meta( $post_id, '_djv_related_poojas', $f['related_poojas'] );
+				update_post_meta( $post_id, '_djv_related_mantras', $f['related_mantras'] );
+
+				// SEO Trilingual
+				update_post_meta( $post_id, '_djv_seo_title_en', $f['seo_title_en'] );
+				update_post_meta( $post_id, '_djv_seo_title_te', $f['seo_title_te'] );
+				update_post_meta( $post_id, '_djv_seo_title_hi', $f['seo_title_hi'] );
+				update_post_meta( $post_id, '_djv_seo_desc_en', $f['seo_desc_en'] );
+				update_post_meta( $post_id, '_djv_seo_desc_te', $f['seo_desc_te'] );
+				update_post_meta( $post_id, '_djv_seo_desc_hi', $f['seo_desc_hi'] );
+
+				// Taxonomies
+				if ( ! empty( $f['deity_slug'] ) ) {
+					wp_set_object_terms( $post_id, $f['deity_slug'], 'djv_deity' );
+				}
+				if ( ! empty( $f['categories'] ) ) {
+					wp_set_object_terms( $post_id, $f['categories'], 'djv_festival_cat' );
+					wp_set_object_terms( $post_id, $f['categories'], 'djv_festival_type' ); // legacy support
+				}
+			}
+		}
+
+		return [
+			'total'   => count( $festivals ),
+			'updated' => $updated,
+			'created' => $created,
+		];
+	}
+
+	/**
+	 * Canonical Pooja Guides Sync: Updates existing poojas and inserts new ones without duplicates.
+	 */
+	public static function sync_pooja_data(): array {
+		require_once __DIR__ . '/data-poojas.php';
+		$poojas = djv_get_canonical_poojas();
+		$updated = 0;
+		$created = 0;
+
+		foreach ( $poojas as $p ) {
+			$existing = get_page_by_path( $p['slug'], OBJECT, 'djv_pooja' );
+			if ( $existing ) {
+				$post_id = $existing->ID;
+				wp_update_post([
+					'ID'           => $post_id,
+					'post_title'   => $p['title'],
+					'post_name'    => $p['slug'],
+					'post_content' => $p['intro_en'],
+					'post_excerpt' => wp_trim_words( $p['intro_en'], 30 ),
+					'post_status'  => 'publish',
+				]);
+				$updated++;
+			} else {
+				$post_id = wp_insert_post([
+					'post_title'   => $p['title'],
+					'post_name'    => $p['slug'],
+					'post_content' => $p['intro_en'],
+					'post_excerpt' => wp_trim_words( $p['intro_en'], 30 ),
+					'post_status'  => 'publish',
+					'post_type'    => 'djv_pooja',
+				]);
+				$created++;
+			}
+
+			if ( $post_id && ! is_wp_error( $post_id ) ) {
+				// Trilingual titles & intros
+				update_post_meta( $post_id, '_djv_title_en', $p['title_en'] );
+				update_post_meta( $post_id, '_djv_title_te', $p['title_te'] );
+				update_post_meta( $post_id, '_djv_title_hi', $p['title_hi'] );
+
+				update_post_meta( $post_id, '_djv_intro_en', $p['intro_en'] );
+				update_post_meta( $post_id, '_djv_intro_te', $p['intro_te'] );
+				update_post_meta( $post_id, '_djv_intro_hi', $p['intro_hi'] );
+
+				update_post_meta( $post_id, '_djv_duration', $p['duration'] );
+				update_post_meta( $post_id, '_djv_samagri', $p['samagri'] );
+
+				// 12 Canonical Steps
+				update_post_meta( $post_id, '_djv_preparation', $p['preparation'] );
+				update_post_meta( $post_id, '_djv_sankalpam', $p['sankalpam'] );
+				update_post_meta( $post_id, '_djv_kalasha_sthapana', $p['kalasha_sthapana'] );
+				update_post_meta( $post_id, '_djv_avahanam', $p['avahanam'] );
+				update_post_meta( $post_id, '_djv_dhyana', $p['dhyana'] );
+				update_post_meta( $post_id, '_djv_main_puja', $p['main_puja'] );
+				update_post_meta( $post_id, '_djv_mantra_japa', $p['mantra_japa'] );
+				update_post_meta( $post_id, '_djv_naivedyam', $p['naivedyam'] );
+				update_post_meta( $post_id, '_djv_aarti', $p['aarti'] );
+				update_post_meta( $post_id, '_djv_prarthana', $p['prarthana'] );
+				update_post_meta( $post_id, '_djv_prasadam', $p['prasadam'] );
+				update_post_meta( $post_id, '_djv_visarjan', $p['visarjan'] );
+				update_post_meta( $post_id, '_djv_vrat_rules', $p['vrat_rules'] );
+				update_post_meta( $post_id, '_djv_faq', $p['faq'] );
+
+				// Relationships
+				update_post_meta( $post_id, '_djv_related_mantras', $p['related_mantras'] );
+				update_post_meta( $post_id, '_djv_related_festivals', $p['related_festivals'] );
+
+				// SEO Trilingual
+				update_post_meta( $post_id, '_djv_seo_title_en', $p['seo_title_en'] );
+				update_post_meta( $post_id, '_djv_seo_title_te', $p['seo_title_te'] );
+				update_post_meta( $post_id, '_djv_seo_title_hi', $p['seo_title_hi'] );
+				update_post_meta( $post_id, '_djv_seo_desc_en', $p['seo_desc_en'] );
+				update_post_meta( $post_id, '_djv_seo_desc_te', $p['seo_desc_te'] );
+				update_post_meta( $post_id, '_djv_seo_desc_hi', $p['seo_desc_hi'] );
+
+				// Taxonomies
+				if ( ! empty( $p['deity_slug'] ) ) {
+					wp_set_object_terms( $post_id, $p['deity_slug'], 'djv_deity' );
+				}
+				if ( ! empty( $p['category'] ) ) {
+					wp_set_object_terms( $post_id, $p['category'], 'djv_pooja_cat' );
+				}
+			}
+		}
+
+		return [
+			'total'   => count( $poojas ),
 			'updated' => $updated,
 			'created' => $created,
 		];
@@ -971,6 +1200,38 @@ class DJV_Post_Types {
 			] );
 			if ( $articles_id && ! is_wp_error( $articles_id ) ) {
 				update_post_meta( $articles_id, '_wp_page_template', 'page-articles.php' );
+				$created = true;
+			}
+		}
+
+		// 4. Festivals Directory (/festivals/)
+		$festivals_page = get_page_by_path( 'festivals', OBJECT, 'page' );
+		if ( ! $festivals_page ) {
+			$festivals_id = wp_insert_post( [
+				'post_title'   => 'Hindu Festivals & Vrats Calendar',
+				'post_name'    => 'festivals',
+				'post_content' => '',
+				'post_status'  => 'publish',
+				'post_type'    => 'page',
+			] );
+			if ( $festivals_id && ! is_wp_error( $festivals_id ) ) {
+				update_post_meta( $festivals_id, '_wp_page_template', 'template-festivals.php' );
+				$created = true;
+			}
+		}
+
+		// 5. Pooja Guides Directory (/pooja/)
+		$pooja_page = get_page_by_path( 'pooja', OBJECT, 'page' );
+		if ( ! $pooja_page ) {
+			$pooja_id = wp_insert_post( [
+				'post_title'   => 'Pooja Guides & Vidhi',
+				'post_name'    => 'pooja',
+				'post_content' => '',
+				'post_status'  => 'publish',
+				'post_type'    => 'page',
+			] );
+			if ( $pooja_id && ! is_wp_error( $pooja_id ) ) {
+				update_post_meta( $pooja_id, '_wp_page_template', 'template-pooja.php' );
 				$created = true;
 			}
 		}

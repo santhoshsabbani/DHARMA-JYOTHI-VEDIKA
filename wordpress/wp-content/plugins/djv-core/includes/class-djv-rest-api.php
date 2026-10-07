@@ -366,21 +366,27 @@ class DJV_REST_API {
 	public static function get_pooja( WP_REST_Request $req ): WP_REST_Response {
 		$posts = get_posts( [
 			'post_type'      => 'djv_pooja',
-			'posts_per_page' => 20,
-			'orderby'        => 'menu_order',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
 			'order'          => 'ASC',
 			'post_status'    => 'publish',
 		] );
 
 		$pooja_list = array_map( function( $post ) {
+			$id = $post->ID;
 			return [
-				'id'      => $post->ID,
-				'slug'    => $post->post_name,
-				'title'   => get_the_title( $post ),
-				'excerpt' => get_the_excerpt( $post ),
-				'link'    => get_permalink( $post ),
-				'icon'    => get_post_meta( $post->ID, '_djv_icon', true ),
-				'deity'   => wp_get_post_terms( $post->ID, 'djv_deity', [ 'fields' => 'names' ] ),
+				'id'          => $id,
+				'slug'        => $post->post_name,
+				'title'       => get_the_title( $post ),
+				'title_en'    => get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post ),
+				'title_te'    => get_post_meta( $id, '_djv_title_te', true ),
+				'title_hi'    => get_post_meta( $id, '_djv_title_hi', true ),
+				'excerpt'     => get_the_excerpt( $post ),
+				'duration'    => get_post_meta( $id, '_djv_duration', true ),
+				'categories'  => wp_get_post_terms( $id, 'djv_pooja_cat', [ 'fields' => 'names' ] ),
+				'deity'       => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
+				'link'        => get_permalink( $post ),
+				'thumbnail'   => get_the_post_thumbnail_url( $id, 'medium' ),
 			];
 		}, $posts );
 
@@ -394,20 +400,43 @@ class DJV_REST_API {
 		$slug = sanitize_key( $req->get_param( 'slug' ) );
 		$post = get_page_by_path( $slug, OBJECT, 'djv_pooja' );
 
-		if ( ! $post ) {
+		if ( ! $post || $post->post_status !== 'publish' ) {
 			return self::respond_error( 'Pooja guide not found', 404, 'not_found' );
 		}
 
+		$id = $post->ID;
 		return self::respond( [
-			'id'          => $post->ID,
-			'slug'        => $post->post_name,
-			'title'       => get_the_title( $post ),
-			'content'     => apply_filters( 'the_content', $post->post_content ),
-			'samagri'     => get_post_meta( $post->ID, '_djv_samagri', true ),
-			'mantras'     => get_post_meta( $post->ID, '_djv_mantras', true ),
-			'naivedyam'   => get_post_meta( $post->ID, '_djv_naivedyam', true ),
-			'deity'       => wp_get_post_terms( $post->ID, 'djv_deity', [ 'fields' => 'names' ] ),
-			'updated'     => $post->post_modified,
+			'id'               => $id,
+			'slug'             => $post->post_name,
+			'title'            => get_the_title( $post ),
+			'title_en'         => get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post ),
+			'title_te'         => get_post_meta( $id, '_djv_title_te', true ),
+			'title_hi'         => get_post_meta( $id, '_djv_title_hi', true ),
+			'intro_en'         => get_post_meta( $id, '_djv_intro_en', true ) ?: apply_filters( 'the_content', $post->post_content ),
+			'intro_te'         => get_post_meta( $id, '_djv_intro_te', true ),
+			'intro_hi'         => get_post_meta( $id, '_djv_intro_hi', true ),
+			'duration'         => get_post_meta( $id, '_djv_duration', true ),
+			'samagri'          => get_post_meta( $id, '_djv_samagri', true ),
+			'preparation'      => get_post_meta( $id, '_djv_preparation', true ),
+			'sankalpam'        => get_post_meta( $id, '_djv_sankalpam', true ),
+			'kalasha_sthapana' => get_post_meta( $id, '_djv_kalasha_sthapana', true ),
+			'avahanam'         => get_post_meta( $id, '_djv_avahanam', true ),
+			'dhyana'           => get_post_meta( $id, '_djv_dhyana', true ),
+			'main_puja'        => get_post_meta( $id, '_djv_main_puja', true ),
+			'mantra_japa'      => get_post_meta( $id, '_djv_mantra_japa', true ),
+			'naivedyam'        => get_post_meta( $id, '_djv_naivedyam', true ),
+			'aarti'            => get_post_meta( $id, '_djv_aarti', true ),
+			'prarthana'        => get_post_meta( $id, '_djv_prarthana', true ),
+			'prasadam'         => get_post_meta( $id, '_djv_prasadam', true ),
+			'visarjan'         => get_post_meta( $id, '_djv_visarjan', true ),
+			'vrat_rules'       => get_post_meta( $id, '_djv_vrat_rules', true ),
+			'faq'              => get_post_meta( $id, '_djv_faq', true ) ?: [],
+			'related_mantras'  => get_post_meta( $id, '_djv_related_mantras', true ) ?: [],
+			'related_festivals'=> get_post_meta( $id, '_djv_related_festivals', true ) ?: [],
+			'categories'       => wp_get_post_terms( $id, 'djv_pooja_cat', [ 'fields' => 'names' ] ),
+			'deity'            => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
+			'link'             => get_permalink( $post ),
+			'updated'          => $post->post_modified,
 		] );
 	}
 
@@ -794,20 +823,38 @@ class DJV_REST_API {
 	/* ─── Helpers ─────────────────────────────────────────────── */
 
 	private static function format_festival_post( WP_Post $post ): array {
+		$id = $post->ID;
 		return [
-			'id'          => $post->ID,
-			'slug'        => $post->post_name,
-			'name'        => get_the_title( $post ),
-			'content'     => apply_filters( 'the_content', $post->post_content ),
-			'significance'=> get_post_meta( $post->ID, '_djv_significance', true ),
-			'puja_timings'=> get_post_meta( $post->ID, '_djv_puja_timings', true ),
-			'samagri'     => get_post_meta( $post->ID, '_djv_samagri', true ),
-			'naivedyam'   => get_post_meta( $post->ID, '_djv_naivedyam', true ),
-			'mantras'     => get_post_meta( $post->ID, '_djv_mantras', true ),
-			'date_rule'   => get_post_meta( $post->ID, '_djv_date_rule', true ),
-			'thumbnail'   => get_the_post_thumbnail_url( $post, 'large' ),
-			'link'        => get_permalink( $post ),
-			'updated'     => $post->post_modified,
+			'id'              => $id,
+			'slug'            => $post->post_name,
+			'title'           => get_the_title( $post ),
+			'title_en'        => get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post ),
+			'title_te'        => get_post_meta( $id, '_djv_title_te', true ) ?: get_post_meta( $id, '_djv_telugu_name', true ),
+			'title_hi'        => get_post_meta( $id, '_djv_title_hi', true ),
+			'excerpt'         => get_the_excerpt( $post ),
+			'content_en'      => get_post_meta( $id, '_djv_content_en', true ) ?: apply_filters( 'the_content', $post->post_content ),
+			'content_te'      => get_post_meta( $id, '_djv_content_te', true ),
+			'content_hi'      => get_post_meta( $id, '_djv_content_hi', true ),
+			'significance'    => get_post_meta( $id, '_djv_significance', true ),
+			'history'         => get_post_meta( $id, '_djv_history', true ),
+			'puja_timings'    => get_post_meta( $id, '_djv_puja_timings', true ),
+			'samagri'         => get_post_meta( $id, '_djv_samagri', true ),
+			'naivedyam'       => get_post_meta( $id, '_djv_naivedyam', true ),
+			'vrat_rules'      => get_post_meta( $id, '_djv_vrat_rules', true ),
+			'dos'             => get_post_meta( $id, '_djv_dos', true ),
+			'donts'           => get_post_meta( $id, '_djv_donts', true ),
+			'date'            => get_post_meta( $id, '_djv_festival_date', true ),
+			'tithi_rule'      => get_post_meta( $id, '_djv_tithi_rule', true ),
+			'month'           => get_post_meta( $id, '_djv_month', true ),
+			'is_major'        => (bool) get_post_meta( $id, '_djv_is_major', true ),
+			'is_telugu'       => (bool) get_post_meta( $id, '_djv_is_telugu', true ),
+			'categories'      => wp_get_post_terms( $id, 'djv_festival_cat', [ 'fields' => 'names' ] ),
+			'deity'           => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
+			'related_poojas'  => get_post_meta( $id, '_djv_related_poojas', true ) ?: [],
+			'related_mantras' => get_post_meta( $id, '_djv_related_mantras', true ) ?: [],
+			'thumbnail'       => get_the_post_thumbnail_url( $id, 'large' ),
+			'link'            => get_permalink( $post ),
+			'updated'         => $post->post_modified,
 		];
 	}
 }

@@ -324,6 +324,79 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
           </section>
         <?php endif; ?>
 
+        <!-- ── Related Festivals & Poojas (Reciprocal Internal Link Graph) ── -->
+        <?php
+        $rel_festivals = new WP_Query([
+          'post_type'      => 'djv_festival',
+          'posts_per_page' => 2,
+          'post_status'    => 'publish',
+          'meta_query'     => [
+            [
+              'key'     => '_djv_related_mantras',
+              'value'   => get_post_field( 'post_name', $post_id ),
+              'compare' => 'LIKE',
+            ]
+          ]
+        ]);
+        if ( ! $rel_festivals->have_posts() && ! empty( $deity ) ) {
+          $rel_festivals = new WP_Query([
+            'post_type'      => 'djv_festival',
+            'posts_per_page' => 2,
+            'post_status'    => 'publish',
+            'tax_query'      => [
+              [
+                'taxonomy' => 'djv_deity',
+                'field'    => 'name',
+                'terms'    => $deity,
+              ]
+            ]
+          ]);
+        }
+
+        $rel_poojas = new WP_Query([
+          'post_type'      => 'djv_pooja',
+          'posts_per_page' => 2,
+          'post_status'    => 'publish',
+          'meta_query'     => [
+            [
+              'key'     => '_djv_related_mantras',
+              'value'   => get_post_field( 'post_name', $post_id ),
+              'compare' => 'LIKE',
+            ]
+          ]
+        ]);
+        if ( ! $rel_poojas->have_posts() && ! empty( $deity ) ) {
+          $rel_poojas = new WP_Query([
+            'post_type'      => 'djv_pooja',
+            'posts_per_page' => 2,
+            'post_status'    => 'publish',
+            'tax_query'      => [
+              [
+                'taxonomy' => 'djv_deity',
+                'field'    => 'name',
+                'terms'    => $deity,
+              ]
+            ]
+          ]);
+        }
+        ?>
+        <?php if ( $rel_festivals->have_posts() || $rel_poojas->have_posts() ) : ?>
+          <section class="related-festivals-poojas-section" style="margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--clr-border, #E8DFD3);">
+            <h2 class="related-heading" style="font-family: var(--font-heading, serif); font-size: 1.5rem; color: var(--clr-primary, #7A2419); margin-bottom: 1.25rem;">
+              <?php esc_html_e( 'Associated Festivals &amp; Pooja Vidhis', 'djv-theme' ); ?>
+              <span class="related-heading-te" style="display: block; font-family: var(--font-telugu, sans-serif); font-size: 1.1rem; color: var(--clr-accent, #C89432); margin-top: 0.25rem;">సంబంధిత పండుగలు &amp; పూజా విధానాలు</span>
+            </h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+              <?php while ( $rel_festivals->have_posts() ) : $rel_festivals->the_post(); ?>
+                <?php get_template_part( 'template-parts/festival/card' ); ?>
+              <?php endwhile; wp_reset_postdata(); ?>
+              <?php while ( $rel_poojas->have_posts() ) : $rel_poojas->the_post(); ?>
+                <?php get_template_part( 'template-parts/pooja/card' ); ?>
+              <?php endwhile; wp_reset_postdata(); ?>
+            </div>
+          </section>
+        <?php endif; ?>
+
       </article>
     <?php endwhile; endif; ?>
 
