@@ -81,9 +81,17 @@ class DJV_REST_API {
 			'permission_callback' => '__return_true',
 			'args'                => [
 				'deity'    => [ 'type' => 'string', 'default' => '' ],
-				'language' => [ 'type' => 'string', 'default' => 'en' ],
-				'per_page' => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+				'category' => [ 'type' => 'string', 'default' => '' ],
+				'search'   => [ 'type' => 'string', 'default' => '' ],
+				'page'     => [ 'type' => 'integer', 'default' => 1 ],
+				'per_page' => [ 'type' => 'integer', 'default' => 24, 'maximum' => 100 ],
 			],
+		] );
+
+		register_rest_route( $ns, '/mantras/(?P<slug>[a-z0-9-]+)', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_mantra_single' ],
+			'permission_callback' => '__return_true',
 		] );
 
 		// ── Temples ───────────────────────────────────────────────
@@ -407,41 +415,152 @@ class DJV_REST_API {
 	 * GET /djv/v1/mantras
 	 */
 	public static function get_mantras( WP_REST_Request $req ): WP_REST_Response {
-		$deity    = sanitize_key( $req->get_param( 'deity' ) );
-		$language = sanitize_key( $req->get_param( 'language' ) );
-		$per_page = min( intval( $req->get_param( 'per_page' ) ), 100 );
+		$deity_param    = sanitize_text_field( $req->get_param( 'deity' ) );
+		$category_param = sanitize_text_field( $req->get_param( 'category' ) );
+		$search_param   = sanitize_text_field( $req->get_param( 'search' ) ?: $req->get_param( 's' ) );
+		$featured_param = $req->get_param( 'featured' );
+		$popular_param  = $req->get_param( 'popular' );
+		$page           = max( 1, intval( $req->get_param( 'page' ) ?: 1 ) );
+		$per_page_raw   = $req->get_param( 'per_page' );
+		$per_page       = $per_page_raw !== null && $per_page_raw !== '' ? min( max( 1, intval( $per_page_raw ) ), 100 ) : 24;
 
 		$args = [
 			'post_type'      => 'djv_mantra',
 			'posts_per_page' => $per_page,
+			'paged'          => $page,
 			'post_status'    => 'publish',
+			'orderby'        => 'title',
+			'order'          => 'ASC',
 		];
 
-		if ( $deity ) {
-			$args['tax_query'] = [[
-				'taxonomy' => 'djv_deity',
-				'field'    => 'slug',
-				'terms'    => $deity,
-			]];
+		if ( $search_param ) {
+			$args['s'] = $search_param;
 		}
 
-		$posts = get_posts( $args );
-
-		$mantras = array_map( function( $post ) use ( $language ) {
-			return [
-				'id'              => $post->ID,
-				'slug'            => $post->post_name,
-				'title'           => get_the_title( $post ),
-				'original_text'   => get_post_meta( $post->ID, '_djv_original_text', true ),
-				'transliteration' => get_post_meta( $post->ID, '_djv_transliteration', true ),
-				'meaning'         => get_post_meta( $post->ID, '_djv_meaning', true ),
-				'audio_url'       => get_post_meta( $post->ID, '_djv_audio_url', true ),
-				'deity'           => wp_get_post_terms( $post->ID, 'djv_deity', [ 'fields' => 'names' ] ),
-				'link'            => get_permalink( $post ),
+		$tax_query = [];
+		if ( $category_param && strtolower( $category_param ) !== 'all' ) {
+			$cat_slug = sanitize_title( $category_param );
+			$tax_query[] = [
+				'relation' => 'OR',
+				[
+					'taxonomy' => 'djv_mantra_cat',
+					'field'    => 'slug',
+					'terms'    => [ $cat_slug, strtolower( $category_param ) ],
+				],
+				[
+					'taxonomy' => 'djv_deity',
+					'field'    => 'slug',
+					'terms'    => [ $cat_slug, strtolower( $category_param ) ],
+				],
 			];
+		}
+
+		if ( $deity_param && strtolower( $deity_param ) !== 'all' ) {
+			$tax_query[] = [
+				'taxonomy' => 'djv_deity',
+				'field'    => 'slug',
+				'terms'    => [ sanitize_title( $deity_param ), strtolower( $deity_param ) ],
+			];
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$args['tax_query'] = $tax_query;
+		}
+
+		$meta_query = [];
+		if ( $featured_param !== null && $featured_param !== '' && $featured_param !== '0' && $featured_param !== 'false' ) {
+			$meta_query[] = [
+				'key'   => '_djv_is_featured',
+				'value' => '1',
+			];
+		}
+		if ( $popular_param !== null && $popular_param !== '' && $popular_param !== '0' && $popular_param !== 'false' ) {
+			$meta_query[] = [
+				'key'   => '_djv_is_popular',
+				'value' => '1',
+			];
+		}
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = $meta_query;
+		}
+
+		$query = new WP_Query( $args );
+		$posts = $query->posts;
+
+		$mantras = array_map( function( $post ) {
+			return self::format_mantra_data( $post );
 		}, $posts );
 
-		return self::respond( $mantras, [ 'count' => count( $mantras ) ] );
+		return self::respond( $mantras, [
+			'count'       => count( $mantras ),
+			'total'       => (int) $query->found_posts,
+			'total_pages' => (int) $query->max_num_pages,
+			'page'        => $page,
+			'per_page'    => $per_page,
+		] );
+	}
+
+	/**
+	 * GET /djv/v1/mantras/{slug}
+	 */
+	public static function get_mantra_single( WP_REST_Request $req ): WP_REST_Response {
+		$slug = sanitize_title( $req->get_param( 'slug' ) );
+		$post = get_page_by_path( $slug, OBJECT, 'djv_mantra' );
+
+		if ( ! $post || $post->post_status !== 'publish' ) {
+			return self::error( 'not_found', __( 'Mantra not found.', 'djv-core' ), 404 );
+		}
+
+		return self::respond( self::format_mantra_data( $post, true ) );
+	}
+
+	/**
+	 * Format single mantra item with rich metadata.
+	 */
+	private static function format_mantra_data( WP_Post $post, bool $detailed = false ): array {
+		$id        = $post->ID;
+		$deity     = get_post_meta( $id, '_djv_deity', true );
+		if ( empty( $deity ) ) {
+			$deity_terms = wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] );
+			$deity = ! empty( $deity_terms ) ? $deity_terms[0] : '';
+		}
+		$categories = wp_get_post_terms( $id, 'djv_mantra_cat', [ 'fields' => 'names' ] );
+
+		$sanskrit = get_post_meta( $id, '_djv_sanskrit_text', true ) ?: get_post_meta( $id, '_djv_original_text', true );
+
+		$data = [
+			'id'              => $id,
+			'slug'            => $post->post_name,
+			'title'           => get_the_title( $post ),
+			'telugu_title'    => get_post_meta( $id, '_djv_telugu_title', true ),
+			'deity'           => $deity,
+			'categories'      => $categories,
+			'excerpt'         => get_the_excerpt( $post ),
+			'sanskrit_text'   => $sanskrit,
+			'telugu_text'     => get_post_meta( $id, '_djv_telugu_text', true ),
+			'transliteration' => get_post_meta( $id, '_djv_transliteration', true ),
+			'meaning'         => get_post_meta( $id, '_djv_meaning', true ),
+			'chant_count'     => get_post_meta( $id, '_djv_chant_count', true ),
+			'best_time'       => get_post_meta( $id, '_djv_best_time', true ),
+			'is_featured'     => get_post_meta( $id, '_djv_is_featured', true ) === '1',
+			'is_popular'      => get_post_meta( $id, '_djv_is_popular', true ) === '1',
+			'featured_image'  => get_the_post_thumbnail_url( $id, 'medium' ) ?: null,
+			'audio_url'       => get_post_meta( $id, '_djv_audio_url', true ) ?: get_post_meta( $id, '_djv_audio', true ),
+			'link'            => get_permalink( $post ),
+		];
+
+		if ( $detailed ) {
+			$data['content']        = apply_filters( 'the_content', $post->post_content );
+			$data['how_to_chant']   = get_post_meta( $id, '_djv_how_to_chant', true );
+			$data['significance']   = get_post_meta( $id, '_djv_significance', true );
+			$data['benefits']       = get_post_meta( $id, '_djv_benefits', true );
+			$data['faq']            = get_post_meta( $id, '_djv_faq', true ) ?: [];
+			$data['seo_title']      = get_post_meta( $id, '_djv_seo_title', true );
+			$data['meta_description']= get_post_meta( $id, '_djv_meta_description', true );
+			$data['focus_keyword']  = get_post_meta( $id, '_djv_focus_keyword', true );
+		}
+
+		return $data;
 	}
 
 	/**

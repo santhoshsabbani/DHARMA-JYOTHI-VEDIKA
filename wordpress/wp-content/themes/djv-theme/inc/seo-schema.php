@@ -41,6 +41,14 @@ function djv_get_seo_description(): string {
 		return __( "Today's complete Hindu Panchangam. Accurate Tithi, Nakshatra, Yoga, Karana, Rahu Kalam, Sunrise, Sunset, Moonrise, Moonset and Muhurtham calculated dynamically using Lahiri Ayanamsa for any location in India.", 'djv-theme' );
 	}
 
+	if ( is_singular( 'djv_mantra' ) ) {
+		$post_id = get_the_ID();
+		$custom_meta_desc = get_post_meta( $post_id, '_djv_meta_description', true );
+		if ( ! empty( $custom_meta_desc ) ) {
+			return $custom_meta_desc;
+		}
+	}
+
 	if ( is_singular() ) {
 		$post_id = get_the_ID();
 		if ( has_excerpt( $post_id ) ) {
@@ -307,3 +315,17 @@ function djv_render_schema_jsonld(): void {
 	}
 }
 add_action( 'wp_head', 'djv_render_schema_jsonld', 2 );
+
+/**
+ * Custom SEO Document Title for Mantras.
+ */
+function djv_filter_mantra_document_title( string $title ): string {
+	if ( is_singular( 'djv_mantra' ) ) {
+		$seo_title = get_post_meta( get_the_ID(), '_djv_seo_title', true );
+		if ( ! empty( $seo_title ) ) {
+			return $seo_title;
+		}
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'djv_filter_mantra_document_title', 20 );

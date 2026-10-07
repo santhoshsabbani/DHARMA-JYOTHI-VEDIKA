@@ -240,18 +240,113 @@ class DJV_Post_Types {
 			'hierarchical' => true,
 			'rewrite'      => [ 'slug' => 'service-category' ],
 		] );
+
+		// Mantra Category taxonomy (Shiva, Hanuman, Ganesha, Lakshmi, Saraswati, Durga, Vishnu, Krishna, Navagraha, Wealth, Education, Protection, Peace, Devotion)
+		register_taxonomy( 'djv_mantra_cat', [ 'djv_mantra' ], [
+			'labels' => [
+				'name'          => __( 'Mantra Categories', 'djv-core' ),
+				'singular_name' => __( 'Mantra Category', 'djv-core' ),
+				'all_items'     => __( 'All Categories', 'djv-core' ),
+				'edit_item'     => __( 'Edit Category', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Category', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'mantra-category' ],
+		] );
 	}
 
 	/**
 	 * Seed default content if CPTs are empty, ensuring the CMS has editable items.
 	 */
 	public static function maybe_seed_content(): void {
-		if ( get_option( 'djv_starter_content_seeded' ) ) {
-			return;
+		if ( ! get_option( 'djv_starter_content_seeded' ) ) {
+			self::seed_starter_data();
+			update_option( 'djv_starter_content_seeded', 1 );
 		}
 
-		self::seed_starter_data();
-		update_option( 'djv_starter_content_seeded', 1 );
+		$mantras_version = intval( get_option( 'djv_mantras_db_version', 0 ) );
+		if ( $mantras_version < 3 || ( isset( $_GET['djv_sync_mantras'] ) && current_user_can( 'manage_options' ) ) ) {
+			self::sync_mantras_data();
+			update_option( 'djv_mantras_db_version', 3 );
+		}
+	}
+
+	/**
+	 * Canonical Mantras Sync: Updates existing mantras and inserts new ones without duplicates.
+	 */
+	public static function sync_mantras_data(): array {
+		require_once __DIR__ . '/data-mantras.php';
+		$mantras = djv_get_canonical_mantras();
+		$updated = 0;
+		$created = 0;
+
+		foreach ( $mantras as $m ) {
+			$existing = get_page_by_path( $m['slug'], OBJECT, 'djv_mantra' );
+			if ( ! $existing && $m['slug'] === 'maha-mrityunjaya-mantra' ) {
+				$existing = get_page_by_path( 'mahamrityunjaya-mantra', OBJECT, 'djv_mantra' );
+			}
+			if ( $existing ) {
+				$post_id = $existing->ID;
+				wp_update_post([
+					'ID'           => $post_id,
+					'post_title'   => $m['title'],
+					'post_name'    => $m['slug'],
+					'post_content' => $m['content'],
+					'post_excerpt' => $m['excerpt'],
+					'post_status'  => 'publish',
+				]);
+				$updated++;
+			} else {
+				$post_id = wp_insert_post([
+					'post_title'   => $m['title'],
+					'post_name'    => $m['slug'],
+					'post_content' => $m['content'],
+					'post_excerpt' => $m['excerpt'],
+					'post_status'  => 'publish',
+					'post_type'    => 'djv_mantra',
+				]);
+				if ( ! is_wp_error( $post_id ) ) {
+					$created++;
+				}
+			}
+
+			if ( $post_id && ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, '_djv_telugu_title', $m['telugu_title'] );
+				update_post_meta( $post_id, '_djv_original_text', $m['sanskrit_text'] );
+				update_post_meta( $post_id, '_djv_sanskrit_text', $m['sanskrit_text'] );
+				update_post_meta( $post_id, '_djv_telugu_text', $m['telugu_text'] );
+				update_post_meta( $post_id, '_djv_transliteration', $m['transliteration'] );
+				update_post_meta( $post_id, '_djv_meaning', $m['meaning'] );
+				update_post_meta( $post_id, '_djv_how_to_chant', $m['how_to_chant'] );
+				update_post_meta( $post_id, '_djv_chant_count', $m['chant_count'] );
+				update_post_meta( $post_id, '_djv_best_time', $m['best_time'] );
+				update_post_meta( $post_id, '_djv_significance', $m['significance'] );
+				update_post_meta( $post_id, '_djv_benefits', $m['benefits'] );
+				update_post_meta( $post_id, '_djv_faq', $m['faq'] );
+				update_post_meta( $post_id, '_djv_deity', $m['deity'] );
+				update_post_meta( $post_id, '_djv_is_featured', ! empty( $m['is_featured'] ) ? '1' : '0' );
+				update_post_meta( $post_id, '_djv_is_popular', ! empty( $m['is_popular'] ) ? '1' : '0' );
+				update_post_meta( $post_id, '_djv_seo_title', $m['seo_title'] );
+				update_post_meta( $post_id, '_djv_meta_description', $m['meta_description'] );
+				update_post_meta( $post_id, '_djv_focus_keyword', $m['focus_keyword'] );
+
+				// Assign Taxonomies
+				if ( ! empty( $m['deity_slug'] ) ) {
+					wp_set_object_terms( $post_id, $m['deity_slug'], 'djv_deity' );
+				}
+				if ( ! empty( $m['categories'] ) ) {
+					wp_set_object_terms( $post_id, $m['categories'], 'djv_mantra_cat' );
+				}
+			}
+		}
+
+		return [
+			'total'   => count( $mantras ),
+			'updated' => $updated,
+			'created' => $created,
+		];
 	}
 
 	public static function seed_starter_data(): void {

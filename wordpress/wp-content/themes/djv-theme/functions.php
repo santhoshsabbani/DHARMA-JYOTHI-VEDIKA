@@ -326,5 +326,10 @@ function djv_theme_custom_route_fallback(): void {
 			}
 		}
 	}
+
+	if ( $request_uri === 'mantras/mahamrityunjaya-mantra' ) {
+		wp_safe_redirect( home_url( '/mantras/maha-mrityunjaya-mantra/' ), 301 );
+		exit;
+	}
 }
 add_action( 'template_redirect', 'djv_theme_custom_route_fallback', 5 );

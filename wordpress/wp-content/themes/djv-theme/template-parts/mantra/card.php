@@ -1,47 +1,107 @@
 <?php
 /**
- * Template Part: Dynamic Mantra Card
+ * Template Part: Dynamic Mantra Card (DJV Standard)
+ *
+ * Conforms to DJV visual identity and design specs:
+ * Deity image/icon, English title, Telugu title, Category, Short description, "Read Mantra" button.
  *
  * @package DJV_Theme
  */
 defined( 'ABSPATH' ) || exit;
 
 $post_id          = get_the_ID();
-$sanskrit_text    = get_post_meta( $post_id, '_djv_original_text', true );
-$telugu_text      = get_post_meta( $post_id, '_djv_telugu_text', true );
-$meaning          = get_post_meta( $post_id, '_djv_meaning', true );
-$chant_count      = get_post_meta( $post_id, '_djv_chant_count', true );
+$telugu_title     = get_post_meta( $post_id, '_djv_telugu_title', true );
+$deity            = get_post_meta( $post_id, '_djv_deity', true );
+if ( empty( $deity ) ) {
+	$terms = wp_get_post_terms( $post_id, 'djv_deity', [ 'fields' => 'names' ] );
+	$deity = ! empty( $terms ) ? $terms[0] : '';
+}
+$categories = wp_get_post_terms( $post_id, 'djv_mantra_cat', [ 'fields' => 'names' ] );
+if ( empty( $categories ) && ! empty( $deity ) ) {
+	$categories = [ $deity ];
+}
+$cat_label = ! empty( $categories ) ? implode( ' • ', array_slice( $categories, 0, 2 ) ) : ( $deity ?: 'Sacred Chant' );
+
+// Map deities to sacred iconography
+$deity_lower = strtolower( $deity . ' ' . get_the_title() );
+$icon = '🕉️';
+if ( strpos( $deity_lower, 'hanuman' ) !== false || strpos( $deity_lower, 'anjaneya' ) !== false ) {
+	$icon = '🚩';
+} elseif ( strpos( $deity_lower, 'shiva' ) !== false || strpos( $deity_lower, 'mrityunjaya' ) !== false ) {
+	$icon = '🔱';
+} elseif ( strpos( $deity_lower, 'ganesh' ) !== false || strpos( $deity_lower, 'ganapati' ) !== false || strpos( $deity_lower, 'vakratunda' ) !== false ) {
+	$icon = '🐘';
+} elseif ( strpos( $deity_lower, 'lakshmi' ) !== false || strpos( $deity_lower, 'kuber' ) !== false || strpos( $deity_lower, 'shreem' ) !== false ) {
+	$icon = '🪷';
+} elseif ( strpos( $deity_lower, 'saraswati' ) !== false || strpos( $deity_lower, 'vidya' ) !== false ) {
+	$icon = '🪕';
+} elseif ( strpos( $deity_lower, 'durga' ) !== false || strpos( $deity_lower, 'devi' ) !== false || strpos( $deity_lower, 'chandi' ) !== false ) {
+	$icon = '🦁';
+} elseif ( strpos( $deity_lower, 'krishna' ) !== false ) {
+	$icon = '🦚';
+} elseif ( strpos( $deity_lower, 'vishnu' ) !== false || strpos( $deity_lower, 'narayana' ) !== false ) {
+	$icon = '🐚';
+} elseif ( strpos( $deity_lower, 'surya' ) !== false ) {
+	$icon = '☀️';
+} elseif ( strpos( $deity_lower, 'shani' ) !== false || strpos( $deity_lower, 'navagraha' ) !== false || strpos( $deity_lower, 'chandra' ) !== false || strpos( $deity_lower, 'rahu' ) !== false ) {
+	$icon = '🪐';
+}
+
+$thumb_url = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'medium' ) : '';
 ?>
-<div class="mantra-card" id="mantra-card-<?php echo esc_attr( $post_id ); ?>" style="border:1px solid var(--clr-border);background:#FFF;border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem;">
-    <h3 style="font-family:var(--font-heading,serif);font-size:1.25rem;color:var(--clr-primary);margin:0;line-height:1.3;">
-      <a href="<?php the_permalink(); ?>" style="color:inherit;text-decoration:none;">
+<article class="mantra-card" id="mantra-card-<?php echo esc_attr( $post_id ); ?>" data-deity="<?php echo esc_attr( strtolower( $deity ) ); ?>" data-categories="<?php echo esc_attr( strtolower( implode( ' ', $categories ) ) ); ?>">
+  <!-- Card Visual Header -->
+  <div class="mantra-card-media">
+    <?php if ( $thumb_url ) : ?>
+      <img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy" class="mantra-card-img" />
+    <?php else : ?>
+      <div class="mantra-icon-placeholder" aria-hidden="true">
+        <span class="mantra-deity-symbol"><?php echo esc_html( $icon ); ?></span>
+      </div>
+    <?php endif; ?>
+  </div>
+
+  <div class="mantra-card-body">
+    <!-- Meta Category Badge -->
+    <div class="mantra-category-tag">
+      <span class="badge-dot" aria-hidden="true"></span>
+      <span class="badge-text"><?php echo esc_html( $cat_label ); ?></span>
+    </div>
+
+    <!-- Title (English) -->
+    <h3 class="mantra-title">
+      <a href="<?php the_permalink(); ?>" class="mantra-title-link">
         <?php the_title(); ?>
       </a>
     </h3>
-    <span style="font-size:1.5rem;" aria-hidden="true">📿</span>
-  </div>
 
-  <?php if ( $sanskrit_text ) : ?>
-    <div style="font-family:'Noto Sans Devanagari',serif;font-size:1rem;color:var(--clr-primary);background:#FFF9F0;padding:0.75rem 1rem;border-radius:0.5rem;margin-bottom:0.75rem;line-height:1.6;border-left:3px solid var(--clr-primary);">
-      <?php echo esc_html( wp_trim_words( $sanskrit_text, 16 ) ); ?>
-    </div>
-  <?php endif; ?>
-
-  <?php if ( $meaning ) : ?>
-    <p style="font-size:0.85rem;color:var(--clr-text-secondary);line-height:1.6;margin:0 0 1rem 0;flex:1;">
-      <strong><?php esc_html_e( 'Meaning:', 'djv-theme' ); ?></strong> <?php echo esc_html( wp_trim_words( $meaning, 18 ) ); ?>
-    </p>
-  <?php endif; ?>
-
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-size:0.8125rem;">
-    <?php if ( $chant_count ) : ?>
-      <span style="color:var(--clr-accent,#C89432);font-weight:600;">
-        🔁 <?php echo esc_html( $chant_count ); ?>
-      </span>
+    <!-- Telugu Title -->
+    <?php if ( $telugu_title ) : ?>
+      <div class="mantra-telugu-title" lang="te">
+        <?php echo esc_html( $telugu_title ); ?>
+      </div>
     <?php endif; ?>
-    <a href="<?php the_permalink(); ?>" style="font-weight:600;color:var(--clr-primary);text-decoration:none;">
-      <?php esc_html_e( 'Full Stotram & Audio', 'djv-theme' ); ?> →
-    </a>
+
+    <!-- Short Description -->
+    <p class="mantra-excerpt">
+      <?php
+      $excerpt = get_the_excerpt();
+      if ( empty( $excerpt ) ) {
+        $content = get_post_meta( $post_id, '_djv_meaning', true ) ?: get_the_content();
+        $excerpt = wp_trim_words( wp_strip_all_tags( $content ), 16, '...' );
+      } else {
+        $excerpt = wp_trim_words( $excerpt, 16, '...' );
+      }
+      echo esc_html( $excerpt );
+      ?>
+    </p>
+
+    <!-- Card Footer / CTA -->
+    <div class="mantra-card-footer">
+      <a href="<?php the_permalink(); ?>" class="btn-read-mantra" aria-label="<?php echo esc_attr( sprintf( __( 'Read Mantra: %s', 'djv-theme' ), get_the_title() ) ); ?>">
+        <span><?php esc_html_e( 'Read Mantra', 'djv-theme' ); ?></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
-</div>
+</article>
