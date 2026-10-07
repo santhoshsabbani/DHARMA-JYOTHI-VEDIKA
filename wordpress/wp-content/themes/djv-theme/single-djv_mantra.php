@@ -349,9 +349,12 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
 
         $fest_args = [
           'post_type'      => 'djv_festival',
-          'posts_per_page' => 2,
+          'posts_per_page' => 3,
           'post_status'    => 'publish',
           'meta_query'     => $slug_meta_conditions,
+          'orderby'        => 'meta_value_num',
+          'meta_key'       => '_djv_is_major',
+          'order'          => 'DESC',
         ];
         if ( ! empty( $search_terms ) ) {
           $fest_args['tax_query'] = [
@@ -374,9 +377,12 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
         if ( ! $rel_festivals->have_posts() ) {
           $rel_festivals = new WP_Query([
             'post_type'      => 'djv_festival',
-            'posts_per_page' => 2,
+            'posts_per_page' => 3,
             'post_status'    => 'publish',
             'meta_query'     => $slug_meta_conditions,
+            'orderby'        => 'meta_value_num',
+            'meta_key'       => '_djv_is_major',
+            'order'          => 'DESC',
           ]);
         }
 
