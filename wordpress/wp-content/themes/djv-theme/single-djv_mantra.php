@@ -329,6 +329,13 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
         $mantra_slug = get_post_field( 'post_name', $post_id );
 
         // 1. Query festivals prioritizing both mantra relationship and matching deity
+        $deity_slugs = wp_get_post_terms( $post_id, 'djv_deity', [ 'fields' => 'slugs' ] );
+        $deity_clean = trim( preg_replace( '/\b(lord|goddess|shri|sri)\b/i', '', $deity ?: '' ) );
+        $search_terms = array_unique( array_filter( array_merge(
+          $deity_slugs ?: [],
+          [ $deity, $deity_clean, sanitize_title( $deity_clean ), sanitize_title( $deity ) ]
+        ) ) );
+
         $fest_args = [
           'post_type'      => 'djv_festival',
           'posts_per_page' => 2,
@@ -341,12 +348,18 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
             ]
           ]
         ];
-        if ( ! empty( $deity ) ) {
+        if ( ! empty( $search_terms ) ) {
           $fest_args['tax_query'] = [
+            'relation' => 'OR',
+            [
+              'taxonomy' => 'djv_deity',
+              'field'    => 'slug',
+              'terms'    => $search_terms,
+            ],
             [
               'taxonomy' => 'djv_deity',
               'field'    => 'name',
-              'terms'    => $deity,
+              'terms'    => $search_terms,
             ]
           ];
         }
@@ -381,12 +394,18 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
             ]
           ]
         ];
-        if ( ! empty( $deity ) ) {
+        if ( ! empty( $search_terms ) ) {
           $pooja_args['tax_query'] = [
+            'relation' => 'OR',
+            [
+              'taxonomy' => 'djv_deity',
+              'field'    => 'slug',
+              'terms'    => $search_terms,
+            ],
             [
               'taxonomy' => 'djv_deity',
               'field'    => 'name',
-              'terms'    => $deity,
+              'terms'    => $search_terms,
             ]
           ];
         }
