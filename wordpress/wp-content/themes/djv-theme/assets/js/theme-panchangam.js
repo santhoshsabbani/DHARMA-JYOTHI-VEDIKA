@@ -306,6 +306,12 @@
 
     const heroContent = document.getElementById('hero-pc-data');
     if (heroContent) heroContent.style.display = '';
+
+    const fpLoading = document.getElementById('full-pc-loading');
+    if (fpLoading) fpLoading.style.display = 'none';
+
+    const fpContent = document.getElementById('full-pc-data');
+    if (fpContent) fpContent.style.display = '';
   }
 
   /**
@@ -447,6 +453,9 @@
       // Also render Homepage Hero Quick Card if present on page
       renderHeroCard(data, date, location);
 
+      // Also render Homepage Full Panchangam Grid if present on page
+      renderHomepageGrid(data, date, location);
+
     } catch (e) {
       console.error('Error rendering panchangam view:', e);
     }
@@ -505,7 +514,7 @@
         setText('hero-sunset',  data.solar.sunsetStr  || formatTime(data.solar.sunset, tz));
       }
 
-      const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : null);
+      const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : (data.solar ? data.solar.moonrise : null));
       setText('hero-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
 
       if (data.timings && data.timings.rahuKalam) {
@@ -513,6 +522,90 @@
       }
     } catch (e) {
       console.error('Error rendering hero card:', e);
+    }
+  }
+
+  /**
+   * Render Homepage Full Panchangam Section Grid if present.
+   */
+  function renderHomepageGrid(data, date, location) {
+    const card = document.getElementById('full-panchangam-card');
+    if (!card) return;
+
+    try {
+      const tz = location.timezone || 'Asia/Kolkata';
+
+      const dObj = new Date(date + 'T12:00:00Z');
+      const formattedEn = dObj.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      // Headers & metadata
+      setText('full-pc-title', `Panchangam — ${date}`);
+      setText('full-pc-vara', formattedEn);
+      setText('fp-header-location', `${location.name}, ${location.state}`);
+
+      // Pancha Angas
+      if (data.vara) {
+        setText('fp-vara', data.vara.name || '—');
+      }
+      if (data.tithi) {
+        setText('fp-tithi', data.tithi.name || '—');
+        setText('fp-paksha', data.tithi.paksha || '—');
+      }
+      if (data.nakshatra) {
+        const nObj = data.nakshatra.nakshatra || data.nakshatra;
+        setText('fp-nakshatra', nObj.name || '—');
+        const padaText = data.nakshatra.pada ? `Pada ${data.nakshatra.pada}` : '';
+        setText('fp-nakshatra-pada', padaText);
+      }
+      if (data.yoga) {
+        setText('fp-yoga', data.yoga.name || '—');
+      }
+      if (data.karana) {
+        setText('fp-karana', data.karana.name || '—');
+      }
+
+      // Solar & Lunar
+      if (data.solar) {
+        setText('fp-sunrise', data.solar.sunriseStr || formatTime(data.solar.sunrise, tz));
+        setText('fp-sunset',  data.solar.sunsetStr  || formatTime(data.solar.sunset, tz));
+      }
+      const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : (data.solar ? data.solar.moonrise : null));
+      setText('fp-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
+
+      // Auspicious & Inauspicious Timings
+      if (data.timings) {
+        if (data.timings.abhijitMuhurtham) {
+          setText('fp-abhijit', formatPeriod(data.timings.abhijitMuhurtham, tz));
+        }
+        if (data.timings.rahuKalam) {
+          setText('fp-rahu', formatPeriod(data.timings.rahuKalam, tz));
+        }
+        if (data.timings.yamagandam) {
+          setText('fp-yamagandam', formatPeriod(data.timings.yamagandam, tz));
+        }
+        if (data.timings.gulikaKalam) {
+          setText('fp-gulika', formatPeriod(data.timings.gulikaKalam, tz));
+        }
+      }
+
+      // Footer Location info
+      const metaLoc = document.getElementById('fp-meta-location');
+      if (metaLoc) {
+        metaLoc.innerHTML = `📍 <span class="global-location-name">${location.name}</span> (${formatCoordinate(location.latitude, 4)}°N, ${formatCoordinate(location.longitude, 4)}°E)`;
+      }
+
+      const fullLoading = document.getElementById('full-pc-loading');
+      if (fullLoading) fullLoading.style.display = 'none';
+      const fullData = document.getElementById('full-pc-data');
+      if (fullData) fullData.style.display = '';
+
+    } catch (e) {
+      console.error('Error rendering homepage grid:', e);
     }
   }
 

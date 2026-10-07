@@ -62,28 +62,40 @@ $today_str = date( 'l, F j, Y' );
         <span class="sun-icon" aria-hidden="true">🌅</span>
         <div class="sun-data">
           <span class="sun-data-label"><?php esc_html_e( 'Sunrise', 'djv-theme' ); ?></span>
-          <span class="sun-data-value" id="hero-sunrise"><?php echo esc_html( $ssr_data['solar']['sunriseStr'] ?? '—' ); ?></span>
+          <span class="sun-data-value" id="hero-sunrise"><?php
+            $hero_sunrise = $ssr_data['solar']['sunriseStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunrise'] ?? null );
+            echo esc_html( $hero_sunrise ?: '—' );
+          ?></span>
         </div>
       </div>
       <div class="sun-item" role="listitem">
         <span class="sun-icon" aria-hidden="true">🌇</span>
         <div class="sun-data">
           <span class="sun-data-label"><?php esc_html_e( 'Sunset', 'djv-theme' ); ?></span>
-          <span class="sun-data-value" id="hero-sunset"><?php echo esc_html( $ssr_data['solar']['sunsetStr'] ?? '—' ); ?></span>
+          <span class="sun-data-value" id="hero-sunset"><?php
+            $hero_sunset = $ssr_data['solar']['sunsetStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunset'] ?? null );
+            echo esc_html( $hero_sunset ?: '—' );
+          ?></span>
         </div>
       </div>
       <div class="sun-item" role="listitem">
         <span class="sun-icon" aria-hidden="true">🌕</span>
         <div class="sun-data">
           <span class="sun-data-label"><?php esc_html_e( 'Moonrise', 'djv-theme' ); ?></span>
-          <span class="sun-data-value" id="hero-moonrise"><?php echo esc_html( $ssr_data['moonrise']['time'] ?? '—' ); ?></span>
+          <span class="sun-data-value" id="hero-moonrise"><?php
+            $hero_moonrise = $ssr_data['moonrise']['time'] ?? ( $ssr_data['solar']['moonrise'] ?? djv_format_ssr_time( $ssr_data['moonrise']['datetime'] ?? null ) );
+            echo esc_html( $hero_moonrise ?: '—' );
+          ?></span>
         </div>
       </div>
     </div>
 
     <div class="rahu-bar" role="note" aria-label="<?php esc_attr_e( 'Rahu Kalam timing', 'djv-theme' ); ?>">
       <span class="rahu-label">⚠️ <?php esc_html_e( 'Rahu Kalam', 'djv-theme' ); ?></span>
-      <span class="rahu-time" id="hero-rahu"><?php echo esc_html( $ssr_data['timings']['rahuKalam']['text'] ?? '—' ); ?></span>
+      <span class="rahu-time" id="hero-rahu"><?php
+        $hero_rahu = $ssr_data['timings']['rahuKalam']['text'] ?? djv_format_ssr_period( $ssr_data['timings']['rahuKalam'] ?? null );
+        echo esc_html( $hero_rahu ?: '—' );
+      ?></span>
     </div>
   </div>
 

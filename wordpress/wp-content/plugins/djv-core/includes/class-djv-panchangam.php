@@ -177,15 +177,17 @@ class DJV_Panchangam {
         $cache_key = $this->get_cache_key( $date, $latitude, $longitude, $timezone, $region, $language );
         $cached    = get_transient( $cache_key );
         if ( false !== $cached && is_array( $cached ) ) {
-            return array_merge( $cached, [ '_cache_hit' => 'transient' ] );
+            $normalized = $this->normalize_payload( $cached, $timezone, $latitude, $longitude, $date );
+            return array_merge( $normalized, [ '_cache_hit' => 'transient' ] );
         }
 
         // 2. CPT database cache (version-aware)
         $from_cpt = $this->get_from_cpt_cache( $date, $latitude, $longitude, $timezone );
         if ( $from_cpt ) {
+            $normalized = $this->normalize_payload( $from_cpt, $timezone, $latitude, $longitude, $date );
             // Refresh transient from CPT data
-            set_transient( $cache_key, $from_cpt, HOUR_IN_SECONDS );
-            return array_merge( $from_cpt, [ '_cache_hit' => 'cpt' ] );
+            set_transient( $cache_key, $normalized, HOUR_IN_SECONDS );
+            return array_merge( $normalized, [ '_cache_hit' => 'cpt' ] );
         }
 
         // 3. Try live calculation via Node.js subprocess
@@ -202,11 +204,14 @@ class DJV_Panchangam {
             }
         }
 
-        // Store result in both caches
-        $this->store_in_cpt_cache( $date, $latitude, $longitude, $result, $timezone );
-        set_transient( $cache_key, $result, HOUR_IN_SECONDS );
+        // Normalize result before caching
+        $normalized = $this->normalize_payload( $result, $timezone, $latitude, $longitude, $date );
 
-        return array_merge( $result, [ '_cache_hit' => 'live' ] );
+        // Store result in both caches
+        $this->store_in_cpt_cache( $date, $latitude, $longitude, $normalized, $timezone );
+        set_transient( $cache_key, $normalized, HOUR_IN_SECONDS );
+
+        return array_merge( $normalized, [ '_cache_hit' => 'live' ] );
     }
 
     /**
@@ -547,5 +552,386 @@ class DJV_Panchangam {
         }
 
         return [ $date, $lat, $lon, $tz ];
+    }
+
+    /**
+     * Normalize and defensively enrich Panchangam payload.
+     * Ensures all solar, lunar, and timing fields have human-readable formatted strings,
+     * so templates and REST consumers never receive empty/dash values even on remote API fallback.
+     *
+     * @param array  $data
+     * @param string $timezone
+     * @param float  $latitude
+     * @param float  $longitude
+     * @param string $date
+     * @return array
+     */
+    public function normalize_payload( array $data, string $timezone, float $latitude, float $longitude, string $date ): array {
+        if ( empty( $data ) ) {
+            return $data;
+        }
+
+        // 1. Solar calculations & formatting
+        if ( isset( $data['solar'] ) && is_array( $data['solar'] ) ) {
+            if ( empty( $data['solar']['sunriseStr'] ) && ! empty( $data['solar']['sunrise'] ) ) {
+                $data['solar']['sunriseStr'] = $this->format_iso_time( $data['solar']['sunrise'], $timezone );
+            }
+            if ( empty( $data['solar']['sunsetStr'] ) && ! empty( $data['solar']['sunset'] ) ) {
+                $data['solar']['sunsetStr'] = $this->format_iso_time( $data['solar']['sunset'], $timezone );
+            }
+            if ( empty( $data['solar']['solarNoonStr'] ) && ! empty( $data['solar']['solarNoon'] ) ) {
+                $data['solar']['solarNoonStr'] = $this->format_iso_time( $data['solar']['solarNoon'], $timezone );
+            }
+            if ( empty( $data['solar']['dayLengthStr'] ) && ! empty( $data['solar']['sunrise'] ) && ! empty( $data['solar']['sunset'] ) ) {
+                $rise_ts = strtotime( $data['solar']['sunrise'] );
+                $set_ts  = strtotime( $data['solar']['sunset'] );
+                if ( $rise_ts && $set_ts && $set_ts > $rise_ts ) {
+                    $diff_mins = (int) round( ( $set_ts - $rise_ts ) / 60 );
+                    $data['solar']['dayLengthMinutes'] = $diff_mins;
+                    $hrs  = floor( $diff_mins / 60 );
+                    $mins = $diff_mins % 60;
+                    $data['solar']['dayLengthStr'] = "{$hrs}h {$mins}m";
+                }
+            }
+        }
+
+        // 2. Timings intervals formatting
+        if ( isset( $data['timings'] ) && is_array( $data['timings'] ) ) {
+            $timing_keys = [ 'rahuKalam', 'yamagandam', 'gulikaKalam', 'abhijitMuhurtham', 'brahmaMuhurtham', 'amritKalam', 'varjyam' ];
+            foreach ( $timing_keys as $t_key ) {
+                if ( ! empty( $data['timings'][ $t_key ] ) && is_array( $data['timings'][ $t_key ] ) ) {
+                    $t = &$data['timings'][ $t_key ];
+                    if ( empty( $t['startStr'] ) && ! empty( $t['start'] ) ) {
+                        $t['startStr'] = $this->format_iso_time( $t['start'], $timezone );
+                    }
+                    if ( empty( $t['endStr'] ) && ! empty( $t['end'] ) ) {
+                        $t['endStr'] = $this->format_iso_time( $t['end'], $timezone );
+                    }
+                    if ( empty( $t['text'] ) && ! empty( $t['startStr'] ) && ! empty( $t['endStr'] ) ) {
+                        $t['text'] = $t['startStr'] . ' – ' . $t['endStr'];
+                    }
+                }
+            }
+
+            // Dur Muhurtham (single interval or array of intervals)
+            if ( ! empty( $data['timings']['durMuhurtham'] ) ) {
+                if ( isset( $data['timings']['durMuhurtham']['start'] ) ) {
+                    $dm = &$data['timings']['durMuhurtham'];
+                    if ( empty( $dm['startStr'] ) && ! empty( $dm['start'] ) ) {
+                        $dm['startStr'] = $this->format_iso_time( $dm['start'], $timezone );
+                    }
+                    if ( empty( $dm['endStr'] ) && ! empty( $dm['end'] ) ) {
+                        $dm['endStr'] = $this->format_iso_time( $dm['end'], $timezone );
+                    }
+                    if ( empty( $dm['text'] ) && ! empty( $dm['startStr'] ) && ! empty( $dm['endStr'] ) ) {
+                        $dm['text'] = $dm['startStr'] . ' – ' . $dm['endStr'];
+                    }
+                } elseif ( is_array( $data['timings']['durMuhurtham'] ) ) {
+                    foreach ( $data['timings']['durMuhurtham'] as &$dm ) {
+                        if ( is_array( $dm ) ) {
+                            if ( empty( $dm['startStr'] ) && ! empty( $dm['start'] ) ) {
+                                $dm['startStr'] = $this->format_iso_time( $dm['start'], $timezone );
+                            }
+                            if ( empty( $dm['endStr'] ) && ! empty( $dm['end'] ) ) {
+                                $dm['endStr'] = $this->format_iso_time( $dm['end'], $timezone );
+                            }
+                            if ( empty( $dm['text'] ) && ! empty( $dm['startStr'] ) && ! empty( $dm['endStr'] ) ) {
+                                $dm['text'] = $dm['startStr'] . ' – ' . $dm['endStr'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Moonrise and Moonset
+        $needs_moon_calc = empty( $data['moonrise'] ) || ! is_array( $data['moonrise'] ) || empty( $data['moonrise']['time'] ) || $data['moonrise']['time'] === '—';
+        if ( $needs_moon_calc ) {
+            $parts = explode( '-', $date );
+            if ( count( $parts ) === 3 ) {
+                $y = (int) $parts[0];
+                $m = (int) $parts[1];
+                $d = (int) $parts[2];
+                $moon_times = self::calculate_moon_rise_set( $y, $m, $d, $latitude, $longitude, $timezone );
+                $data['moonrise'] = $moon_times['moonrise'];
+                $data['moonset']  = $moon_times['moonset'];
+            }
+        }
+
+        if ( isset( $data['lunar'] ) && is_array( $data['lunar'] ) ) {
+            if ( empty( $data['lunar']['moonrise'] ) && ! empty( $data['moonrise'] ) ) {
+                $data['lunar']['moonrise'] = $data['moonrise'];
+            }
+            if ( empty( $data['lunar']['moonset'] ) && ! empty( $data['moonset'] ) ) {
+                $data['lunar']['moonset'] = $data['moonset'];
+            }
+        }
+
+        if ( isset( $data['solar'] ) && is_array( $data['solar'] ) ) {
+            if ( empty( $data['solar']['moonrise'] ) && ! empty( $data['moonrise']['time'] ) ) {
+                $data['solar']['moonrise'] = $data['moonrise']['time'];
+            }
+            if ( empty( $data['solar']['moonset'] ) && ! empty( $data['moonset']['time'] ) ) {
+                $data['solar']['moonset'] = $data['moonset']['time'];
+            }
+        }
+
+        // 4. Pancha Angas span strings
+        foreach ( [ 'tithi', 'nakshatra', 'yoga', 'karana' ] as $anga_key ) {
+            if ( ! empty( $data[ $anga_key ] ) && is_array( $data[ $anga_key ] ) ) {
+                $item = &$data[ $anga_key ];
+                $end_time = $item['end'] ?? ( $item['endTime'] ?? null );
+                if ( $end_time && empty( $item['endStr'] ) ) {
+                    $item['endStr'] = $this->format_iso_time( $end_time, $timezone );
+                }
+                if ( empty( $item['spanStr'] ) && ! empty( $item['endStr'] ) ) {
+                    $item['spanStr'] = 'Up to ' . $item['endStr'];
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Format ISO 8601 UTC timestamp to formatted local time in target timezone.
+     *
+     * @param string|int|null $time
+     * @param string          $timezone
+     * @param string          $format
+     * @return string
+     */
+    private function format_iso_time( $time, string $timezone = 'Asia/Kolkata', string $format = 'g:i A' ): string {
+        if ( empty( $time ) || ! is_string( $time ) ) {
+            return '';
+        }
+        try {
+            $dt = new DateTimeImmutable( $time );
+            return $dt->setTimezone( new DateTimeZone( $timezone ) )->format( $format );
+        } catch ( Exception $e ) {
+            return '';
+        }
+    }
+
+    /**
+     * Astronomical Moonrise and Moonset calculation (Meeus Ch 15, 47).
+     * Provides instantaneous parity with packages/panchangam-engine.
+     *
+     * @param int    $year
+     * @param int    $month
+     * @param int    $day
+     * @param float  $lat
+     * @param float  $lon
+     * @param string $timezone
+     * @return array
+     */
+    public static function calculate_moon_rise_set( int $year, int $month, int $day, float $lat, float $lon, string $timezone = 'Asia/Kolkata' ): array {
+        try {
+            $dtz = new DateTimeZone( $timezone );
+            $dt = new DateTimeImmutable( "{$year}-{$month}-{$day} 12:00:00", $dtz );
+            $tzOffset = $dtz->getOffset( $dt ) / 3600.0;
+        } catch ( Exception $e ) {
+            $tzOffset = 5.5;
+        }
+
+        $jdMidnightUTC = self::gregorian_to_jd_calc( $year, $month, $day ) - $tzOffset / 24.0;
+        $stepHours = 0.25;
+        $riseJD = null;
+        $setJD  = null;
+
+        $prevDiff = self::calc_moon_altitude( $jdMidnightUTC - 6.0 / 24.0, $lat, $lon )['diff'];
+
+        for ( $t = -6.0 + $stepHours; $t <= 30.0; $t += $stepHours ) {
+            $jd = $jdMidnightUTC + $t / 24.0;
+            $diff = self::calc_moon_altitude( $jd, $lat, $lon )['diff'];
+
+            if ( $prevDiff < 0 && $diff >= 0 ) {
+                $rootJD = self::find_moon_crossing( $jdMidnightUTC + ( $t - $stepHours ) / 24.0, $jd, $lat, $lon );
+                $utcTs = (int) round( ( $rootJD - 2440587.5 ) * 86400.0 );
+                try {
+                    $dtLocal = ( new DateTimeImmutable( "@{$utcTs}" ) )->setTimezone( new DateTimeZone( $timezone ) );
+                    if ( $dtLocal->format( 'Y-m-d' ) === sprintf( '%04d-%02d-%02d', $year, $month, $day ) && ! $riseJD ) {
+                        $riseJD = $rootJD;
+                    }
+                } catch ( Exception $e ) {}
+            }
+
+            if ( $prevDiff > 0 && $diff <= 0 ) {
+                $rootJD = self::find_moon_crossing( $jdMidnightUTC + ( $t - $stepHours ) / 24.0, $jd, $lat, $lon );
+                $utcTs = (int) round( ( $rootJD - 2440587.5 ) * 86400.0 );
+                try {
+                    $dtLocal = ( new DateTimeImmutable( "@{$utcTs}" ) )->setTimezone( new DateTimeZone( $timezone ) );
+                    if ( $dtLocal->format( 'Y-m-d' ) === sprintf( '%04d-%02d-%02d', $year, $month, $day ) && ! $setJD ) {
+                        $setJD = $rootJD;
+                    }
+                } catch ( Exception $e ) {}
+            }
+
+            $prevDiff = $diff;
+        }
+
+        $riseRes = [ 'time' => 'No Moonrise', 'datetime' => null, 'status' => 'no_event' ];
+        if ( $riseJD ) {
+            $utcTs = (int) round( ( $riseJD - 2440587.5 ) * 86400.0 );
+            try {
+                $dtLocal = ( new DateTimeImmutable( "@{$utcTs}" ) )->setTimezone( new DateTimeZone( $timezone ) );
+                $riseRes = [
+                    'time'     => $dtLocal->format( 'g:i A' ),
+                    'datetime' => $dtLocal->format( DateTimeInterface::ATOM ),
+                    'status'   => 'normal',
+                ];
+            } catch ( Exception $e ) {}
+        }
+
+        $setRes = [ 'time' => 'No Moonset', 'datetime' => null, 'status' => 'no_event' ];
+        if ( $setJD ) {
+            $utcTs = (int) round( ( $setJD - 2440587.5 ) * 86400.0 );
+            try {
+                $dtLocal = ( new DateTimeImmutable( "@{$utcTs}" ) )->setTimezone( new DateTimeZone( $timezone ) );
+                $setRes = [
+                    'time'     => $dtLocal->format( 'g:i A' ),
+                    'datetime' => $dtLocal->format( DateTimeInterface::ATOM ),
+                    'status'   => 'normal',
+                ];
+            } catch ( Exception $e ) {}
+        }
+
+        return [ 'moonrise' => $riseRes, 'moonset' => $setRes ];
+    }
+
+    private static function gregorian_to_jd_calc( int $year, int $month, int $day ): float {
+        if ( $month <= 2 ) {
+            $year -= 1;
+            $month += 12;
+        }
+        $A = floor( $year / 100 );
+        $B = 2 - $A + floor( $A / 4 );
+        return floor( 365.25 * ( $year + 4716 ) ) + floor( 30.6001 * ( $month + 1 ) ) + $day + $B - 1524.5;
+    }
+
+    private static function normalize_deg_360( float $deg ): float {
+        $d = fmod( $deg, 360.0 );
+        if ( $d < 0 ) {
+            $d += 360.0;
+        }
+        return $d;
+    }
+
+    private static function normalize_deg_180( float $deg ): float {
+        $d = fmod( $deg + 180.0, 360.0 );
+        if ( $d < 0 ) {
+            $d += 360.0;
+        }
+        return $d - 180.0;
+    }
+
+    private static function calc_moon_position( float $jd ): array {
+        $deg2rad = M_PI / 180.0;
+        $rad2deg = 180.0 / M_PI;
+        $T = ( $jd - 2451545.0 ) / 36525.0;
+
+        $L0 = self::normalize_deg_360( 218.3164477 + 481267.88123421 * $T - 0.0015786 * $T * $T + $T * $T * $T / 538841.0 - $T * $T * $T * $T / 65194000.0 );
+        $D  = self::normalize_deg_360( 297.8501921 + 445267.1114034  * $T - 0.0018819 * $T * $T + $T * $T * $T / 545868.0 - $T * $T * $T * $T / 113065000.0 );
+        $M  = self::normalize_deg_360( 357.5291092 + 35999.0502909   * $T - 0.0001536 * $T * $T + $T * $T * $T / 24490000.0 );
+        $Mp = self::normalize_deg_360( 134.9633964 + 477198.8675055  * $T + 0.0087414 * $T * $T + $T * $T * $T / 69699.0 - $T * $T * $T * $T / 14712000.0 );
+        $F  = self::normalize_deg_360( 93.2720950  + 483202.0175233  * $T - 0.0036539 * $T * $T - $T * $T * $T / 3526000.0 + $T * $T * $T * $T / 863310000.0 );
+
+        $D_rad  = $D  * $deg2rad;
+        $M_rad  = $M  * $deg2rad;
+        $Mp_rad = $Mp * $deg2rad;
+        $F_rad  = $F  * $deg2rad;
+
+        $SigmaL =
+            6.288774 * sin( $Mp_rad ) +
+            1.274027 * sin( 2 * $D_rad - $Mp_rad ) +
+            0.658314 * sin( 2 * $D_rad ) +
+            0.213618 * sin( 2 * $Mp_rad ) -
+            0.185116 * sin( $M_rad ) -
+            0.114332 * sin( 2 * $F_rad ) +
+            0.058793 * sin( 2 * $D_rad - 2 * $Mp_rad ) +
+            0.057066 * sin( 2 * $D_rad - $M_rad - $Mp_rad ) +
+            0.053322 * sin( 2 * $D_rad + $Mp_rad ) +
+            0.045758 * sin( 2 * $D_rad - $M_rad ) -
+            0.040923 * sin( $M_rad - $Mp_rad ) -
+            0.034720 * sin( $D_rad ) -
+            0.030383 * sin( $M_rad + $Mp_rad );
+
+        $SigmaB =
+            5.128154 * sin( $F_rad ) +
+            0.280602 * sin( $Mp_rad + $F_rad ) +
+            0.277693 * sin( $Mp_rad - $F_rad ) +
+            0.173237 * sin( 2 * $D_rad - $F_rad ) +
+            0.055413 * sin( 2 * $D_rad - $Mp_rad + $F_rad ) +
+            0.046271 * sin( 2 * $D_rad - $Mp_rad - $F_rad ) +
+            0.032573 * sin( 2 * $D_rad + $F_rad ) +
+            0.017198 * sin( 2 * $Mp_rad + $F_rad );
+
+        $lambda = self::normalize_deg_360( $L0 + $SigmaL );
+        $beta   = $SigmaB;
+
+        $eps = 23.43929111 - 0.013004167 * $T - 0.000000164 * $T * $T + 0.000000504 * $T * $T * $T;
+
+        $lR = $lambda * $deg2rad;
+        $bR = $beta   * $deg2rad;
+        $eR = $eps    * $deg2rad;
+
+        $x = cos( $bR ) * cos( $lR );
+        $y = cos( $bR ) * cos( $eR ) * sin( $lR ) - sin( $bR ) * sin( $eR );
+        $z = sin( $bR ) * cos( $eR ) + cos( $bR ) * sin( $eR ) * sin( $lR );
+
+        $ra  = self::normalize_deg_360( atan2( $y, $x ) * $rad2deg );
+        $dec = asin( max( -1.0, min( 1.0, $z ) ) ) * $rad2deg;
+
+        $Delta = 385000.56 -
+            20905.355 * cos( $Mp_rad ) -
+             3699.111 * cos( 2 * $D_rad - $Mp_rad ) -
+             2955.968 * cos( 2 * $D_rad ) -
+              569.925 * cos( 2 * $Mp_rad ) +
+               48.888 * cos( $M_rad );
+
+        $parallax = asin( 6378.14 / $Delta ) * $rad2deg;
+        $h0 = 0.727507 * $parallax - 0.566667;
+
+        return [ 'ra' => $ra, 'dec' => $dec, 'h0' => $h0 ];
+    }
+
+    private static function calc_moon_altitude( float $jd, float $lat, float $lon ): array {
+        $deg2rad = M_PI / 180.0;
+        $rad2deg = 180.0 / M_PI;
+
+        $pos = self::calc_moon_position( $jd );
+        $ra  = $pos['ra'];
+        $dec = $pos['dec'];
+        $h0  = $pos['h0'];
+
+        $Ddays = $jd - 2451545.0;
+        $T     = $Ddays / 36525.0;
+        $gmst  = self::normalize_deg_360( 280.46061837 + 360.98564736629 * $Ddays + 0.000387933 * $T * $T - ( $T * $T * $T / 38710000.0 ) );
+        $lst   = self::normalize_deg_360( $gmst + $lon );
+
+        $H    = self::normalize_deg_180( $lst - $ra ) * $deg2rad;
+        $latR = $lat * $deg2rad;
+        $decR = $dec * $deg2rad;
+
+        $sinAlt = sin( $latR ) * sin( $decR ) + cos( $latR ) * cos( $decR ) * cos( $H );
+        $alt    = asin( max( -1.0, min( 1.0, $sinAlt ) ) ) * $rad2deg;
+
+        return [ 'alt' => $alt, 'h0' => $h0, 'diff' => $alt - $h0 ];
+    }
+
+    private static function find_moon_crossing( float $jd1, float $jd2, float $lat, float $lon, int $maxIter = 30 ): float {
+        $low  = $jd1;
+        $high = $jd2;
+        for ( $i = 0; $i < $maxIter; $i++ ) {
+            $mid  = ( $low + $high ) / 2.0;
+            $dMid = self::calc_moon_altitude( $mid, $lat, $lon )['diff'];
+            $dLow = self::calc_moon_altitude( $low, $lat, $lon )['diff'];
+            if ( $dLow * $dMid <= 0 ) {
+                $high = $mid;
+            } else {
+                $low = $mid;
+            }
+        }
+        return ( $low + $high ) / 2.0;
     }
 }

@@ -180,6 +180,66 @@ function djv_get_ssr_panchangam( ?string $date = null, ?float $lat = null, ?floa
 }
 
 /**
+ * Safely format an ISO time or timestamp for SSR templates in the given timezone.
+ *
+ * @param string|int|null $time
+ * @param string          $tz
+ * @param string          $format
+ * @return string
+ */
+function djv_format_ssr_time( $time, string $tz = 'Asia/Kolkata', string $format = 'g:i A' ): string {
+	if ( empty( $time ) || $time === '—' ) {
+		return '—';
+	}
+	if ( is_string( $time ) && ! preg_match( '/\d{4}-\d{2}-\d{2}|T|\d{2}:\d{2}/', $time ) ) {
+		return $time;
+	}
+	try {
+		$tz_obj = new DateTimeZone( $tz );
+		if ( is_numeric( $time ) ) {
+			$dt = new DateTimeImmutable( "@{$time}" );
+			return $dt->setTimezone( $tz_obj )->format( $format );
+		}
+		$dt = new DateTimeImmutable( $time );
+		return $dt->setTimezone( $tz_obj )->format( $format );
+	} catch ( Exception $e ) {
+		return (string) $time;
+	}
+}
+
+/**
+ * Safely format a timing period (e.g. Rahu Kalam) for SSR templates.
+ *
+ * @param array|string|null $period
+ * @param string            $tz
+ * @return string
+ */
+function djv_format_ssr_period( $period, string $tz = 'Asia/Kolkata' ): string {
+	if ( empty( $period ) ) {
+		return '—';
+	}
+	if ( is_string( $period ) ) {
+		return $period;
+	}
+	if ( is_array( $period ) ) {
+		if ( ! empty( $period['text'] ) ) {
+			return $period['text'];
+		}
+		if ( ! empty( $period['startStr'] ) && ! empty( $period['endStr'] ) ) {
+			return $period['startStr'] . ' – ' . $period['endStr'];
+		}
+		if ( ! empty( $period['start'] ) && ! empty( $period['end'] ) ) {
+			$s = djv_format_ssr_time( $period['start'], $tz );
+			$e = djv_format_ssr_time( $period['end'], $tz );
+			if ( $s !== '—' && $e !== '—' ) {
+				return $s . ' – ' . $e;
+			}
+		}
+	}
+	return '—';
+}
+
+/**
  * Load Dynamic SEO & Schema.org Definitions
  */
 require_once DJV_THEME_DIR . '/inc/seo-schema.php';

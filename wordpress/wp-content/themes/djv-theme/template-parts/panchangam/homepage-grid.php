@@ -85,15 +85,24 @@ $today_str = date( 'l, F j, Y' );
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">☀️</span> <?php esc_html_e( 'Solar & Lunar', 'djv-theme' ); ?></div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Sunrise', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value" id="fp-sunrise"><?php echo esc_html( $ssr_data['solar']['sunriseStr'] ?? '—' ); ?></div>
+              <div class="pancha-item-value" id="fp-sunrise"><?php
+                $fp_sunrise = $ssr_data['solar']['sunriseStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunrise'] ?? null );
+                echo esc_html( $fp_sunrise ?: '—' );
+              ?></div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Sunset', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value" id="fp-sunset"><?php echo esc_html( $ssr_data['solar']['sunsetStr'] ?? '—' ); ?></div>
+              <div class="pancha-item-value" id="fp-sunset"><?php
+                $fp_sunset = $ssr_data['solar']['sunsetStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunset'] ?? null );
+                echo esc_html( $fp_sunset ?: '—' );
+              ?></div>
             </div>
             <div class="pancha-item" id="fp-moonrise-row">
               <span class="pancha-item-label"><?php esc_html_e( 'Moonrise', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value" id="fp-moonrise"><?php echo esc_html( $ssr_data['moonrise']['time'] ?? '—' ); ?></div>
+              <div class="pancha-item-value" id="fp-moonrise"><?php
+                $fp_moonrise = $ssr_data['moonrise']['time'] ?? ( $ssr_data['solar']['moonrise'] ?? djv_format_ssr_time( $ssr_data['moonrise']['datetime'] ?? null ) );
+                echo esc_html( $fp_moonrise ?: '—' );
+              ?></div>
             </div>
           </div>
 
@@ -102,7 +111,10 @@ $today_str = date( 'l, F j, Y' );
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">✨</span> <?php esc_html_e( 'Auspicious Timings', 'djv-theme' ); ?></div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Abhijit Muhurtham', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value timing-auspicious" id="fp-abhijit"><?php echo esc_html( $ssr_data['timings']['abhijitMuhurtham']['text'] ?? '—' ); ?></div>
+              <div class="pancha-item-value timing-auspicious" id="fp-abhijit"><?php
+                $fp_abhijit = $ssr_data['timings']['abhijitMuhurtham']['text'] ?? djv_format_ssr_period( $ssr_data['timings']['abhijitMuhurtham'] ?? null );
+                echo esc_html( $fp_abhijit ?: '—' );
+              ?></div>
             </div>
           </div>
 
@@ -111,15 +123,24 @@ $today_str = date( 'l, F j, Y' );
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">⚠️</span> <?php esc_html_e( 'Inauspicious Timings', 'djv-theme' ); ?></div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Rahu Kalam', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value timing-warning" id="fp-rahu"><?php echo esc_html( $ssr_data['timings']['rahuKalam']['text'] ?? '—' ); ?></div>
+              <div class="pancha-item-value timing-warning" id="fp-rahu"><?php
+                $fp_rahu = $ssr_data['timings']['rahuKalam']['text'] ?? djv_format_ssr_period( $ssr_data['timings']['rahuKalam'] ?? null );
+                echo esc_html( $fp_rahu ?: '—' );
+              ?></div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Yamagandam', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value timing-warning" id="fp-yamagandam"><?php echo esc_html( $ssr_data['timings']['yamagandam']['text'] ?? '—' ); ?></div>
+              <div class="pancha-item-value timing-warning" id="fp-yamagandam"><?php
+                $fp_yamagandam = $ssr_data['timings']['yamagandam']['text'] ?? djv_format_ssr_period( $ssr_data['timings']['yamagandam'] ?? null );
+                echo esc_html( $fp_yamagandam ?: '—' );
+              ?></div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label"><?php esc_html_e( 'Gulika Kalam', 'djv-theme' ); ?></span>
-              <div class="pancha-item-value timing-warning" id="fp-gulika"><?php echo esc_html( $ssr_data['timings']['gulikaKalam']['text'] ?? '—' ); ?></div>
+              <div class="pancha-item-value timing-warning" id="fp-gulika"><?php
+                $fp_gulika = $ssr_data['timings']['gulikaKalam']['text'] ?? djv_format_ssr_period( $ssr_data['timings']['gulikaKalam'] ?? null );
+                echo esc_html( $fp_gulika ?: '—' );
+              ?></div>
             </div>
           </div>
         </div>
