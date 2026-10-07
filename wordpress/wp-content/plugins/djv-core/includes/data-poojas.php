@@ -343,7 +343,7 @@ function djv_get_canonical_poojas(): array {
 					'a' => 'The devotee should sit facing East, and the spout of the Shiva Linga (Jaladhari/Yoni) must always point towards the North.'
 				]
 			],
-			'related_mantras'  => [ 'om-namah-shivaya', 'maha-mrityunjaya-mantra', 'shiva-panchakshara-stotram', 'shiva-gayatri-mantra' ],
+			'related_mantras'  => [ 'om-namah-shivaya', 'maha-mrityunjaya-mantra', 'mahamrityunjaya-mantra', 'shiva-panchakshara-stotram', 'shiva-gayatri-mantra' ],
 			'related_festivals'=> [ 'maha-shivaratri', 'karthika-masam', 'pradosham' ],
 			'seo_title_en'     => 'Shiva Linga Abhishekam & Rudrabhishekam Vidhi: Step-by-Step at Home',
 			'seo_title_te'     => 'శివ లింగాభిషేక విధానం: పంచామృత అభిషేకం, బిల్వపత్ర పూజ, రుద్ర మంత్రాలు',
