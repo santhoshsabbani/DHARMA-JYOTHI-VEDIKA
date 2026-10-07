@@ -3,16 +3,182 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Today's Panchangam (October 3, 2026) — Dharma Jyothi Vedika | Hyderabad</title>
-  <meta name="description" content="Today's complete Hindu Panchangam for October 3, 2026. Tithi: Dvitiya, Nakshatra: Uttara Phalguni, Rahu Kalam, Sunrise, Sunset and all timings for Hyderabad." />
-  <link rel="canonical" href="https://dharmajyothivedika.com/panchangam/2026-10-03/" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Today's Panchangam — October 3, 2026","description":"Complete Hindu Panchangam for October 3, 2026 for Hyderabad, Telangana","url":"https://dharmajyothivedika.com/panchangam/2026-10-03/"}</script>
+  <title>India-Wide Panchangam — Dharma Jyothi Vedika | Dynamic Astronomical Calendar</title>
+  <meta name="description" content="Dynamic Hindu Panchangam for any location across India. Accurate Tithi, Nakshatra, Yoga, Karana, Rahu Kalam, Sunrise, Sunset, Moonrise, Moonset and Muhurtham calculated using Lahiri Ayanamsa and exact coordinates." />
+  <link rel="canonical" href="https://dharmajyothivedika.com/panchangam/" />
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   
   <link rel="stylesheet" href="../assets/css/design-system.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    /* Panchangam App Enhancements */
+    .pc-controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--clr-white, #fff);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-xl, 1rem);
+      border: 1px solid var(--clr-border, #e8d5c4);
+      box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04));
+      margin-bottom: 1.5rem;
+    }
+    .pc-location-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(200, 148, 50, 0.1);
+      border: 1px solid rgba(200, 148, 50, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--clr-dark, #2b1810);
+      cursor: pointer;
+      transition: all var(--transition-base, 0.2s ease);
+    }
+    .pc-location-pill:hover {
+      background: rgba(200, 148, 50, 0.2);
+      border-color: var(--clr-primary, #7a2419);
+    }
+    .pc-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.55rem 0.9rem;
+      border-radius: var(--radius-md, 0.5rem);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-primary, sans-serif);
+      transition: all var(--transition-base, 0.2s ease);
+      border: 1px solid var(--clr-border, #e8d5c4);
+      background: var(--clr-bg, #fdfaf6);
+      color: var(--clr-text, #333);
+      text-decoration: none;
+    }
+    .pc-btn:hover {
+      border-color: var(--clr-primary, #7a2419);
+      color: var(--clr-primary, #7a2419);
+      background: var(--clr-primary-faint, rgba(122,36,25,0.06));
+    }
+    .pc-btn--primary {
+      background: var(--clr-primary, #7a2419);
+      color: #fff;
+      border-color: var(--clr-primary, #7a2419);
+    }
+    .pc-btn--primary:hover {
+      background: #5c1a11;
+      color: #fff;
+    }
+    .pc-date-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .pc-date-picker-input {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--clr-border, #e8d5c4);
+      border-radius: var(--radius-md, 0.5rem);
+      font-family: var(--font-primary, sans-serif);
+      font-size: 0.875rem;
+      color: var(--clr-dark, #2b1810);
+      background: #fff;
+      cursor: pointer;
+    }
+    /* Modal styles */
+    .pc-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .pc-modal-dialog {
+      background: #fff;
+      border-radius: var(--radius-xl, 1rem);
+      max-width: 620px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl, 0 10px 25px rgba(0,0,0,0.2));
+      border: 1px solid var(--clr-border, #e8d5c4);
+      padding: 1.5rem;
+    }
+    .pc-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--clr-border, #e8d5c4);
+      padding-bottom: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .pc-modal-title {
+      font-family: var(--font-heading, serif);
+      font-size: 1.25rem;
+      color: var(--clr-primary, #7a2419);
+      margin: 0;
+    }
+    .pc-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--clr-text-muted, #888);
+      padding: 0 0.5rem;
+    }
+    .loc-quick-pill {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: var(--clr-bg, #fdfaf6);
+      border: 1px solid var(--clr-border, #e8d5c4);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin: 0.2rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .loc-quick-pill:hover {
+      border-color: var(--clr-primary, #7a2419);
+      background: var(--clr-primary-faint, rgba(122,36,25,0.06));
+      color: var(--clr-primary, #7a2419);
+    }
+    .loc-result-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--clr-border, #f0f0f0);
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-radius: var(--radius-md, 0.5rem);
+    }
+    .loc-result-item:hover {
+      background: var(--clr-primary-faint, rgba(122,36,25,0.06));
+    }
+    .pc-meta-box {
+      background: #1e1e24;
+      color: #e6e6e6;
+      border-radius: var(--radius-lg, 0.75rem);
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      max-height: 250px;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,17 +191,16 @@
   <div class="container page-hero-inner">
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="/">Home</a><span class="breadcrumb-sep">›</span>
-      <a href="/panchangam/">Panchangam</a><span class="breadcrumb-sep">›</span>
-      <span aria-current="page">October 3, 2026</span>
+      <span aria-current="page">India-Wide Panchangam</span>
     </nav>
-    <div class="page-hero-badge">📅 Calculated · Provisional</div>
-    <h1 class="page-hero-title" id="page-title">Today's Hindu Panchangam</h1>
-    <p class="page-hero-sub">నేటి పంచాంగం — శనివారం, అక్టోబర్ 3, 2026</p>
+    <div class="page-hero-badge">🕉 Real-Time Astronomical Engine · Drik Ganita</div>
+    <h1 class="page-hero-title" id="page-title">Hindu Panchangam</h1>
+    <p class="page-hero-sub" id="pc-date-heading">Loading today's panchangam...</p>
     <div class="page-hero-meta">
-      <span>📍 Hyderabad, Telangana, India</span>
-      <span>🕐 IST (UTC +5:30)</span>
-      <span>📖 Lahiri Ayanamsa · Amanta</span>
-      <span>⚙️ Engine v1.0.0 · Rules: telugu-1.0</span>
+      <span id="pc-location-heading">📍 Hyderabad, Telangana</span>
+      <span id="pc-coord-badge">17.3850°N, 78.4867°E</span>
+      <span id="pc-tz-badge">IST (UTC +5:30)</span>
+      <span id="pc-ayanamsa-badge">Lahiri Ayanamsa (Chitrapaksha)</span>
     </div>
   </div>
 </section>
@@ -44,91 +209,115 @@
 <main class="panchangam-page" id="main-content">
   <div class="container">
 
-    <!-- Date Navigation -->
-    <div class="date-nav">
-      <a href="/panchangam/2026-10-02/" class="date-nav-btn" id="prev-day-btn">← October 2, 2026</a>
-      <span class="date-nav-current">Saturday, October 3, 2026</span>
-      <a href="/panchangam/2026-10-04/" class="date-nav-btn" id="next-day-btn">October 4, 2026 →</a>
+    <!-- Error Banner -->
+    <div id="pc-error-banner" style="display:none;background:#ffebee;color:#c62828;padding:1rem;border-radius:8px;margin-bottom:1.5rem;font-weight:600;border:1px solid #ffcdd2"></div>
+
+    <!-- Interactive Controls Bar -->
+    <div class="pc-controls-bar">
+      <!-- Location Controls -->
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+        <button class="pc-location-pill" id="pc-open-loc-modal-btn" title="Change Location">
+          📍 <span id="pc-loc-btn-label">Change Location</span> ▾
+        </button>
+        <button class="pc-btn" id="pc-btn-use-location" title="Detect GPS coordinates">
+          🎯 Use My Location
+        </button>
+      </div>
+
+      <!-- Date Navigation Controls -->
+      <div class="pc-nav-group">
+        <button class="pc-btn" id="pc-prev-day-btn">◀ Previous Day</button>
+        <button class="pc-btn pc-btn--primary" id="pc-today-btn">Today</button>
+        <button class="pc-btn" id="pc-next-day-btn">Next Day ▶</button>
+      </div>
+
+      <!-- Date Picker & 12h/24h toggle -->
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+        <div class="pc-date-picker-wrap">
+          <label for="pc-date-picker-input" style="font-size:0.8rem;font-weight:600;color:var(--clr-text-muted)">📅 Jump Date:</label>
+          <input type="date" id="pc-date-picker-input" class="pc-date-picker-input" aria-label="Select Date" />
+        </div>
+        <button class="pc-btn" id="pc-time-format-btn" title="Toggle time format">Switch to 24h</button>
+      </div>
     </div>
 
+    <!-- Main Grid -->
     <div class="panchangam-page-grid">
 
-      <!-- LEFT: Main Panchangam -->
+      <!-- LEFT COLUMN: Main Panchangam Cards -->
       <div>
 
-        <!-- Sunrise / Sunset / Moonrise / Moonset -->
+        <!-- 1. Sun & Moon Timings -->
         <div class="solar-row fade-in" role="list" aria-label="Solar and lunar timings">
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌅</span>
             <div class="solar-label">Sunrise</div>
-            <div class="solar-time" id="sunrise-time">6:05 AM</div>
+            <div class="solar-time" id="val-sunrise">—</div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌇</span>
             <div class="solar-label">Sunset</div>
-            <div class="solar-time" id="sunset-time">6:11 PM</div>
+            <div class="solar-time" id="val-sunset">—</div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌕</span>
             <div class="solar-label">Moonrise</div>
-            <div class="solar-time" id="moonrise-time">7:42 PM</div>
+            <div class="solar-time" id="val-moonrise">—</div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌑</span>
             <div class="solar-label">Moonset</div>
-            <div class="solar-time" id="moonset-time">7:58 AM†</div>
+            <div class="solar-time" id="val-moonset">—</div>
           </div>
         </div>
 
-        <!-- Pancha Angas -->
+        <!-- 2. Pancha Angas (Five Limbs) -->
         <div class="pc-card fade-in">
           <div class="pc-card-head">
             <span class="pc-card-icon" aria-hidden="true">🕉</span>
-            <h2>Pancha Angas — Five Limbs</h2>
+            <h2>Pancha Angas — Five Limbs of the Day</h2>
           </div>
           <div class="pc-card-body">
-            <table class="pancha-table" aria-label="Pancha Angas — Five limbs of the Panchangam">
+            <table class="pancha-table" aria-label="Pancha Angas">
               <tbody>
                 <tr>
                   <td class="pt-label">Vara (Weekday)</td>
-                  <td class="pt-value">Shanivara (Saturday)
-                    <span class="pt-value-te">శనివారం</span>
-                    <span class="pt-time">Ruler: Saturn (Shani)</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pt-label">Paksha</td>
                   <td class="pt-value">
-                    <span class="paksha-pill">🌙 Shukla Paksha · శుక్ల పక్షం</span>
-                    <span class="pt-time">Waxing phase — Pratipada to Purnima</span>
+                    <span id="val-vara-en">—</span>
+                    <span class="pt-value-te" id="val-vara-te"></span>
+                    <span class="pt-time" id="val-vara-ruler"></span>
                   </td>
                 </tr>
                 <tr>
                   <td class="pt-label">Tithi</td>
-                  <td class="pt-value">Dvitiya (2nd)
-                    <span class="pt-value-te">విదియ — 2వ తిథి</span>
-                    <span class="pt-time">until 09:47 PM IST · then Tritiya begins</span>
+                  <td class="pt-value">
+                    <span id="val-tithi-name">—</span>
+                    <span class="pt-value-te" id="val-tithi-te"></span>
+                    <span class="pt-time" id="val-tithi-end"></span>
                   </td>
                 </tr>
                 <tr>
                   <td class="pt-label">Nakshatra</td>
-                  <td class="pt-value">Uttara Phalguni — Pada 3
-                    <span class="pt-value-te">ఉత్తర ఫల్గుణి — 3వ పాద</span>
-                    <span class="pt-time">until 11:23 PM IST · Ruler: Sun · Deity: Aryaman</span>
+                  <td class="pt-value">
+                    <span id="val-nakshatra-name">—</span>
+                    <span class="pt-value-te" id="val-nakshatra-te"></span>
+                    <span class="pt-time" id="val-nakshatra-end"></span>
+                    <span class="pt-time" id="val-nakshatra-meta" style="color:var(--clr-text-secondary);font-style:normal"></span>
                   </td>
                 </tr>
                 <tr>
                   <td class="pt-label">Yoga</td>
-                  <td class="pt-value">Siddha
-                    <span class="pt-value-te">సిద్ధ యోగం</span>
-                    <span class="pt-time">until 08:15 PM IST · Auspicious</span>
+                  <td class="pt-value">
+                    <span id="val-yoga-name">—</span>
+                    <span class="pt-value-te" id="val-yoga-te"></span>
+                    <span class="pt-time" id="val-yoga-end"></span>
                   </td>
                 </tr>
                 <tr>
                   <td class="pt-label">Karana</td>
-                  <td class="pt-value">Taitila
-                    <span class="pt-value-te">తైతిల కరణం</span>
-                    <span class="pt-time">until 10:30 AM IST · then Gara begins</span>
+                  <td class="pt-value">
+                    <span id="val-karana-name">—</span>
+                    <span class="pt-time" id="val-karana-end"></span>
                   </td>
                 </tr>
               </tbody>
@@ -136,271 +325,249 @@
           </div>
         </div>
 
-        <!-- Solar Calendar Info -->
-        <div class="pc-card fade-in">
-          <div class="pc-card-head">
-            <span class="pc-card-icon" aria-hidden="true">☀️</span>
-            <h2>Hindu Calendar Position</h2>
-          </div>
-          <div class="pc-card-body">
-            <table class="pancha-table" aria-label="Hindu calendar details">
-              <tbody>
-                <tr>
-                  <td class="pt-label">Masa (Month)</td>
-                  <td class="pt-value">Karthika
-                    <span class="pt-value-te">కార్తీక మాసం</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pt-label">Samvatsara</td>
-                  <td class="pt-value">Vikari
-                    <span class="pt-value-te">వికారి సంవత్సరం</span>
-                    <span class="pt-time">60-year Jovian cycle year</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pt-label">Ritu (Season)</td>
-                  <td class="pt-value">Sharada (Autumn)
-                    <span class="pt-value-te">శారద ఋతువు</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pt-label">Ayana</td>
-                  <td class="pt-value">Dakshinayana
-                    <span class="pt-value-te">దక్షిణాయనం</span>
-                    <span class="pt-time">Sun moving towards south</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pt-label">Lunar Day of Month</td>
-                  <td class="pt-value">Karthika Shukla Dvitiya</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Auspicious Timings -->
+        <!-- 3. Auspicious Timings (Shubha Muhurtham) -->
         <div class="pc-card fade-in">
           <div class="pc-card-head pc-card-head--gold">
             <span class="pc-card-icon" aria-hidden="true">✨</span>
-            <h2>Auspicious Timings — శుభ వేళలు</h2>
+            <h2>Auspicious Timings — శుభ సమయాలు</h2>
           </div>
           <div class="pc-card-body">
-            <div class="timing-list" role="list">
-              <div class="timing-bar timing-bar--good" role="listitem">
-                <span class="timing-icon" aria-hidden="true">⭐</span>
-                <div class="timing-name">Abhijit Muhurtham
-                  <small>అభిజిత్ ముహూర్తం</small>
+            <div class="timing-list">
+              <div class="timing-bar timing-bar--good">
+                <span class="timing-icon" aria-hidden="true">🌟</span>
+                <div class="timing-name">
+                  Abhijit Muhurtham
+                  <small>అభిజిత్ ముహూర్తం · 8వ ముహూర్తం</small>
                 </div>
-                <span class="timing-period timing-period--good">11:48 AM – 12:37 PM</span>
+                <div class="timing-period timing-period--good" id="val-abhijit">—</div>
               </div>
-              <div class="timing-bar timing-bar--good" role="listitem">
-                <span class="timing-icon" aria-hidden="true">🌊</span>
-                <div class="timing-name">Amrit Kalam
-                  <small>అమృత కాలం</small>
+              <div class="timing-bar timing-bar--good">
+                <span class="timing-icon" aria-hidden="true">🪷</span>
+                <div class="timing-name">
+                  Amrit Kalam
+                  <small>అమృత కాలం · శుభ ప్రదం</small>
                 </div>
-                <span class="timing-period timing-period--good">6:05 AM – 7:38 AM</span>
+                <div class="timing-period timing-period--good" id="val-amritkalam">—</div>
               </div>
-              <div class="timing-bar timing-bar--neutral" role="listitem">
-                <span class="timing-icon" aria-hidden="true">🌙</span>
-                <div class="timing-name">Brahma Muhurtham
-                  <small>బ్రహ్మ ముహూర్తం</small>
+              <div class="timing-bar timing-bar--good">
+                <span class="timing-icon" aria-hidden="true">🌅</span>
+                <div class="timing-name">
+                  Brahma Muhurtham
+                  <small>బ్రహ్మ ముహూర్తం · సూర్యోదయానికి ముందు</small>
                 </div>
-                <span class="timing-period timing-period--neutral">4:30 AM – 5:17 AM</span>
+                <div class="timing-period timing-period--good" id="val-brahmamuhurtham">—</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Inauspicious Timings -->
+        <!-- 4. Inauspicious Timings (Ashubha Muhurtham) -->
         <div class="pc-card fade-in">
           <div class="pc-card-head pc-card-head--warn">
             <span class="pc-card-icon" aria-hidden="true">⚠️</span>
-            <h2>Inauspicious Timings — అశుభ వేళలు</h2>
+            <h2>Inauspicious Timings — అశుభ సమయాలు</h2>
           </div>
           <div class="pc-card-body">
-            <div class="timing-list" role="list">
-              <div class="timing-bar timing-bar--warn" role="listitem">
-                <span class="timing-icon" aria-hidden="true">🔴</span>
-                <div class="timing-name">Rahu Kalam
-                  <small>రాహు కాలం — Avoid new work</small>
+            <div class="timing-list">
+              <div class="timing-bar timing-bar--warn">
+                <span class="timing-icon" aria-hidden="true">🛑</span>
+                <div class="timing-name">
+                  Rahu Kalam
+                  <small>రాహు కాలం · రాహువు అధిపతి</small>
                 </div>
-                <span class="timing-period timing-period--warn">10:30 AM – 12:00 PM</span>
+                <div class="timing-period timing-period--warn" id="val-rahukalam">—</div>
               </div>
-              <div class="timing-bar timing-bar--warn" role="listitem">
-                <span class="timing-icon" aria-hidden="true">🔴</span>
-                <div class="timing-name">Yamagandam
-                  <small>యమగండం — Avoid travel</small>
-                </div>
-                <span class="timing-period timing-period--warn">1:30 PM – 3:00 PM</span>
-              </div>
-              <div class="timing-bar timing-bar--warn" role="listitem">
-                <span class="timing-icon" aria-hidden="true">🔴</span>
-                <div class="timing-name">Gulika Kalam
-                  <small>గులిక కాలం</small>
-                </div>
-                <span class="timing-period timing-period--warn">6:05 AM – 7:35 AM</span>
-              </div>
-              <div class="timing-bar timing-bar--warn" role="listitem">
+              <div class="timing-bar timing-bar--warn">
                 <span class="timing-icon" aria-hidden="true">⚠️</span>
-                <div class="timing-name">Durmuhurtham
-                  <small>దుర్ముహూర్తం</small>
+                <div class="timing-name">
+                  Yamagandam
+                  <small>యమగండం · యముని అధిపత్యం</small>
                 </div>
-                <span class="timing-period timing-period--warn">8:14 AM – 9:02 AM</span>
+                <div class="timing-period timing-period--warn" id="val-yamagandam">—</div>
+              </div>
+              <div class="timing-bar timing-bar--neutral">
+                <span class="timing-icon" aria-hidden="true">⏳</span>
+                <div class="timing-name">
+                  Gulika Kalam
+                  <small>గుళిక కాలం · శని పుత్ర గుళిక</small>
+                </div>
+                <div class="timing-period timing-period--neutral" id="val-gulikakalam">—</div>
+              </div>
+              <div class="timing-bar timing-bar--warn">
+                <span class="timing-icon" aria-hidden="true">🚫</span>
+                <div class="timing-name">
+                  Dur Muhurtham
+                  <small>దుర్ముహూర్తం · నిషిద్ధ సమయం</small>
+                </div>
+                <div class="timing-period timing-period--warn" id="val-durmuhurtham">—</div>
+              </div>
+              <div class="timing-bar timing-bar--warn">
+                <span class="timing-icon" aria-hidden="true">⛔</span>
+                <div class="timing-name">
+                  Varjyam (Tyajyam)
+                  <small>వర్జ్యం · త్యాజ్య కాలం</small>
+                </div>
+                <div class="timing-period timing-period--warn" id="val-varjyam">—</div>
               </div>
             </div>
-            <p style="font-size:.75rem;color:var(--clr-text-muted);margin-top:.875rem;line-height:1.6;">
-              These periods are traditionally considered inauspicious for beginning new ventures. The exact impact and applicability depends on the specific activity. Consult a Jyotishi for important decisions.
-            </p>
           </div>
-        </div>
-
-        <!-- Calculation Meta -->
-        <div class="meta-footer" role="contentinfo" aria-label="Calculation details">
-          <span>📍 Hyderabad (17.3850°N, 78.4867°E)</span>
-          <span>🕐 Asia/Kolkata (IST, UTC+5:30)</span>
-          <span>📖 Lahiri Ayanamsa · Amanta month system</span>
-          <span>⚙️ Engine v1.0.0 · Rules: telugu-1.0</span>
-          <span style="color:var(--clr-error);font-style:italic;">⚠ Pre-validation data</span>
         </div>
 
       </div>
 
-      <!-- RIGHT: Sidebar -->
-      <aside class="pc-sidebar" aria-label="Additional information">
+      <!-- RIGHT COLUMN: Astronomical Details, Moon Phase, & Methodology -->
+      <aside class="pc-sidebar">
 
-        <!-- Today's Festival -->
+        <!-- Solar Day Details -->
         <div class="sidebar-widget">
-          <div class="sw-head"><span>🎊</span> Today's Occasion</div>
-          <div class="sw-body">
-            <div class="festival-sw">
-              <div class="fsw-icon" aria-hidden="true">🪔</div>
-              <div>
-                <div class="fsw-name">Navaratri — Day 2</div>
-                <div class="fsw-desc">Worshipping Brahmacharini — the second form of Goddess Durga. Fast and prayer for knowledge and wisdom.</div>
-                <a href="/festivals/navaratri/" class="fsw-link" id="sidebar-festival-link">Full details <span aria-hidden="true">→</span></a>
-              </div>
+          <div class="sw-head"><span>☀️</span> Solar Day Details</div>
+          <div class="sw-body calendar-info">
+            <div class="ci-row">
+              <span class="ci-label">Solar Noon (మధ్యాహ్నం)</span>
+              <span class="ci-value" id="val-solarnoon">—</span>
+            </div>
+            <div class="ci-row">
+              <span class="ci-label">Day Length (పగటి కాలం)</span>
+              <span class="ci-value" id="val-daylength">—</span>
             </div>
           </div>
         </div>
 
-        <!-- Hindu Calendar Quick View -->
+        <!-- Moon Phase & Illumination -->
         <div class="sidebar-widget">
-          <div class="sw-head"><span>📅</span> Calendar Position</div>
-          <div class="sw-body">
-            <div class="calendar-info">
-              <div class="ci-row"><span class="ci-label">Samvat Year</span><span class="ci-value">2083</span></div>
-              <div class="ci-row"><span class="ci-label">Masa</span><span class="ci-value">Karthika</span></div>
-              <div class="ci-row"><span class="ci-label">Paksha</span><span class="ci-value">Shukla</span></div>
-              <div class="ci-row"><span class="ci-label">Tithi</span><span class="ci-value">Dvitiya</span></div>
-              <div class="ci-row"><span class="ci-label">Ritu</span><span class="ci-value">Sharada</span></div>
-              <div class="ci-row"><span class="ci-label">Ayana</span><span class="ci-value">Dakshinayana</span></div>
+          <div class="sw-head"><span>🌙</span> Lunar Phase & Illumination</div>
+          <div class="sw-body calendar-info">
+            <div class="ci-row">
+              <span class="ci-label">Moon Phase</span>
+              <span class="ci-value" id="val-moonphase">—</span>
+            </div>
+            <div class="ci-row">
+              <span class="ci-label">Telugu Description</span>
+              <span class="ci-value" id="val-moonphase-te" style="font-family:var(--font-telugu)">—</span>
+            </div>
+            <div class="ci-row">
+              <span class="ci-label">Illumination %</span>
+              <span class="ci-value" id="val-illumination">—</span>
             </div>
           </div>
         </div>
 
-        <!-- Location -->
+        <!-- Calculation Methodology & Ayanamsa Notice -->
         <div class="sidebar-widget">
-          <div class="sw-head"><span>📍</span> Location</div>
-          <div class="sw-body">
-            <div style="background:var(--clr-primary-faint);border-radius:var(--radius-lg);padding:.875rem;margin-bottom:.75rem">
-              <div style="font-size:.9375rem;font-weight:700;color:var(--clr-dark)">Hyderabad</div>
-              <div style="font-size:.75rem;color:var(--clr-text-secondary)">Telangana, India · IST (UTC+5:30)</div>
-              <div style="font-size:.7rem;color:var(--clr-text-muted);margin-top:.25rem">17.3850°N, 78.4867°E</div>
-            </div>
-            <button style="width:100%;padding:.6rem;background:transparent;border:1px solid var(--clr-border);border-radius:var(--radius-md);font-size:.8rem;font-weight:600;color:var(--clr-text-secondary);cursor:pointer;font-family:var(--font-primary);transition:all var(--transition-base)" id="change-loc-btn" onmouseover="this.style.borderColor='var(--clr-primary)';this.style.color='var(--clr-primary)'" onmouseout="this.style.borderColor='var(--clr-border)';this.style.color='var(--clr-text-secondary)'">
-              Change Location
-            </button>
+          <div class="sw-head"><span>📖</span> Calculation Convention</div>
+          <div class="sw-body" style="font-size:0.8125rem;line-height:1.6;color:var(--clr-text-secondary)">
+            <p><strong>Ayanamsa:</strong> Lahiri (Chitrapaksha) — Government of India Standard Calendar Reform Committee recommendation.</p>
+            <p><strong>Coordinate System:</strong> Topocentric coordinates accounting for lunar horizontal parallax, semi-diameter, and atmospheric refraction.</p>
+            <p><strong>Convention:</strong> Astronomical Udaya Tithi (Tithi at local sunrise) and civil date attribution.</p>
+            <p><strong>Timezone:</strong> Indian Standard Time (IST, UTC+05:30) calculated from exact latitude & longitude.</p>
           </div>
         </div>
 
-        <!-- Share -->
+        <!-- Data Integrity Inspector -->
         <div class="sidebar-widget">
-          <div class="sw-head"><span>↗</span> Share Panchangam</div>
+          <div class="sw-head"><span>⚙️</span> Engine Verification Metadata</div>
           <div class="sw-body">
-            <div class="share-grid">
-              <button class="share-btn" id="share-wa">📱 WhatsApp</button>
-              <button class="share-btn" id="share-tg">✈️ Telegram</button>
-              <button class="share-btn" id="share-copy">🔗 Copy</button>
-              <button class="share-btn" id="share-fb">📘 Facebook</button>
-            </div>
+            <p style="font-size:0.75rem;color:var(--clr-text-muted);margin-bottom:0.5rem">
+              Every result is calculated in real-time with verified coordinates:
+            </p>
+            <pre class="pc-meta-box" id="pc-meta-json">Loading metadata...</pre>
           </div>
         </div>
 
         <!-- Disclaimer -->
         <div class="disclaimer" role="note">
           <strong>⚠ Important Note</strong>
-          Panchangam data is provided for informational and devotional purposes. For ceremonial, muhurtham, or astrological decisions, please consult a qualified Jyotishi. Timings may vary by ±5 minutes due to calculation method.
-        </div>
-
-        <!-- Browse by date -->
-        <div class="sidebar-widget">
-          <div class="sw-head"><span>📆</span> Browse Panchangam</div>
-          <div class="sw-body">
-            <input type="date" id="panchangam-date-picker" value="2026-10-03" style="width:100%;padding:.6rem;border:1px solid var(--clr-border);border-radius:var(--radius-md);font-size:.875rem;font-family:var(--font-primary);color:var(--clr-text);background:var(--clr-bg);margin-bottom:.625rem" aria-label="Select date for Panchangam">
-            <button id="go-to-date-btn" style="width:100%;padding:.6rem;background:var(--clr-primary);color:white;border:none;border-radius:var(--radius-md);font-size:.875rem;font-weight:600;cursor:pointer;font-family:var(--font-primary)">View Panchangam →</button>
-          </div>
+          Panchangam calculations are provided for devotional and informational purposes based on Drik Ganita ephemeris. For ceremonial Muhurtham decisions, please consult an authoritative Jyotishi.
         </div>
 
       </aside>
+
     </div>
+
   </div>
 </main>
 
-<!-- FOOTER -->
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <div class="footer-simple">
-      <div class="footer-brand-wrap">
-        <span class="footer-brand-name">DHARMA JYOTHI VEDIKA</span>
-        <span class="footer-brand-te">ధర్మ జ్యోతి వేదిక</span>
-      </div>
-      <nav class="footer-links-row" aria-label="Footer navigation">
-        <a href="/panchangam/">Panchangam</a>
-        <a href="/festivals/">Festivals</a>
-        <a href="/muhurtham/">Muhurtham</a>
-        <a href="/pooja/">Pooja</a>
-        <a href="/mantras/">Mantras</a>
-        <a href="/temples/">Temples</a>
-        <a href="/about/">About</a>
-        <a href="/privacy-policy/">Privacy</a>
-        <a href="/disclaimer/">Disclaimer</a>
-      </nav>
+<!-- LOCATION SELECTION MODAL -->
+<div class="pc-modal-backdrop" id="pc-location-modal" role="dialog" aria-modal="true" aria-labelledby="modal-loc-title">
+  <div class="pc-modal-dialog">
+    <div class="pc-modal-header">
+      <h3 class="pc-modal-title" id="modal-loc-title">Select Location Across India</h3>
+      <button class="pc-close-btn" id="pc-close-loc-modal-btn" aria-label="Close modal">&times;</button>
     </div>
-    <p class="footer-copy">&copy; 2026 Dharma Jyothi Vedika. Panchangam for informational purposes only.</p>
+
+    <!-- Quick State Filter & Search -->
+    <div style="margin-bottom:1rem">
+      <div style="display:grid;grid-template-columns:1fr 140px;gap:0.5rem;margin-bottom:0.75rem">
+        <input type="text" id="pc-loc-search-input" placeholder="Type city or town (e.g. Varanasi, Tirupati, Delhi)..." style="width:100%;padding:0.6rem 0.8rem;border:1px solid var(--clr-border);border-radius:var(--radius-md);font-size:0.9rem" />
+        <select id="pc-state-filter" style="padding:0.6rem;border:1px solid var(--clr-border);border-radius:var(--radius-md);font-size:0.85rem">
+          <option value="All States">All States</option>
+        </select>
+      </div>
+
+      <!-- Quick City Selection Pills -->
+      <div style="margin-bottom:0.75rem">
+        <span style="font-size:0.75rem;font-weight:600;color:var(--clr-text-muted);text-transform:uppercase;letter-spacing:0.05em">Popular Locations:</span><br>
+        <div style="margin-top:0.35rem">
+          <span class="loc-quick-pill" data-name="Hyderabad" data-state="Telangana" data-lat="17.3850" data-lon="78.4867">Hyderabad</span>
+          <span class="loc-quick-pill" data-name="Delhi" data-state="Delhi" data-lat="28.6139" data-lon="77.2090">Delhi</span>
+          <span class="loc-quick-pill" data-name="Mumbai" data-state="Maharashtra" data-lat="19.0760" data-lon="72.8777">Mumbai</span>
+          <span class="loc-quick-pill" data-name="Bengaluru" data-state="Karnataka" data-lat="12.9716" data-lon="77.5946">Bengaluru</span>
+          <span class="loc-quick-pill" data-name="Chennai" data-state="Tamil Nadu" data-lat="13.0827" data-lon="80.2707">Chennai</span>
+          <span class="loc-quick-pill" data-name="Kolkata" data-state="West Bengal" data-lat="22.5726" data-lon="88.3639">Kolkata</span>
+          <span class="loc-quick-pill" data-name="Varanasi" data-state="Uttar Pradesh" data-lat="25.3176" data-lon="82.9739">Varanasi</span>
+          <span class="loc-quick-pill" data-name="Tirupati" data-state="Andhra Pradesh" data-lat="13.6288" data-lon="79.4192">Tirupati</span>
+          <span class="loc-quick-pill" data-name="Visakhapatnam" data-state="Andhra Pradesh" data-lat="17.6868" data-lon="83.2185">Visakhapatnam</span>
+          <span class="loc-quick-pill" data-name="Guwahati" data-state="Assam" data-lat="26.1445" data-lon="91.7362">Guwahati</span>
+          <span class="loc-quick-pill" data-name="Srinagar" data-state="Jammu & Kashmir" data-lat="34.0837" data-lon="74.7973">Srinagar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Results List -->
+    <div id="pc-loc-results" style="max-height:220px;overflow-y:auto;border:1px solid var(--clr-border);border-radius:var(--radius-md);margin-bottom:1rem;background:#fafafa">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Manual Coordinates Input (Accordion) -->
+    <details style="margin-top:1rem;border-top:1px solid var(--clr-border);padding-top:0.75rem">
+      <summary style="font-size:0.85rem;font-weight:600;color:var(--clr-primary);cursor:pointer">Enter Custom Latitude & Longitude</summary>
+      <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+        <div>
+          <label style="font-size:0.75rem;color:var(--clr-text-muted)">Latitude (°N):</label>
+          <input type="number" step="0.0001" id="pc-custom-lat" placeholder="e.g. 17.3850" style="width:100%;padding:0.5rem;border:1px solid var(--clr-border);border-radius:var(--radius-md)" />
+        </div>
+        <div>
+          <label style="font-size:0.75rem;color:var(--clr-text-muted)">Longitude (°E):</label>
+          <input type="number" step="0.0001" id="pc-custom-lon" placeholder="e.g. 78.4867" style="width:100%;padding:0.5rem;border:1px solid var(--clr-border);border-radius:var(--radius-md)" />
+        </div>
+        <div style="grid-column:1 / -1">
+          <label style="font-size:0.75rem;color:var(--clr-text-muted)">Location Name:</label>
+          <input type="text" id="pc-custom-name" placeholder="e.g. My Village" style="width:100%;padding:0.5rem;border:1px solid var(--clr-border);border-radius:var(--radius-md)" />
+        </div>
+        <div style="grid-column:1 / -1;margin-top:0.5rem">
+          <button class="pc-btn pc-btn--primary" id="pc-apply-custom-coords-btn" style="width:100%">Apply Exact Coordinates</button>
+        </div>
+      </div>
+    </details>
+
   </div>
-</footer>
+</div>
 
-<script>
-(function(){
-  'use strict';
-  // Header scroll
-  const hdr = document.getElementById('site-header');
-  window.addEventListener('scroll', () => hdr.classList.toggle('scrolled', window.scrollY > 10), { passive: true });
-
-  // Date picker
-  document.getElementById('go-to-date-btn').addEventListener('click', () => {
-    const v = document.getElementById('panchangam-date-picker').value;
-    if (v) window.location.href = `/panchangam/${v}/`;
-  });
-
-  // Share
-  const url = 'https://dharmajyothivedika.com/panchangam/2026-10-03/';
-  const text = '🕉 Panchangam — Oct 3, 2026 (Hyderabad)\nTithi: Dvitiya | Nakshatra: Uttara Phalguni\nRahu Kalam: 10:30–12:00 PM\n' + url;
-  document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-  document.getElementById('share-tg').onclick = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent('Today\'s Panchangam')}`, '_blank');
-  document.getElementById('share-fb').onclick = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-  document.getElementById('share-copy').onclick = async function() {
-    try { await navigator.clipboard.writeText(url); this.textContent = '✓ Copied!'; setTimeout(() => this.textContent = '🔗 Copy', 2000); } catch(e) {}
-  };
-
-  // Moonset dagger note
-  document.querySelector('[id=moonset-time]').title = '† Moonset occurs after midnight — next calendar day';
-})();
-</script>
-
+<!-- FOOTER -->
 <djv-footer></djv-footer>
 <script src="../assets/js/components/footer-component.js"></script>
+
+<!-- Scripts -->
+<script src="../assets/js/panchangam-core.js"></script>
+<script src="../assets/js/india-locations.js"></script>
+<script src="../assets/js/panchangam-app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.DJVPanchangamApp && typeof window.DJVPanchangamApp.init === 'function') {
+      window.DJVPanchangamApp.init();
+    }
+  });
+</script>
+
 </body>
 </html>

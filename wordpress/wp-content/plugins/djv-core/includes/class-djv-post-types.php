@@ -333,9 +333,9 @@ class DJV_Post_Types {
 		}
 
 		$festivals_version = intval( get_option( 'djv_festivals_db_version', 0 ) );
-		if ( $festivals_version < 4 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
+		if ( $festivals_version < 5 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
 			self::sync_festivals_data();
-			update_option( 'djv_festivals_db_version', 4 );
+			update_option( 'djv_festivals_db_version', 5 );
 		}
 
 		$pooja_version = intval( get_option( 'djv_pooja_db_version', 0 ) );
@@ -530,8 +530,8 @@ class DJV_Post_Types {
 			[
 				'title'   => 'Navaratri (శరన్నవరాత్రులు)',
 				'slug'    => 'navaratri',
-				'date'    => '2026-10-02',
-				'end_date'=> '2026-10-10',
+				'date'    => '2026-10-11',
+				'end_date'=> '2026-10-19',
 				'month'   => 'Ashwina',
 				'type'    => 'Major Festival',
 				'excerpt' => 'Nine sacred nights honouring Goddess Durga in her nine divine manifestations.',
@@ -541,21 +541,21 @@ class DJV_Post_Types {
 					'_djv_puja_timings' => 'Ghatasthapana: Morning 06:15 AM - 08:30 AM',
 					'_djv_samagri'      => 'Kalasham, Coconut, Mango leaves, Nine grains (Navadhanya), Red cloth, Kumkum, Sandalwood paste, Akshata',
 					'_djv_naivedyam'    => 'Ksheerannam (Payasam), Sweet Pongal, Vadapappu, Chalimidi',
-					'_djv_mantras'      => '॥ ॐ ऐं ह्रीं क्लीं चामुण्डायै विच्चे ॥',
+					'_djv_mantras'      => '॥ ॐ ऐं ह్రీం క్లీం చాముండాయై విచ్చే ॥',
 					'_djv_telugu_name'  => 'శరన్నవరాత్రులు',
 				]
 			],
 			[
 				'title'   => 'Vijayadasami (విజయదశమి)',
 				'slug'    => 'vijayadasami',
-				'date'    => '2026-10-11',
+				'date'    => '2026-10-20',
 				'month'   => 'Ashwina',
 				'type'    => 'Major Festival',
 				'excerpt' => 'Triumph of Dharma over Adharma. Shami puja, Ayudha puja, and commencement of auspicious new ventures.',
 				'content' => 'Vijayadasami marks the victory of Lord Rama over Ravana and Goddess Durga over Mahishasura. It is considered the most auspicious day of the year for starting new learning (Vidyarambham), buying vehicles, or launching enterprises.',
 				'meta'    => [
 					'_djv_significance' => 'Victory of virtue, wisdom, and divine righteousness.',
-					'_djv_puja_timings' => 'Aparahna Puja: 01:15 PM - 03:30 PM',
+					'_djv_puja_timings' => 'Aparahna Vijaya Muhurat: 01:57 PM – 02:44 PM | Shami Puja: 05:30 PM – 06:45 PM',
 					'_djv_samagri'      => 'Shami leaves, Turmeric, Kumkum, Books, Work tools, Flowers',
 					'_djv_naivedyam'    => 'Boorelu, Garelu, Paramannam',
 					'_djv_mantras'      => 'शमी शमयते पापं शमी लोहितकण्टका । धारिण्यर्जुनबाणानां रामस्य प्रियवादिनी ॥',
@@ -565,7 +565,7 @@ class DJV_Post_Types {
 			[
 				'title'   => 'Diwali (దీపావళి)',
 				'slug'    => 'diwali',
-				'date'    => '2026-10-20',
+				'date'    => '2026-11-08',
 				'month'   => 'Ashwina / Kartika',
 				'type'    => 'Maha Parva',
 				'excerpt' => 'Festival of Lights on Ashwina Amavasya. Sri Maha Lakshmi Pooja and Kubera Pooja in every home.',
@@ -582,7 +582,7 @@ class DJV_Post_Types {
 			[
 				'title'   => 'Karthika Pournami (కార్తీక పౌర్ణమి)',
 				'slug'    => 'karthika-pournami',
-				'date'    => '2026-11-04',
+				'date'    => '2026-11-24',
 				'month'   => 'Kartika',
 				'type'    => 'Purnima Vratam',
 				'excerpt' => 'Tripurari Purnima with sacred 365-wick deeparadhana under Usiri (Amla) tree and Shiva temple darshan.',

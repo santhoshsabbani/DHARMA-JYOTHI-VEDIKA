@@ -42,11 +42,23 @@ wordpress/wp-content/backup-db/
 wordpress/wp-content/advanced-cache.php
 wordpress/wp-content/object-cache.php
 wordpress/wp-content/db.php
+wordpress/*.php
+wordpress/*.html
+wordpress/*.txt
+wordpress/wp-content/index.php
+wordpress/wp-content/plugins/index.php
+wordpress/wp-content/themes/index.php
 
 # ── WordPress plugin cache / generated ───────────────────────
 wordpress/plugins/djv-core/cache/
 wordpress/plugins/djv-core/tmp/
 wordpress/plugins/djv-core/languages/*.mo
+
+# ── Python / Archives ────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.zip
 
 # ── Logs ─────────────────────────────────────────────────────
 logs/

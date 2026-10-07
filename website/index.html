@@ -155,8 +155,8 @@
     <div class="hero-quick-card" id="hero-panchangam-card" aria-label="Today's Panchangam summary">
       <div class="quick-card-header">
         <div class="quick-card-date" id="hero-date-display" aria-live="polite">
-          <!-- Dynamically filled by JS -->
-          Saturday, October 3, 2026
+          <!-- Dynamically filled by live API -->
+          <span class="djv-loading-pulse">Loading…</span>
         </div>
         <button class="quick-card-location" id="hero-loc-btn" aria-label="Change location">
           <span aria-hidden="true">📍</span>
@@ -165,56 +165,79 @@
         </button>
       </div>
 
-      <div class="panchanga-quick-grid" role="list" aria-label="Panchangam details">
-        <div class="pq-item" role="listitem">
-          <div class="pq-label">Tithi</div>
-          <div class="pq-value" id="hero-tithi">Dvitiya</div>
-          <div class="pq-time" id="hero-tithi-end">until 09:47 PM</div>
-        </div>
-        <div class="pq-item" role="listitem">
-          <div class="pq-label">Nakshatra</div>
-          <div class="pq-value" id="hero-nakshatra">Uttara Phalguni</div>
-          <div class="pq-time" id="hero-nakshatra-end">until 11:23 PM</div>
-        </div>
-        <div class="pq-item" role="listitem">
-          <div class="pq-label">Yoga</div>
-          <div class="pq-value" id="hero-yoga">Siddha</div>
-          <div class="pq-time" id="hero-yoga-end">until 08:15 PM</div>
-        </div>
-        <div class="pq-item" role="listitem">
-          <div class="pq-label">Karana</div>
-          <div class="pq-value" id="hero-karana">Taitila</div>
-          <div class="pq-time" id="hero-karana-end">until 10:30 AM</div>
+      <!-- Loading skeleton -->
+      <div id="hero-pc-loading" aria-live="polite" aria-label="Loading Panchangam data">
+        <div class="panchanga-quick-grid" role="list">
+          <div class="pq-item" role="listitem"><div class="pq-label">Tithi</div><div class="pq-value djv-loading-pulse">…</div><div class="pq-time">&nbsp;</div></div>
+          <div class="pq-item" role="listitem"><div class="pq-label">Nakshatra</div><div class="pq-value djv-loading-pulse">…</div><div class="pq-time">&nbsp;</div></div>
+          <div class="pq-item" role="listitem"><div class="pq-label">Yoga</div><div class="pq-value djv-loading-pulse">…</div><div class="pq-time">&nbsp;</div></div>
+          <div class="pq-item" role="listitem"><div class="pq-label">Karana</div><div class="pq-value djv-loading-pulse">…</div><div class="pq-time">&nbsp;</div></div>
         </div>
       </div>
 
-      <div class="sun-row" role="list" aria-label="Sunrise and sunset">
-        <div class="sun-item" role="listitem">
-          <span class="sun-icon" aria-hidden="true">🌅</span>
-          <div class="sun-data">
-            <span class="sun-data-label">Sunrise</span>
-            <span class="sun-data-value" id="hero-sunrise">6:05 AM</span>
+      <!-- Live data (hidden until loaded) -->
+      <div id="hero-pc-data" style="display:none;">
+        <div class="panchanga-quick-grid" role="list" aria-label="Panchangam details">
+          <div class="pq-item" role="listitem">
+            <div class="pq-label">Tithi</div>
+            <div class="pq-value" id="hero-tithi"></div>
+            <div class="pq-time" id="hero-tithi-end"></div>
+          </div>
+          <div class="pq-item" role="listitem">
+            <div class="pq-label">Nakshatra</div>
+            <div class="pq-value" id="hero-nakshatra"></div>
+            <div class="pq-time" id="hero-nakshatra-end"></div>
+          </div>
+          <div class="pq-item" role="listitem">
+            <div class="pq-label">Yoga</div>
+            <div class="pq-value" id="hero-yoga"></div>
+            <div class="pq-time" id="hero-yoga-end"></div>
+          </div>
+          <div class="pq-item" role="listitem">
+            <div class="pq-label">Karana</div>
+            <div class="pq-value" id="hero-karana"></div>
+            <div class="pq-time" id="hero-karana-end"></div>
           </div>
         </div>
-        <div class="sun-item" role="listitem">
-          <span class="sun-icon" aria-hidden="true">🌇</span>
-          <div class="sun-data">
-            <span class="sun-data-label">Sunset</span>
-            <span class="sun-data-value" id="hero-sunset">6:11 PM</span>
+
+        <div class="sun-row" role="list" aria-label="Sunrise, sunset and moonrise">
+          <div class="sun-item" role="listitem">
+            <span class="sun-icon" aria-hidden="true">🌅</span>
+            <div class="sun-data">
+              <span class="sun-data-label">Sunrise</span>
+              <span class="sun-data-value" id="hero-sunrise"></span>
+            </div>
+          </div>
+          <div class="sun-item" role="listitem">
+            <span class="sun-icon" aria-hidden="true">🌇</span>
+            <div class="sun-data">
+              <span class="sun-data-label">Sunset</span>
+              <span class="sun-data-value" id="hero-sunset"></span>
+            </div>
+          </div>
+          <div class="sun-item" role="listitem">
+            <span class="sun-icon" aria-hidden="true">🌕</span>
+            <div class="sun-data">
+              <span class="sun-data-label">Moonrise</span>
+              <span class="sun-data-value" id="hero-moonrise"></span>
+            </div>
           </div>
         </div>
-        <div class="sun-item" role="listitem">
-          <span class="sun-icon" aria-hidden="true">🌕</span>
-          <div class="sun-data">
-            <span class="sun-data-label">Moonrise</span>
-            <span class="sun-data-value" id="hero-moonrise">7:42 PM</span>
-          </div>
+
+        <div class="rahu-bar" role="note" aria-label="Rahu Kalam timing">
+          <span class="rahu-label">⚠ Rahu Kalam</span>
+          <span class="rahu-time" id="hero-rahu"></span>
         </div>
       </div>
 
-      <div class="rahu-bar" role="note" aria-label="Rahu Kalam timing">
-        <span class="rahu-label">⚠ Rahu Kalam</span>
-        <span class="rahu-time" id="hero-rahu">10:30 AM – 12:00 PM</span>
+      <!-- Error state (hidden until error) -->
+      <div id="hero-pc-error" style="display:none;" role="alert" aria-live="assertive">
+        <div style="padding:1.25rem;text-align:center;color:var(--clr-text-muted);">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🙏</div>
+          <div style="font-weight:600;margin-bottom:0.25rem;">Panchangam Unavailable</div>
+          <div style="font-size:0.8rem;" id="hero-pc-error-msg">Unable to load live Panchangam data. Please try again shortly.</div>
+          <button id="hero-pc-retry-btn" style="margin-top:0.75rem;padding:0.4rem 1rem;background:var(--clr-primary);color:white;border:none;border-radius:9999px;cursor:pointer;font-size:0.8rem;">Retry</button>
+        </div>
       </div>
 
       <div class="quick-card-cta">
@@ -318,8 +341,8 @@
 
         <div class="panchanga-card-header">
           <div>
-            <div class="panchanga-card-title">Panchangam — Saturday, October 3, 2026</div>
-            <div class="panchanga-card-date">శనివారం · Karthika Masa · Shukla Paksha</div>
+            <div class="panchanga-card-title" id="full-pc-title">Panchangam — Loading…</div>
+            <div class="panchanga-card-date" id="full-pc-vara">Loading…</div>
           </div>
           <div class="panchanga-actions">
             <button class="panchanga-action-btn" id="panchangam-date-btn" aria-label="Change date">📅 Change Date</button>
@@ -327,49 +350,56 @@
           </div>
         </div>
 
-        <div class="panchanga-grid">
+        <!-- Full section loading skeleton -->
+        <div id="full-pc-loading" style="padding:2rem;text-align:center;color:var(--clr-text-muted);" aria-live="polite">
+          <div class="djv-loading-pulse" style="font-size:1.1rem;">Loading live Panchangam data…</div>
+        </div>
+
+        <!-- Full section error state -->
+        <div id="full-pc-error" style="display:none;padding:2rem;text-align:center;" role="alert">
+          <div style="font-size:2.5rem;margin-bottom:0.75rem;">🙏</div>
+          <div style="font-weight:600;font-size:1.1rem;margin-bottom:0.5rem;">Panchangam Unavailable</div>
+          <div style="color:var(--clr-text-muted);font-size:0.875rem;" id="full-pc-error-msg">Unable to load live Panchangam data from the server.</div>
+          <button id="full-pc-retry-btn" style="margin-top:1rem;padding:0.5rem 1.5rem;background:var(--clr-primary);color:white;border:none;border-radius:9999px;cursor:pointer;">Retry</button>
+        </div>
+
+        <!-- Full section live data -->
+        <div id="full-pc-data" class="panchanga-grid" style="display:none;">
 
           <!-- Pancha Angas -->
           <div class="panchanga-section-block">
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">🌙</span> Pancha Angas</div>
             <div class="pancha-item">
               <span class="pancha-item-label">Vara (Weekday)</span>
-              <div class="pancha-item-value">Shanivara (Saturday)</div>
+              <div class="pancha-item-value" id="fp-vara">—</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Tithi</span>
               <div class="pancha-item-value">
-                Dvitiya
-                <span class="pancha-item-time">until 09:47 PM IST</span>
+                <span id="fp-tithi">—</span>
               </div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Paksha</span>
-              <div class="pancha-item-value">Shukla Paksha</div>
+              <div class="pancha-item-value" id="fp-paksha">—</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Nakshatra</span>
               <div class="pancha-item-value">
-                Uttara Phalguni
-                <span class="pancha-item-time">until 11:23 PM IST</span>
+                <span id="fp-nakshatra">—</span>
+                <span class="pancha-item-time" id="fp-nakshatra-pada"></span>
               </div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Nakshatra Pada</span>
-              <div class="pancha-item-value">3rd Pada</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Yoga</span>
               <div class="pancha-item-value">
-                Siddha
-                <span class="pancha-item-time">until 08:15 PM IST</span>
+                <span id="fp-yoga">—</span>
               </div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Karana</span>
               <div class="pancha-item-value">
-                Taitila
-                <span class="pancha-item-time">until 10:30 AM IST</span>
+                <span id="fp-karana">—</span>
               </div>
             </div>
           </div>
@@ -378,32 +408,16 @@
           <div class="panchanga-section-block">
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">☀️</span> Solar &amp; Lunar</div>
             <div class="pancha-item">
-              <span class="pancha-item-label">Masa (Month)</span>
-              <div class="pancha-item-value">Karthika</div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Ritu (Season)</span>
-              <div class="pancha-item-value">Sharada</div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Ayana</span>
-              <div class="pancha-item-value">Dakshinayana</div>
-            </div>
-            <div class="pancha-item">
               <span class="pancha-item-label">Sunrise</span>
-              <div class="pancha-item-value">6:05 AM IST</div>
+              <div class="pancha-item-value" id="fp-sunrise">—</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Sunset</span>
-              <div class="pancha-item-value">6:11 PM IST</div>
+              <div class="pancha-item-value" id="fp-sunset">—</div>
             </div>
-            <div class="pancha-item">
+            <div class="pancha-item" id="fp-moonrise-row">
               <span class="pancha-item-label">Moonrise</span>
-              <div class="pancha-item-value">7:42 PM IST</div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Moonset</span>
-              <div class="pancha-item-value">7:58 AM IST (next day)</div>
+              <div class="pancha-item-value" id="fp-moonrise">—</div>
             </div>
           </div>
 
@@ -412,15 +426,7 @@
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">✨</span> Auspicious Timings</div>
             <div class="pancha-item">
               <span class="pancha-item-label">Abhijit Muhurtham</span>
-              <div class="pancha-item-value timing-auspicious">
-                11:48 AM – 12:37 PM
-              </div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Amrit Kalam</span>
-              <div class="pancha-item-value timing-auspicious">
-                6:05 AM – 7:38 AM
-              </div>
+              <div class="pancha-item-value timing-auspicious" id="fp-abhijit">—</div>
             </div>
           </div>
 
@@ -429,32 +435,26 @@
             <div class="psb-title"><span class="psb-icon" aria-hidden="true">⚠️</span> Inauspicious Timings</div>
             <div class="pancha-item">
               <span class="pancha-item-label">Rahu Kalam</span>
-              <div class="pancha-item-value timing-warning">10:30 AM – 12:00 PM</div>
+              <div class="pancha-item-value timing-warning" id="fp-rahu">—</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Yamagandam</span>
-              <div class="pancha-item-value timing-warning">1:30 PM – 3:00 PM</div>
+              <div class="pancha-item-value timing-warning" id="fp-yamagandam">—</div>
             </div>
             <div class="pancha-item">
               <span class="pancha-item-label">Gulika Kalam</span>
-              <div class="pancha-item-value timing-warning">6:05 AM – 7:35 AM</div>
-            </div>
-            <div class="pancha-item">
-              <span class="pancha-item-label">Durmuhurtham</span>
-              <div class="pancha-item-value timing-warning">
-                8:14 AM – 9:02 AM
-              </div>
+              <div class="pancha-item-value timing-warning" id="fp-gulika">—</div>
             </div>
           </div>
         </div>
 
-        <!-- Calculation Metadata Footer -->
-        <div style="padding: 0.75rem 1.75rem; background: #FFF9F0; border-top: 1px solid var(--clr-border); font-size: 0.72rem; color: var(--clr-text-muted); display: flex; flex-wrap: wrap; gap: 1rem;">
-          <span>📍 Hyderabad, Telangana (17.3850°N, 78.4867°E)</span>
+        <!-- Calculation Metadata Footer (dynamic) -->
+        <div id="full-pc-meta-footer" style="padding: 0.75rem 1.75rem; background: #FFF9F0; border-top: 1px solid var(--clr-border); font-size: 0.72rem; color: var(--clr-text-muted); display: flex; flex-wrap: wrap; gap: 1rem;">
+          <span id="fp-meta-location">📍 Hyderabad, Telangana (17.3850°N, 78.4867°E)</span>
           <span>🕐 Asia/Kolkata (IST, UTC+5:30)</span>
           <span>📖 Lahiri Ayanamsa · Amanta</span>
-          <span>⚙️ Engine v1.0.0 · Rules: telugu-1.0</span>
-          <span style="color: #B5241A; font-style: italic;">⚠ Pre-validation data — verify before ceremonial use</span>
+          <span id="fp-meta-engine">⚙️ Engine v1.0.0 · Rules: telugu-1.0</span>
+          <span style="color: #B5241A; font-style: italic;">⚠ For informational purposes — consult a Jyotishi for ceremonial muhurtham</span>
         </div>
       </div>
 
@@ -554,31 +554,31 @@
 
     <div class="festival-cards">
       <a href="/festivals/navaratri/" class="festival-card" id="festival-navaratri">
-        <div class="festival-card-badge">ONGOING</div>
+        <div class="festival-card-badge">OCT 11</div>
         <span class="festival-card-emoji" aria-hidden="true">🪔</span>
-        <div class="festival-card-name">Navaratri</div>
-        <div class="festival-card-date">Oct 2 – Oct 10, 2026</div>
+        <div class="festival-card-name">Sharad Navratri</div>
+        <div class="festival-card-date">Oct 11 – Oct 19, 2026</div>
         <div class="festival-card-desc">Nine nights celebrating Goddess Durga. Garba, Dandiya, pujas and fasting mark this joyous festival.</div>
       </a>
 
       <a href="/festivals/dussehra/" class="festival-card" id="festival-dussehra">
         <span class="festival-card-emoji" aria-hidden="true">🏹</span>
         <div class="festival-card-name">Dussehra / Vijayadasami</div>
-        <div class="festival-card-date">October 11, 2026</div>
-        <div class="festival-card-desc">Victory of good over evil. Celebrates the defeat of Ravana by Lord Rama.</div>
+        <div class="festival-card-date">October 20, 2026</div>
+        <div class="festival-card-desc">Victory of good over evil. Celebrates the defeat of Ravana by Lord Rama and Shami Puja.</div>
       </a>
 
       <a href="/festivals/diwali/" class="festival-card" id="festival-diwali">
         <span class="festival-card-emoji" aria-hidden="true">🪔</span>
         <div class="festival-card-name">Diwali</div>
-        <div class="festival-card-date">October 20, 2026</div>
+        <div class="festival-card-date">November 8, 2026</div>
         <div class="festival-card-desc">Festival of lights. Lakshmi puja, fireworks, and the celebration of Rama's return to Ayodhya.</div>
       </a>
 
       <a href="/festivals/karthika-purnima/" class="festival-card" id="festival-karthika">
         <span class="festival-card-emoji" aria-hidden="true">🌕</span>
         <div class="festival-card-name">Karthika Purnima</div>
-        <div class="festival-card-date">November 5, 2026</div>
+        <div class="festival-card-date">November 24, 2026</div>
         <div class="festival-card-desc">Sacred full moon in the month of Karthika. Lighting of diyas and river bathing are traditional observances.</div>
       </a>
     </div>
@@ -697,7 +697,7 @@
 
     <!-- Daily Mantra Feature -->
     <div class="daily-mantra-card" id="daily-mantra-card" aria-labelledby="daily-mantra-title">
-      <div class="dm-label">🕉 Daily Mantra · October 3, 2026</div>
+      <div class="dm-label">🕉 Daily Mantra · <span id="daily-mantra-date"></span></div>
       <div class="dm-mantra" id="daily-mantra-title">
         || ॐ नमः शिवाय ||
       </div>
@@ -1037,7 +1037,6 @@
         <div class="footer-col-title">Panchangam</div>
         <ul class="footer-links">
           <li><a href="/panchangam/today/">Today's Panchangam</a></li>
-          <li><a href="/panchangam/2026-10-03/">October 3, 2026</a></li>
           <li><a href="/calendar/">Hindu Calendar 2027</a></li>
           <li><a href="/panchangam/tithi/">Tithi Guide</a></li>
           <li><a href="/panchangam/nakshatra/">Nakshatra Guide</a></li>
@@ -1106,22 +1105,339 @@
 <!-- ════════════════════════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════════════════════════ -->
+<style>
+  /* ── DJV Live Panchangam: Loading pulse animation ── */
+  @keyframes djv-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+  .djv-loading-pulse { animation: djv-pulse 1.4s ease-in-out infinite; color: var(--clr-text-muted, #999); }
+</style>
 <script>
 (function() {
   'use strict';
 
-  /* ─── Header scroll effect ─────────────────────────── */
-  const header = document.getElementById('site-header');
-  const onScroll = () => {
-    header.classList.toggle('scrolled', window.scrollY > 10);
+  /* ═══════════════════════════════════════════════════════════
+     DJV LIVE PANCHANGAM — v2.0
+     Architecture: Website → WordPress REST API → DJV Core
+                  → Node.js Panchangam Engine → real calculation
+     Endpoint: GET /wp-json/djv/v1/panchangam
+     No Panchangam values are ever hardcoded here.
+  ═══════════════════════════════════════════════════════════ */
+
+  /* ─── Config ──────────────────────────────────────── */
+  const DJV_API_BASE = window.location.protocol === 'file:'
+    ? 'https://violet-giraffe-464585.hostingersite.com/wordpress/wp-json/djv/v1'
+    : '/wordpress/wp-json/djv/v1';
+
+  // Default location: Hyderabad, Telangana
+  let gLocation = {
+    lat: 17.3850,
+    lon: 78.4867,
+    timezone: 'Asia/Kolkata',
+    city: 'Hyderabad'
   };
+
+  /* ─── Get today's date in Asia/Kolkata timezone ─── */
+  function getTodayIST() {
+    // Use Intl to get the current date in Asia/Kolkata — never hardcoded
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: gLocation.timezone,
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(now);
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const d = parts.find(p => p.type === 'day').value;
+    return `${y}-${m}-${d}`;
+  }
+
+  /* ─── Format a date string as "Monday, October 5, 2026" ─ */
+  function formatDateStr(isoDate) {
+    const [y, mo, d] = isoDate.split('-').map(Number);
+    const dt = new Date(y, mo - 1, d);
+    const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    return `${days[dt.getDay()]}, ${months[dt.getMonth()]} ${d}, ${y}`;
+  }
+
+  /* ─── Format a Date object to "6:05 AM" (IST) ──────── */
+  function fmtTime(dateVal, tz) {
+    if (!dateVal) return '—';
+    const d = (typeof dateVal === 'string') ? new Date(dateVal) : dateVal;
+    return d.toLocaleTimeString('en-IN', {
+      timeZone: tz || gLocation.timezone,
+      hour: 'numeric', minute: '2-digit', hour12: true
+    });
+  }
+
+  /* ─── Format a time range ──────────────────────────── */
+  function fmtRange(startVal, endVal, tz) {
+    if (!startVal || !endVal) return '—';
+    return `${fmtTime(startVal, tz)} – ${fmtTime(endVal, tz)}`;
+  }
+
+  /* ─── Ordinal suffix ────────────────────────────────── */
+  function ordinal(n) {
+    const s = ['th','st','nd','rd'];
+    const v = n % 100;
+    return n + (s[(v-20)%10] || s[v] || s[0]);
+  }
+
+  /* ─── Determine Paksha from Tithi ID ───────────────── */
+  function getPaksha(tithiId) {
+    // Tithi 1–15: Shukla Paksha; 16–30: Krishna Paksha
+    return (tithiId <= 15) ? 'Shukla Paksha' : 'Krishna Paksha';
+  }
+
+  /* ═══ HERO CARD: show/hide states ═══ */
+  function heroShowLoading() {
+    document.getElementById('hero-pc-loading').style.display = '';
+    document.getElementById('hero-pc-data').style.display    = 'none';
+    document.getElementById('hero-pc-error').style.display   = 'none';
+  }
+  function heroShowData() {
+    document.getElementById('hero-pc-loading').style.display = 'none';
+    document.getElementById('hero-pc-data').style.display    = '';
+    document.getElementById('hero-pc-error').style.display   = 'none';
+  }
+  function heroShowError(msg) {
+    document.getElementById('hero-pc-loading').style.display = 'none';
+    document.getElementById('hero-pc-data').style.display    = 'none';
+    document.getElementById('hero-pc-error').style.display   = '';
+    const msgEl = document.getElementById('hero-pc-error-msg');
+    if (msgEl) msgEl.textContent = msg || 'Panchangam data is currently unavailable.';
+  }
+
+  /* ═══ FULL CARD: show/hide states ═══ */
+  function fullShowLoading() {
+    document.getElementById('full-pc-loading').style.display = '';
+    document.getElementById('full-pc-data').style.display    = 'none';
+    document.getElementById('full-pc-error').style.display   = 'none';
+  }
+  function fullShowData() {
+    document.getElementById('full-pc-loading').style.display = 'none';
+    document.getElementById('full-pc-data').style.display    = '';
+    document.getElementById('full-pc-error').style.display   = 'none';
+  }
+  function fullShowError(msg) {
+    document.getElementById('full-pc-loading').style.display = 'none';
+    document.getElementById('full-pc-data').style.display    = 'none';
+    document.getElementById('full-pc-error').style.display   = '';
+    const msgEl = document.getElementById('full-pc-error-msg');
+    if (msgEl) msgEl.textContent = msg || 'Panchangam data is currently unavailable.';
+  }
+
+  /* ─── Populate elements safely ──────────────────────── */
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val || '—';
+  }
+
+  /* ═══════════════════════════════════════════════
+     MAIN: Fetch Panchangam from WordPress REST API
+     Calls: GET /wp-json/djv/v1/panchangam
+     Params: date, latitude, longitude, timezone
+     NEVER falls back to hardcoded Panchangam data.
+  ═══════════════════════════════════════════════ */
+  async function loadPanchangam(isoDate) {
+    const tz  = gLocation.timezone;
+    const url = `${DJV_API_BASE}/today?date=${encodeURIComponent(isoDate)}&latitude=${gLocation.lat}&longitude=${gLocation.lon}&timezone=${encodeURIComponent(tz)}`;
+
+    // Set date displays immediately (date comes from JS, not API)
+    const formatted = formatDateStr(isoDate);
+    const dateEl = document.getElementById('hero-date-display');
+    if (dateEl) dateEl.textContent = formatted;
+    setText('full-pc-title', `Panchangam — ${formatted}`);
+
+    // Update daily mantra date label
+    const dmDateEl = document.getElementById('daily-mantra-date');
+    if (dmDateEl) {
+      const [y, mo, d] = isoDate.split('-').map(Number);
+      const monthNames = ['January','February','March','April','May','June',
+                          'July','August','September','October','November','December'];
+      dmDateEl.textContent = `${monthNames[mo-1]} ${d}, ${y}`;
+    }
+
+    // Show loading states
+    heroShowLoading();
+    fullShowLoading();
+
+    let apiData;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    try {
+      const response = await fetch(url, { 
+        method: 'GET', 
+        headers: { 'Accept': 'application/json' },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        // Handle non-200 responses
+        let exactError = '';
+        try {
+          const errBody = await response.json();
+          if (errBody && errBody.error && errBody.error.message) exactError = ' (' + errBody.error.message + ')';
+        } catch (_) {}
+        throw new Error(`Panchangam API HTTP ${response.status}${exactError}`);
+      }
+
+      const wrapper = await response.json();
+
+      // WordPress REST wrapper: { success: true, data: {...}, meta: {...} }
+      if (!wrapper || !wrapper.success || !wrapper.data || !wrapper.data.panchangam || !wrapper.data.panchangam.data) {
+        throw new Error('Unexpected API response structure or data missing.');
+      }
+
+      apiData = wrapper.data.panchangam.data;
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('Panchangam API Error:', err);
+      let errMsg = 'Unable to load today\'s Panchangam. ' + err.message;
+      if (err.name === 'AbortError') errMsg = 'Unable to load today\'s Panchangam. Request timed out. <button onclick="window.location.reload()">Retry</button>';
+      
+      // Update DOM with error
+      heroShowError(errMsg);
+      fullShowError(errMsg);
+      
+      // We found a specific error code earlier (djv_engine_error with "Array"). Let's map it safely.
+      const errorMsgContainer = document.getElementById('hero-pc-error-msg');
+      if (errorMsgContainer && err.name === 'AbortError') {
+         errorMsgContainer.innerHTML = errMsg;
+      }
+      return;
+    }
+
+    /* ─── Map API response to DOM ─────────────────────
+       Field names are exactly as returned by core.js:
+         apiData.vara       → { id, name, nameTe, en }
+         apiData.tithi      → { id, name }
+         apiData.nakshatra  → { name, pada }
+         apiData.yoga       → { name }
+         apiData.karana     → { name }
+         apiData.solar      → { sunrise, sunset, solarNoon }
+         apiData.timings    → { rahuKalam, yamagandam, gulikaKalam, abhijitMuhurtham }
+    ─────────────────────────────────────────────── */
+
+    const vara      = apiData.vara      || {};
+    const tithi     = apiData.tithi     || {};
+    const nakshatra = apiData.nakshatra || {};
+    const yoga      = apiData.yoga      || {};
+    const karana    = apiData.karana    || {};
+    const solar     = apiData.solar     || {};
+    const timings   = apiData.timings   || {};
+
+    const paksha = getPaksha(tithi.id || 0);
+    const varaNam = vara.name ? `${vara.name} (${vara.en || ''})` : '—';
+    const nakName = nakshatra.name || (nakshatra.nakshatra && nakshatra.nakshatra.name) || '—';
+    const nakPada = nakshatra.pada ? `${ordinal(nakshatra.pada)} Pada` : '';
+
+    /* ── Hero card ─────────────────────────────────── */
+    setText('hero-tithi',       tithi.name     || '—');
+    setText('hero-tithi-end',   '');
+    setText('hero-nakshatra',   nakName);
+    setText('hero-nakshatra-end', nakPada);
+    setText('hero-yoga',        yoga.name      || '—');
+    setText('hero-yoga-end',    '');
+    setText('hero-karana',      karana.name    || '—');
+    setText('hero-karana-end',  '');
+    setText('hero-sunrise',     fmtTime(solar.sunrise,  tz));
+    setText('hero-sunset',      fmtTime(solar.sunset,   tz));
+
+    // Moonrise resolution from astronomical engine
+    const moonriseData = apiData.moonrise || (apiData.lunar && apiData.lunar.moonrise);
+    let moonriseHero = '—';
+    let moonriseFull = '—';
+    if (moonriseData) {
+      if (moonriseData.status === 'normal' && moonriseData.time) {
+        moonriseHero = moonriseData.time;
+        moonriseFull = `${moonriseData.time} IST`;
+      } else if (moonriseData.status === 'no_event') {
+        moonriseHero = 'No moonrise';
+        moonriseFull = 'No moonrise';
+      } else if (moonriseData.status === 'calculation_error') {
+        moonriseHero = 'Calculation error';
+        moonriseFull = 'Calculation error';
+      } else if (typeof moonriseData === 'string') {
+        moonriseHero = fmtTime(moonriseData, tz);
+        moonriseFull = fmtTime(moonriseData, tz) + ' IST';
+      }
+    } else if (solar.moonrise) {
+      moonriseHero = typeof solar.moonrise === 'string' && solar.moonrise.includes(':') 
+        ? solar.moonrise 
+        : fmtTime(solar.moonrise, tz);
+      moonriseFull = moonriseHero !== '—' ? `${moonriseHero} IST` : '—';
+    }
+
+    setText('hero-moonrise',    moonriseHero);
+    setText('hero-rahu',        fmtRange(timings.rahuKalam?.start, timings.rahuKalam?.end, tz));
+
+    // Update location name
+    setText('hero-loc-name', gLocation.city);
+
+    heroShowData();
+
+    /* ── Full Panchangam card ──────────────────────── */
+    const varaLine = vara.nameTe ? `${vara.nameTe} (${vara.en || ''})` : (vara.en || '—');
+    setText('full-pc-vara',          varaLine);
+    setText('fp-vara',               varaNam);
+    setText('fp-tithi',              tithi.name     || '—');
+    setText('fp-paksha',             paksha);
+    setText('fp-nakshatra',          nakName);
+    setText('fp-nakshatra-pada',     nakPada);
+    setText('fp-yoga',               yoga.name      || '—');
+    setText('fp-karana',             karana.name    || '—');
+    setText('fp-sunrise',            fmtTime(solar.sunrise,  tz) + ' IST');
+    setText('fp-sunset',             fmtTime(solar.sunset,   tz) + ' IST');
+    setText('fp-moonrise',           moonriseFull);
+    setText('fp-abhijit',            fmtRange(timings.abhijitMuhurtham?.start, timings.abhijitMuhurtham?.end, tz));
+    setText('fp-rahu',               fmtRange(timings.rahuKalam?.start,        timings.rahuKalam?.end,        tz));
+    setText('fp-yamagandam',         fmtRange(timings.yamagandam?.start,        timings.yamagandam?.end,       tz));
+    setText('fp-gulika',             fmtRange(timings.gulikaKalam?.start,       timings.gulikaKalam?.end,      tz));
+
+    // Update metadata footer
+    setText('fp-meta-location', `📍 ${gLocation.city} (${gLocation.lat}°N, ${gLocation.lon}°E)`);
+
+    // Update "View Full Panchangam" links with date
+    const fullLink = document.getElementById('hero-full-panchangam-link');
+    if (fullLink) fullLink.href = `/panchangam/${isoDate}/`;
+
+    fullShowData();
+
+    // Update share text with live data
+    window._djvShareData = {
+      date: formatted,
+      tithi: tithi.name || '—',
+      nakshatra: nakName,
+      yoga: yoga.name || '—',
+      moonrise: moonriseHero,
+      rahu: fmtRange(timings.rahuKalam?.start, timings.rahuKalam?.end, tz),
+      city: gLocation.city,
+      isoDate
+    };
+  }
+
+  /* ─── Initial load with today's dynamic date ─────── */
+  const todayIST = getTodayIST();
+  loadPanchangam(todayIST);
+
+  /* ─── Retry buttons ──────────────────────────────── */
+  ['hero-pc-retry-btn', 'full-pc-retry-btn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', () => loadPanchangam(getTodayIST()));
+  });
+
+  /* ─── Header scroll effect ─────────────────────── */
+  const header = document.getElementById('site-header');
+  const onScroll = () => { header.classList.toggle('scrolled', window.scrollY > 10); };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /* ─── Mobile nav ───────────────────────────────────── */
-  const menuToggle    = document.getElementById('menu-toggle-btn');
-  const mobileNav     = document.getElementById('mobile-nav');
-  const mobileDrawer  = document.getElementById('mobile-nav-drawer');
+  /* ─── Mobile nav ────────────────────────────────── */
+  const menuToggle   = document.getElementById('menu-toggle-btn');
+  const mobileNav    = document.getElementById('mobile-nav');
 
   function openMobileNav() {
     mobileNav.classList.add('open');
@@ -1135,15 +1451,12 @@
     menuToggle.textContent = '☰';
     document.body.style.overflow = '';
   }
-
   menuToggle.addEventListener('click', () => {
     mobileNav.classList.contains('open') ? closeMobileNav() : openMobileNav();
   });
-  mobileNav.addEventListener('click', (e) => {
-    if (e.target === mobileNav) closeMobileNav();
-  });
+  mobileNav.addEventListener('click', (e) => { if (e.target === mobileNav) closeMobileNav(); });
 
-  /* ─── Search overlay ────────────────────────────────── */
+  /* ─── Search overlay ────────────────────────────── */
   const searchOpen    = document.getElementById('search-open-btn');
   const searchClose   = document.getElementById('search-close-btn');
   const searchOverlay = document.getElementById('search-overlay');
@@ -1158,45 +1471,110 @@
     if (e.target === searchOverlay) searchOverlay.classList.remove('open');
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      searchOverlay.classList.remove('open');
-      closeMobileNav();
-    }
+    if (e.key === 'Escape') { searchOverlay.classList.remove('open'); closeMobileNav(); }
   });
-
-  /* Search chips */
   document.querySelectorAll('.search-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      searchInput.value = chip.textContent;
-      searchInput.focus();
-    });
+    chip.addEventListener('click', () => { searchInput.value = chip.textContent; searchInput.focus(); });
   });
 
-  /* ─── Date display ──────────────────────────────────── */
-  function formatDate(d) {
-    const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    const months = ['January','February','March','April','May','June',
-                    'July','August','September','October','November','December'];
-    return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  /* ─── Change Date (panchangam-date-btn) ────────── */
+  const dateBtnEl = document.getElementById('panchangam-date-btn');
+  if (dateBtnEl) {
+    dateBtnEl.addEventListener('click', () => {
+      const entered = prompt(
+        'Enter date for Panchangam (YYYY-MM-DD):',
+        getTodayIST()
+      );
+      if (entered && /^\d{4}-\d{2}-\d{2}$/.test(entered.trim())) {
+        loadPanchangam(entered.trim());
+      } else if (entered !== null) {
+        alert('Invalid date format. Please use YYYY-MM-DD (e.g., 2026-10-05).');
+      }
+    });
   }
 
-  const dateEl = document.getElementById('hero-date-display');
-  if (dateEl) {
-    // Use the current date from context
-    const now = new Date('2026-10-03T07:07:38+05:30');
-    dateEl.textContent = formatDate(now);
+  /* ─── Location change ──────────────────────────── */
+  const PRESET_LOCATIONS = [
+    { city: 'Hyderabad',  lat: 17.3850, lon: 78.4867, timezone: 'Asia/Kolkata' },
+    { city: 'Chennai',    lat: 13.0827, lon: 80.2707, timezone: 'Asia/Kolkata' },
+    { city: 'Bangalore',  lat: 12.9716, lon: 77.5946, timezone: 'Asia/Kolkata' },
+    { city: 'Mumbai',     lat: 19.0760, lon: 72.8777, timezone: 'Asia/Kolkata' },
+    { city: 'Delhi',      lat: 28.6139, lon: 77.2090, timezone: 'Asia/Kolkata' },
+    { city: 'Kolkata',    lat: 22.5726, lon: 88.3639, timezone: 'Asia/Kolkata' },
+    { city: 'Visakhapatnam', lat: 17.6868, lon: 83.2185, timezone: 'Asia/Kolkata' },
+    { city: 'Vijayawada', lat: 16.5062, lon: 80.6480, timezone: 'Asia/Kolkata' },
+    { city: 'Tirupati',   lat: 13.6288, lon: 79.4192, timezone: 'Asia/Kolkata' }
+  ];
+
+  function openLocationSelector() {
+    const list = PRESET_LOCATIONS.map((loc, i) => `${i + 1}. ${loc.city}`).join('\n');
+    const choice = prompt(
+      `Select location for Panchangam:\n\n${list}\n\nEnter number (1-${PRESET_LOCATIONS.length}) or type custom coordinates as: lat,lon,City`,
+      '1'
+    );
+    if (choice === null) return;
+
+    const trimmed = choice.trim();
+    const num = parseInt(trimmed, 10);
+    if (!isNaN(num) && num >= 1 && num <= PRESET_LOCATIONS.length) {
+      gLocation = { ...PRESET_LOCATIONS[num - 1] };
+    } else if (trimmed.includes(',')) {
+      // Custom: "17.3850,78.4867,Hyderabad"
+      const parts = trimmed.split(',').map(p => p.trim());
+      const lat = parseFloat(parts[0]);
+      const lon = parseFloat(parts[1]);
+      const city = parts[2] || 'Custom Location';
+      if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        alert('Invalid coordinates. Latitude must be -90 to 90, Longitude -180 to 180.');
+        return;
+      }
+      gLocation = { lat, lon, timezone: 'Asia/Kolkata', city };
+    } else {
+      return;
+    }
+
+    // Reload Panchangam for new location
+    loadPanchangam(getTodayIST());
   }
 
-  /* ─── Greeting ──────────────────────────────────────── */
-  function getGreeting(h) {
-    if (h < 12) return 'Good Morning 🌅';
-    if (h < 17) return 'Good Afternoon ☀️';
-    if (h < 20) return 'Good Evening 🌇';
-    return 'Good Night 🌙';
-  }
-  const now = new Date('2026-10-03T07:07:38+05:30');
+  const locBtns = [
+    document.getElementById('hero-loc-btn'),
+    document.getElementById('change-location-btn'),
+    document.getElementById('hero-location-btn')
+  ].filter(Boolean);
+  locBtns.forEach(btn => btn.addEventListener('click', openLocationSelector));
 
-  /* ─── Scroll-triggered animations ──────────────────── */
+  /* ─── Share buttons (live data) ─────────────────── */
+  const shareWA   = document.getElementById('share-whatsapp-btn');
+  const shareTG   = document.getElementById('share-telegram-btn');
+  const shareCopy = document.getElementById('share-copy-btn');
+
+  function buildShareText() {
+    const d = window._djvShareData || {};
+    return `🕉 Today's Panchangam (${d.date || getTodayIST()}) — ${d.city || 'Hyderabad'}\nTithi: ${d.tithi || '—'} | Nakshatra: ${d.nakshatra || '—'} | Yoga: ${d.yoga || '—'}\nRahu Kalam: ${d.rahu || '—'}\n\nFull details: https://dharmajyothivedika.com/panchangam/today/`;
+  }
+
+  if (shareWA) {
+    shareWA.addEventListener('click', () => {
+      window.open(`https://wa.me/?text=${encodeURIComponent(buildShareText())}`, '_blank', 'noopener');
+    });
+  }
+  if (shareTG) {
+    shareTG.addEventListener('click', () => {
+      window.open(`https://t.me/share/url?url=${encodeURIComponent('https://dharmajyothivedika.com/panchangam/today/')}&text=${encodeURIComponent(buildShareText())}`, '_blank', 'noopener');
+    });
+  }
+  if (shareCopy) {
+    shareCopy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText('https://dharmajyothivedika.com/panchangam/today/');
+        shareCopy.textContent = '✓ Copied!';
+        setTimeout(() => { shareCopy.textContent = '🔗 Copy Link'; }, 2000);
+      } catch { shareCopy.textContent = 'Copy failed'; }
+    });
+  }
+
+  /* ─── Scroll-triggered animations ──────────────── */
   const animElements = document.querySelectorAll('[data-animate]');
   if ('IntersectionObserver' in window) {
     const obs = new IntersectionObserver((entries) => {
@@ -1213,7 +1591,7 @@
     animElements.forEach(el => el.classList.add('in-view'));
   }
 
-  /* ─── Stagger cards on section entry ───────────────── */
+  /* ─── Stagger cards on section entry ───────────── */
   const staggerContainers = document.querySelectorAll(
     '.qa-grid, .festival-cards, .pooja-grid, .mantra-cats, .muhurtham-grid, .temples-grid, .articles-grid'
   );
@@ -1221,8 +1599,7 @@
     const staggerObs = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const children = entry.target.children;
-          Array.from(children).forEach((child, i) => {
+          Array.from(entry.target.children).forEach((child, i) => {
             child.style.opacity = '0';
             child.style.animation = `fadeInUp 0.5s ease ${i * 0.07}s both`;
           });
@@ -1233,49 +1610,7 @@
     staggerContainers.forEach(el => staggerObs.observe(el));
   }
 
-  /* ─── Share buttons ─────────────────────────────────── */
-  const shareWA  = document.getElementById('share-whatsapp-btn');
-  const shareTG  = document.getElementById('share-telegram-btn');
-  const shareCopy= document.getElementById('share-copy-btn');
-
-  const shareText = `🕉 Today's Panchangam (Oct 3, 2026) — Hyderabad\nTithi: Dvitiya | Nakshatra: Uttara Phalguni | Yoga: Siddha\nRahu Kalam: 10:30 AM – 12:00 PM\n\nFull details: https://dharmajyothivedika.com/panchangam/today/`;
-
-  if (shareWA) {
-    shareWA.addEventListener('click', () => {
-      window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
-    });
-  }
-  if (shareTG) {
-    shareTG.addEventListener('click', () => {
-      window.open(`https://t.me/share/url?url=${encodeURIComponent('https://dharmajyothivedika.com/panchangam/today/')}&text=${encodeURIComponent('Today\'s Panchangam')}`, '_blank', 'noopener');
-    });
-  }
-  if (shareCopy) {
-    shareCopy.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText('https://dharmajyothivedika.com/panchangam/today/');
-        shareCopy.textContent = '✓ Copied!';
-        setTimeout(() => { shareCopy.textContent = '🔗 Copy Link'; }, 2000);
-      } catch {
-        shareCopy.textContent = 'Copy failed';
-      }
-    });
-  }
-
-  /* ─── Location change placeholder ──────────────────── */
-  const locBtns = [
-    document.getElementById('hero-loc-btn'),
-    document.getElementById('change-location-btn'),
-    document.getElementById('hero-location-btn')
-  ].filter(Boolean);
-
-  locBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      alert('Location selector will open here.\n\nThis will allow city search, state selection, and GPS option (in mobile app).');
-    });
-  });
-
-  /* ─── Language toggle placeholder ───────────────────── */
+  /* ─── Language toggle ───────────────────────────── */
   const langBtn = document.getElementById('lang-toggle-btn');
   if (langBtn) {
     langBtn.addEventListener('click', () => {
@@ -1289,7 +1624,7 @@
     });
   }
 
-  /* ─── Smooth hover on quick access cards ───────────── */
+  /* ─── Smooth hover on quick access cards ────────── */
   document.querySelectorAll('.qa-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
       this.style.transitionTimingFunction = 'cubic-bezier(0.34,1.56,0.64,1)';

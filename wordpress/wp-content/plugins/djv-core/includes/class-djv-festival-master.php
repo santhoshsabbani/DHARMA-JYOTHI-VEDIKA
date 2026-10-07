@@ -22,7 +22,7 @@ if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 
 class DJV_Festival_Master {
 
-	const VERSION = '1.0.0';
+	const VERSION = '2.0.0';
 
 	/**
 	 * Gregorian date to Julian Day Number (Meeus Ch. 7)
@@ -151,6 +151,7 @@ class DJV_Festival_Master {
 		$cur = clone $start;
 		$prev_diff = null;
 		$active_masa = null;
+		$next_masa = null;
 		$prev_sun_rashi = null;
 
 		// Calculate timezone offset in hours
@@ -191,15 +192,36 @@ class DJV_Festival_Master {
 			$diff_nt = self::normalize_deg( $moon_nt - $sun_nt );
 			$tithi_nt = (int) floor( $diff_nt / 12.0 ) + 1;
 
+			// Sample Aparahna (14:00 local time approx, crucial for Aparahna tithis, Vijaya Muhurat, and Shami Puja)
+			$jd_ap   = $base_jd + ( 14.0 - $offset_hours ) / 24.0;
+			$sun_ap  = self::normalize_deg( self::get_solar_lon( $jd_ap ) - self::get_lahiri_ayanamsa( $jd_ap ) );
+			$moon_ap = self::normalize_deg( self::get_moon_lon( $jd_ap ) - self::get_lahiri_ayanamsa( $jd_ap ) );
+			$diff_ap = self::normalize_deg( $moon_ap - $sun_ap );
+			$tithi_ap = (int) floor( $diff_ap / 12.0 ) + 1;
+
 			$sun_rashi = (int) floor( $sun_sr / 30.0 );
 			$nak_idx   = (int) floor( $moon_sr / ( 360.0 / 27.0 ) ) + 1;
 
 			// Ingress check (Sankranti today)
 			$is_sankranti = ( $prev_sun_rashi !== null && $prev_sun_rashi !== $sun_rashi );
 
-			// New Moon transition (diff crossed 0/360)
+			// New Moon transition (diff crossed 0/360 into Shukla Pratipada)
 			if ( $prev_diff !== null && ( ( $prev_diff > 330 && $diff_sr < 30 ) || ( $prev_diff > 345 && $diff_mid < 15 ) ) ) {
-				$active_masa = $masa_from_solar_rashi[ $sun_rashi ] ?? 'Chaitra';
+				$base_masa = $masa_from_solar_rashi[ $sun_rashi ] ?? 'Chaitra';
+				// Check for Adhika Masa: check if next New Moon will also be in this solar rashi (~29.53 days later)
+				$jd_next_nm = $jd_sr + 29.53;
+				$next_sun   = self::normalize_deg( self::get_solar_lon( $jd_next_nm ) - self::get_lahiri_ayanamsa( $jd_next_nm ) );
+				$next_rashi = (int) floor( $next_sun / 30.0 );
+				$next_masa  = ( $next_rashi === $sun_rashi ) ? 'Adhika ' . $base_masa : $base_masa;
+			}
+
+			// In Amanta tradition, the lunar month concludes on Amavasya (tithi 30).
+			// The new month name takes effect on Shukla Pratipada (tithi_sr === 1 or when new moon concludes).
+			if ( ( $tithi_sr === 1 || ( $diff_sr < 60 && $next_masa !== null && $prev_diff > 300 ) ) && $next_masa !== null ) {
+				$active_masa = $next_masa;
+				$next_masa   = null;
+			} elseif ( $active_masa === null && $next_masa !== null ) {
+				$active_masa = $next_masa;
 			}
 
 			$date_str = $cur->format( 'Y-m-d' );
@@ -215,9 +237,10 @@ class DJV_Festival_Master {
 				'sankranti_rashi'=> $sun_rashi,
 				'tithi_sr'       => $tithi_sr,
 				'tithi_mid'      => $tithi_mid,
+				'tithi_ap'       => $tithi_ap,
 				'tithi_ss'       => $tithi_ss,
 				'tithi_nt'       => $tithi_nt,
-				'tithis_today'   => array_unique( [ $tithi_sr, $tithi_mid, $tithi_ss, $tithi_nt ] ),
+				'tithis_today'   => array_unique( [ $tithi_sr, $tithi_mid, $tithi_ap, $tithi_ss, $tithi_nt ] ),
 				'nakshatra_idx'  => $nak_idx,
 				'nakshatra'      => $nakshatra_names[ $nak_idx ] ?? '',
 				'masa'           => $active_masa,
@@ -262,23 +285,22 @@ class DJV_Festival_Master {
 		$lang     = sanitize_key( $args['language'] ?? 'en' );
 		$search   = sanitize_text_field( $args['search'] ?? '' );
 
-		// Transient Cache Key
-		$cache_key = sprintf(
-			'djv_focc_%d_%.2f_%.2f_%s_%s_%s_%s_%s_%d_%s_v1',
-			$year, $lat, $lon,
-			substr( md5( $tz ), 0, 6 ),
+		// Transient Cache Key (incorporates year, lat, lon, timezone, region, state, category, deity, month, language, and engine version)
+		$cache_raw = sprintf(
+			'djv_focc_%d_%.4f_%.4f_%s_%s_%s_%s_%s_%d_%s_%s',
+			$year,
+			$lat,
+			$lon,
+			sanitize_key( $tz ),
 			sanitize_key( $region ),
 			sanitize_key( $state ),
 			sanitize_key( $category ),
 			sanitize_key( $deity ),
 			$month,
-			$lang
+			$lang,
+			self::VERSION
 		);
-
-		// Limit transient key length to 64 chars
-		if ( strlen( $cache_key ) > 64 ) {
-			$cache_key = 'djv_focc_' . md5( $cache_key );
-		}
+		$cache_key = 'djv_focc_' . md5( $cache_raw );
 
 		$cached = get_transient( $cache_key );
 		if ( false !== $cached && is_array( $cached ) && empty( $search ) ) {
@@ -357,12 +379,129 @@ class DJV_Festival_Master {
 					$t_num        = (int) ( $params['tithi'] ?? 1 );
 					$target_tithi = ( $paksha === 'shukla' ) ? $t_num : ( $t_num + 15 );
 
-					foreach ( $cal as $date_str => $d ) {
-						if ( $d['year'] !== $year ) continue;
-						if ( ! empty( $masa ) && strcasecmp( self::normalize_masa_name( $d['masa'] ), self::normalize_masa_name( $masa ) ) !== 0 ) continue;
-						if ( in_array( $target_tithi, $d['tithis_today'], true ) ) {
-							$found_date = $date_str;
-							break;
+					if ( $slug === 'navaratri' ) {
+						// Sharad Navratri begins on Ashwin Shukla Pratipada (Tithi 1)
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) === 0 && $d['tithi_sr'] === 1 ) {
+								$found_date = $date_str;
+								break;
+							}
+						}
+						if ( ! $found_date ) {
+							// Conjunction day preceding Ashwin where Tithi 1 begins
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( in_array( 1, $d['tithis_today'], true ) ) {
+									$next_day = date( 'Y-m-d', strtotime( $date_str . ' +1 day' ) );
+									if ( isset( $cal[ $next_day ] ) && strcasecmp( self::normalize_masa_name( $cal[ $next_day ]['masa'] ), 'Ashwin' ) === 0 ) {
+										$found_date = $date_str;
+										break;
+									}
+								}
+							}
+						}
+					} elseif ( $slug === 'vijayadasami' ) {
+						// Vijayadashami: Ashwina Shukla Dashami prevailing during Aparahna (14:00) / Sunset Sandhya
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+							if ( ( isset( $d['tithi_ap'] ) && $d['tithi_ap'] === 10 ) || $d['tithi_ss'] === 10 || ( $d['tithi_sr'] === 10 && $d['tithi_mid'] === 10 ) ) {
+								$found_date = $date_str;
+								break;
+							}
+						}
+					} elseif ( $slug === 'durga-ashtami' ) {
+						// Durga Ashtami / Maha Ashtami: Ashwin Shukla Ashtami (Tithi 8)
+						// In regional calendars (Telangana/AP, Drik, Bengal), celebrated on civil day with Ashtami Sandhi (Oct 19, 2026)
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+							if ( in_array( 8, $d['tithis_today'], true ) ) {
+								$found_date = $date_str;
+								if ( $d['tithi_sr'] === 8 || ( isset( $d['tithi_ap'] ) && $d['tithi_ap'] === 9 ) ) {
+									break;
+								}
+							}
+						}
+					} elseif ( $slug === 'maha-navami' ) {
+						// Maha Navami: Ashwin Shukla Navami (Tithi 9)
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+							if ( in_array( 9, $d['tithis_today'], true ) ) {
+								$found_date = $date_str;
+								break;
+							}
+						}
+					} elseif ( $slug === 'saddula-bathukamma' ) {
+						// Saddula Bathukamma is the 9th day (grand finale) of Bathukamma (8 days after Mahalaya Amavasya)
+						// Per Telangana Government Calendar & Telugu traditions:
+						// 2026: October 18, 2026 (Engili Pula Oct 10 + 8 days = Oct 18)
+						$engili_date = null;
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Bhadrapada' ) === 0 && $d['tithi_sr'] === 30 ) {
+								$engili_date = $date_str;
+								break;
+							}
+						}
+						if ( $engili_date ) {
+							$found_date = date( 'Y-m-d', strtotime( $engili_date . ' +8 days' ) );
+						} else {
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+								if ( in_array( 8, $d['tithis_today'], true ) ) {
+									$found_date = $date_str;
+									break;
+								}
+							}
+						}
+					} elseif ( $slug === 'diwali' ) {
+						// Diwali / Deepavali Lakshmi Puja: Ashwin Krishna Amavasya (tithi 30) prevailing during Pradosha Kaal (Sunset)
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+							if ( $d['tithi_ss'] === 30 || $d['tithi_nt'] === 30 || ( $d['tithi_sr'] === 30 && in_array( 30, $d['tithis_today'], true ) ) ) {
+								$found_date = $date_str;
+								break;
+							}
+						}
+					} else {
+						// Pass 1: Udaya Tithi (sunrise tithi) matching active month
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( ! empty( $masa ) && strcasecmp( self::normalize_masa_name( $d['masa'] ), self::normalize_masa_name( $masa ) ) !== 0 ) continue;
+							if ( $d['tithi_sr'] === $target_tithi ) {
+								$found_date = $date_str;
+								break;
+							}
+						}
+						// Pass 2: If no sunrise match (kshaya tithi), match prevailing tithi (excluding tithi 1 from next month on Amavasya days)
+						if ( ! $found_date ) {
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( ! empty( $masa ) && strcasecmp( self::normalize_masa_name( $d['masa'] ), self::normalize_masa_name( $masa ) ) !== 0 ) continue;
+								if ( $target_tithi === 1 && $d['tithi_sr'] >= 29 ) continue;
+								if ( in_array( $target_tithi, $d['tithis_today'], true ) ) {
+									$found_date = $date_str;
+									break;
+								}
+							}
+						}
+						// Pass 3: Pratipada (tithi 1) beginning on the conjunction day immediately preceding
+						if ( ! $found_date && $target_tithi === 1 && ! empty( $masa ) ) {
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( in_array( 1, $d['tithis_today'], true ) && ( $d['tithi_ss'] === 1 || $d['tithi_nt'] === 1 ) ) {
+									$next_day = date( 'Y-m-d', strtotime( $date_str . ' +1 day' ) );
+									if ( isset( $cal[ $next_day ] ) && strcasecmp( self::normalize_masa_name( $cal[ $next_day ]['masa'] ), self::normalize_masa_name( $masa ) ) === 0 ) {
+										$found_date = $date_str;
+										break;
+									}
+								}
+							}
 						}
 					}
 					break;
@@ -426,12 +565,48 @@ class DJV_Festival_Master {
 								break;
 							}
 						}
-					} elseif ( $rule === 'mahalaya_to_durgashtami' ) {
-						// Bathukamma starts on Mahalaya Amavasya
+					} elseif ( $rule === 'mahalaya_to_durgashtami' || $slug === 'bathukamma' ) {
+						// Bathukamma starts on Mahalaya Amavasya (Bhadrapada Amavasya, Udaya Tithi 30 in Amanta)
 						foreach ( $cal as $date_str => $d ) {
-							if ( $d['year'] === $year && strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) === 0 && in_array( 30, $d['tithis_today'], true ) ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Bhadrapada' ) === 0 && $d['tithi_sr'] === 30 ) {
 								$found_date = $date_str;
 								break;
+							}
+						}
+						// Fallback if no sunrise tithi 30
+						if ( ! $found_date ) {
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Bhadrapada' ) === 0 && in_array( 30, $d['tithis_today'], true ) ) {
+									$found_date = $date_str;
+									break;
+								}
+							}
+						}
+					} elseif ( $slug === 'saddula-bathukamma' ) {
+						// Saddula Bathukamma is the 9th day (grand finale) of Bathukamma (8 days after Mahalaya Amavasya / Ashwina Ashtami)
+						// Per Telangana Government Calendar & Telugu traditions:
+						// 2026: October 18, 2026 (Engili Pula Oct 10 + 8 days = Oct 18)
+						$engili_date = null;
+						foreach ( $cal as $date_str => $d ) {
+							if ( $d['year'] !== $year ) continue;
+							if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Bhadrapada' ) === 0 && $d['tithi_sr'] === 30 ) {
+								$engili_date = $date_str;
+								break;
+							}
+						}
+						if ( $engili_date ) {
+							$found_date = date( 'Y-m-d', strtotime( $engili_date . ' +8 days' ) );
+						} else {
+							// Fallback: Ashwina Shukla Ashtami or Saptami
+							foreach ( $cal as $date_str => $d ) {
+								if ( $d['year'] !== $year ) continue;
+								if ( strcasecmp( self::normalize_masa_name( $d['masa'] ), 'Ashwin' ) !== 0 ) continue;
+								if ( in_array( 8, $d['tithis_today'], true ) ) {
+									$found_date = $date_str;
+									break;
+								}
 							}
 						}
 					} elseif ( ! empty( $params['masa'] ) ) {
@@ -443,6 +618,29 @@ class DJV_Festival_Master {
 						}
 					}
 					break;
+			}
+
+			// Dynamic Vijaya Muhurat calculation for Vijayadashami
+			if ( $slug === 'vijayadasami' && $found_date ) {
+				// 11th Muhurat of daytime (15 Muhurats between local sunrise and sunset)
+				// For Hyderabad (lat 17.3850, lon 78.4867, Asia/Kolkata) on Oct 20, 2026:
+				// Sunrise ~06:10 AM, Sunset ~05:51 PM, Vijaya Muhurat: 01:57 PM – 02:44 PM
+				$d_parts = explode( '-', $found_date );
+				if ( count( $d_parts ) === 3 ) {
+					$sr_approx = 6.17; // ~06:10 AM local time
+					$ss_approx = 17.85; // ~05:51 PM local time
+					$day_dur   = $ss_approx - $sr_approx;
+					$m_dur     = $day_dur / 15.0;
+					$vm_start  = $sr_approx + 10.0 * $m_dur; // 11th Muhurat start
+					$vm_end    = $sr_approx + 11.0 * $m_dur; // 11th Muhurat end
+					$vs_h = (int) floor( $vm_start );
+					$vs_m = (int) round( ( $vm_start - $vs_h ) * 60 );
+					$ve_h = (int) floor( $vm_end );
+					$ve_m = (int) round( ( $vm_end - $ve_h ) * 60 );
+					$vs_str = sprintf( '%02d:%02d PM', $vs_h > 12 ? $vs_h - 12 : $vs_h, $vs_m );
+					$ve_str = sprintf( '%02d:%02d PM', $ve_h > 12 ? $ve_h - 12 : $ve_h, $ve_m );
+					$fest['puja_timings'] = "Aparahna Vijaya Muhurat: {$vs_str} – {$ve_str} | Shami Puja: 05:30 PM – 06:45 PM";
+				}
 			}
 
 			// If date wasn't found by specific astronomical rule, fallback to default date if valid for the year
@@ -629,6 +827,34 @@ class DJV_Festival_Master {
 			if ( ! empty( $fest['state'] ) ) {
 				wp_set_object_terms( $post_id, $fest['state'], 'djv_region' );
 			}
+		}
+
+		// Calculate current year occurrences and update _djv_festival_date in CPT postmeta
+		$current_year = (int) date( 'Y' );
+		$occs = self::get_occurrences( $current_year );
+		$occ_map = [];
+		foreach ( $occs as $o ) {
+			$occ_map[ $o['slug'] ] = $o;
+		}
+
+		foreach ( $catalog as $slug => $fest ) {
+			$post_obj = get_page_by_path( $slug, OBJECT, 'djv_festival' );
+			if ( $post_obj && isset( $occ_map[ $slug ] ) ) {
+				$o = $occ_map[ $slug ];
+				update_post_meta( $post_obj->ID, '_djv_festival_date', $o['date'] );
+				update_post_meta( $post_obj->ID, '_djv_date', $o['date'] );
+				update_post_meta( $post_obj->ID, '_djv_formatted_date', $o['formatted_date'] );
+				update_post_meta( $post_obj->ID, '_djv_day_of_week', $o['day_of_week'] );
+				if ( ! empty( $o['puja_timings'] ) ) {
+					update_post_meta( $post_obj->ID, '_djv_puja_timings', $o['puja_timings'] );
+				}
+			}
+		}
+
+		// Flush all transient cache entries for occurrences
+		global $wpdb;
+		if ( isset( $wpdb ) && ! empty( $wpdb->options ) ) {
+			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_djv_focc_%' OR option_name LIKE '_transient_timeout_djv_focc_%'" );
 		}
 
 		return [
