@@ -327,6 +327,17 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
         <!-- ── Related Festivals & Poojas (Reciprocal Internal Link Graph) ── -->
         <?php
         $mantra_slug = get_post_field( 'post_name', $post_id );
+        $alt_slug    = ( strpos( $mantra_slug, 'maha-' ) !== false ) ? str_replace( 'maha-', 'maha', $mantra_slug ) : str_replace( 'mahamrityunjaya', 'maha-mrityunjaya', $mantra_slug );
+        $all_slugs   = array_unique( [ $mantra_slug, $alt_slug ] );
+
+        $slug_meta_conditions = [ 'relation' => 'OR' ];
+        foreach ( $all_slugs as $sl ) {
+          $slug_meta_conditions[] = [
+            'key'     => '_djv_related_mantras',
+            'value'   => $sl,
+            'compare' => 'LIKE',
+          ];
+        }
 
         // 1. Query festivals prioritizing both mantra relationship and matching deity
         $deity_slugs = wp_get_post_terms( $post_id, 'djv_deity', [ 'fields' => 'slugs' ] );
@@ -340,13 +351,7 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
           'post_type'      => 'djv_festival',
           'posts_per_page' => 2,
           'post_status'    => 'publish',
-          'meta_query'     => [
-            [
-              'key'     => '_djv_related_mantras',
-              'value'   => $mantra_slug,
-              'compare' => 'LIKE',
-            ]
-          ]
+          'meta_query'     => $slug_meta_conditions,
         ];
         if ( ! empty( $search_terms ) ) {
           $fest_args['tax_query'] = [
@@ -371,13 +376,7 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
             'post_type'      => 'djv_festival',
             'posts_per_page' => 2,
             'post_status'    => 'publish',
-            'meta_query'     => [
-              [
-                'key'     => '_djv_related_mantras',
-                'value'   => $mantra_slug,
-                'compare' => 'LIKE',
-              ]
-            ]
+            'meta_query'     => $slug_meta_conditions,
           ]);
         }
 
@@ -386,13 +385,7 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
           'post_type'      => 'djv_pooja',
           'posts_per_page' => 2,
           'post_status'    => 'publish',
-          'meta_query'     => [
-            [
-              'key'     => '_djv_related_mantras',
-              'value'   => $mantra_slug,
-              'compare' => 'LIKE',
-            ]
-          ]
+          'meta_query'     => $slug_meta_conditions,
         ];
         if ( ! empty( $search_terms ) ) {
           $pooja_args['tax_query'] = [
@@ -417,13 +410,7 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
             'post_type'      => 'djv_pooja',
             'posts_per_page' => 2,
             'post_status'    => 'publish',
-            'meta_query'     => [
-              [
-                'key'     => '_djv_related_mantras',
-                'value'   => $mantra_slug,
-                'compare' => 'LIKE',
-              ]
-            ]
+            'meta_query'     => $slug_meta_conditions,
           ]);
         }
         ?>

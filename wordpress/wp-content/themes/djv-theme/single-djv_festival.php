@@ -304,6 +304,10 @@ if ( class_exists( 'DJV_Panchangam' ) ) {
               <?php
               foreach ( $related_mantra_slugs as $m_slug ) :
                 $m_post = get_page_by_path( $m_slug, OBJECT, 'djv_mantra' );
+                if ( ! $m_post && strpos( $m_slug, 'mrityunjaya' ) !== false ) {
+                  $alt = ( strpos( $m_slug, 'maha-' ) !== false ) ? str_replace( 'maha-', 'maha', $m_slug ) : str_replace( 'mahamrityunjaya', 'maha-mrityunjaya', $m_slug );
+                  $m_post = get_page_by_path( $alt, OBJECT, 'djv_mantra' );
+                }
                 if ( $m_post ) :
                   $m_sans = get_post_meta( $m_post->ID, '_djv_sanskrit_text', true ) ?: get_post_meta( $m_post->ID, '_djv_original_text', true );
                   $m_tel  = get_post_meta( $m_post->ID, '_djv_telugu_title', true );
