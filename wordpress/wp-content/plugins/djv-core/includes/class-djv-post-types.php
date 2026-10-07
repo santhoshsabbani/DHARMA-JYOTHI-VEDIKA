@@ -232,6 +232,36 @@ class DJV_Post_Types {
 			'rewrite'      => [ 'slug' => 'festival-category' ],
 		] );
 
+		// State / Region taxonomy (Telangana, Andhra Pradesh, Karnataka, Tamil Nadu, Kerala, Maharashtra, Gujarat, etc.)
+		register_taxonomy( 'djv_state', [ 'djv_festival' ], [
+			'labels' => [
+				'name'          => __( 'States & Regions', 'djv-core' ),
+				'singular_name' => __( 'State / Region', 'djv-core' ),
+				'all_items'     => __( 'All States', 'djv-core' ),
+				'edit_item'     => __( 'Edit State', 'djv-core' ),
+				'add_new_item'  => __( 'Add New State', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'state' ],
+		] );
+
+		// Rule Type taxonomy (lunar_tithi, solar_transit, ekadashi, pradosham, etc.)
+		register_taxonomy( 'djv_rule_type', [ 'djv_festival' ], [
+			'labels' => [
+				'name'          => __( 'Festival Rule Types', 'djv-core' ),
+				'singular_name' => __( 'Rule Type', 'djv-core' ),
+				'all_items'     => __( 'All Rule Types', 'djv-core' ),
+				'edit_item'     => __( 'Edit Rule Type', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Rule Type', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => false,
+			'rewrite'      => [ 'slug' => 'rule-type' ],
+		] );
+
 		// Pooja Category taxonomy (Popular Poojas, Festival Poojas, Daily Poojas, Deity Poojas, Vratam)
 		register_taxonomy( 'djv_pooja_cat', [ 'djv_pooja' ], [
 			'labels' => [
@@ -303,9 +333,9 @@ class DJV_Post_Types {
 		}
 
 		$festivals_version = intval( get_option( 'djv_festivals_db_version', 0 ) );
-		if ( $festivals_version < 3 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
+		if ( $festivals_version < 4 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
 			self::sync_festivals_data();
-			update_option( 'djv_festivals_db_version', 3 );
+			update_option( 'djv_festivals_db_version', 4 );
 		}
 
 		$pooja_version = intval( get_option( 'djv_pooja_db_version', 0 ) );
@@ -392,98 +422,14 @@ class DJV_Post_Types {
 	}
 
 	/**
-	 * Canonical Festivals Sync: Updates existing festivals and inserts new ones without duplicates.
+	 * Canonical Festivals Sync: Synchronizes all 509 Master definitions into djv_festival CPT.
 	 */
 	public static function sync_festivals_data(): array {
-		require_once __DIR__ . '/data-festivals.php';
-		$festivals = djv_get_canonical_festivals();
-		$updated = 0;
-		$created = 0;
-
-		foreach ( $festivals as $f ) {
-			$existing = get_page_by_path( $f['slug'], OBJECT, 'djv_festival' );
-			if ( $existing ) {
-				$post_id = $existing->ID;
-				wp_update_post([
-					'ID'           => $post_id,
-					'post_title'   => $f['title'],
-					'post_name'    => $f['slug'],
-					'post_content' => $f['content_en'],
-					'post_excerpt' => $f['excerpt'],
-					'post_status'  => 'publish',
-				]);
-				$updated++;
-			} else {
-				$post_id = wp_insert_post([
-					'post_title'   => $f['title'],
-					'post_name'    => $f['slug'],
-					'post_content' => $f['content_en'],
-					'post_excerpt' => $f['excerpt'],
-					'post_status'  => 'publish',
-					'post_type'    => 'djv_festival',
-				]);
-				$created++;
-			}
-
-			if ( $post_id && ! is_wp_error( $post_id ) ) {
-				// Trilingual titles & contents
-				update_post_meta( $post_id, '_djv_title_en', $f['title_en'] );
-				update_post_meta( $post_id, '_djv_title_te', $f['title_te'] );
-				update_post_meta( $post_id, '_djv_title_hi', $f['title_hi'] );
-				update_post_meta( $post_id, '_djv_telugu_name', $f['title_te'] ); // legacy key
-
-				update_post_meta( $post_id, '_djv_content_en', $f['content_en'] );
-				update_post_meta( $post_id, '_djv_content_te', $f['content_te'] );
-				update_post_meta( $post_id, '_djv_content_hi', $f['content_hi'] );
-
-				update_post_meta( $post_id, '_djv_description_en', $f['excerpt'] );
-				update_post_meta( $post_id, '_djv_description_te', $f['content_te'] );
-				update_post_meta( $post_id, '_djv_description_hi', $f['content_hi'] );
-
-				// Details
-				update_post_meta( $post_id, '_djv_significance', $f['significance'] );
-				update_post_meta( $post_id, '_djv_history', $f['history'] );
-				update_post_meta( $post_id, '_djv_puja_timings', $f['puja_timings'] );
-				update_post_meta( $post_id, '_djv_samagri', $f['samagri'] );
-				update_post_meta( $post_id, '_djv_naivedyam', $f['naivedyam'] );
-				update_post_meta( $post_id, '_djv_vrat_rules', $f['vrat_rules'] );
-				update_post_meta( $post_id, '_djv_dos', $f['dos'] );
-				update_post_meta( $post_id, '_djv_donts', $f['donts'] );
-
-				update_post_meta( $post_id, '_djv_month', $f['month'] );
-				update_post_meta( $post_id, '_djv_tithi_rule', $f['tithi_rule'] );
-				update_post_meta( $post_id, '_djv_festival_date', $f['date_default'] );
-				update_post_meta( $post_id, '_djv_is_major', ! empty( $f['is_major'] ) ? '1' : '0' );
-				update_post_meta( $post_id, '_djv_is_telugu', ! empty( $f['is_telugu'] ) ? '1' : '0' );
-
-				// Relationships
-				update_post_meta( $post_id, '_djv_related_poojas', $f['related_poojas'] );
-				update_post_meta( $post_id, '_djv_related_mantras', $f['related_mantras'] );
-
-				// SEO Trilingual
-				update_post_meta( $post_id, '_djv_seo_title_en', $f['seo_title_en'] );
-				update_post_meta( $post_id, '_djv_seo_title_te', $f['seo_title_te'] );
-				update_post_meta( $post_id, '_djv_seo_title_hi', $f['seo_title_hi'] );
-				update_post_meta( $post_id, '_djv_seo_desc_en', $f['seo_desc_en'] );
-				update_post_meta( $post_id, '_djv_seo_desc_te', $f['seo_desc_te'] );
-				update_post_meta( $post_id, '_djv_seo_desc_hi', $f['seo_desc_hi'] );
-
-				// Taxonomies
-				if ( ! empty( $f['deity_slug'] ) ) {
-					wp_set_object_terms( $post_id, $f['deity_slug'], 'djv_deity' );
-				}
-				if ( ! empty( $f['categories'] ) ) {
-					wp_set_object_terms( $post_id, $f['categories'], 'djv_festival_cat' );
-					wp_set_object_terms( $post_id, $f['categories'], 'djv_festival_type' ); // legacy support
-				}
-			}
+		if ( class_exists( 'DJV_Festival_Master' ) ) {
+			return DJV_Festival_Master::sync_master_to_cpt();
 		}
-
-		return [
-			'total'   => count( $festivals ),
-			'updated' => $updated,
-			'created' => $created,
-		];
+		require_once __DIR__ . '/class-djv-festival-master.php';
+		return DJV_Festival_Master::sync_master_to_cpt();
 	}
 
 	/**

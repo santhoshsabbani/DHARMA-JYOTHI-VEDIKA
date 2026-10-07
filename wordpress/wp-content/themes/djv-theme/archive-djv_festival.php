@@ -131,6 +131,32 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
 
     <!-- ── Filter & Search Controls ── -->
     <div class="festival-controls" style="margin-bottom: 2rem;">
+
+      <!-- ── Year Selector Bar: ‹ 2025  2026  2027  2028  2029  2030 › ── -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="djv-year-bar" id="djv-year-selector" style="background: #FFF; border: 1.5px solid var(--clr-border, #E8DFD3); border-radius: 9999px; padding: 0.35rem 0.6rem; display: inline-flex; align-items: center; gap: 0.3rem; box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--clr-text-muted, #7A6F68); padding: 0 0.4rem; text-transform: uppercase;">📅 Year:</span>
+          <button type="button" class="djv-year-nav" id="djv-year-prev-btn" style="border:none;background:transparent;color:var(--clr-primary, #7A2419);font-size:1.2rem;font-weight:700;cursor:pointer;padding:0.2rem 0.5rem;border-radius:9999px;line-height:1;" title="Previous Year">‹</button>
+          <?php
+          $current_page_year = (int) date( 'Y' );
+          foreach ( [ 2025, 2026, 2027, 2028, 2029, 2030 ] as $y_btn ) :
+            $is_active = ( $y_btn === $current_page_year );
+          ?>
+            <button type="button" class="djv-year-btn <?php echo $is_active ? 'active' : ''; ?>" data-year="<?php echo esc_attr( $y_btn ); ?>"
+                    style="border:none;background:<?php echo $is_active ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $is_active ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;">
+              <?php echo esc_html( $y_btn ); ?>
+            </button>
+          <?php endforeach; ?>
+          <button type="button" class="djv-year-nav" id="djv-year-next-btn" style="border:none;background:transparent;color:var(--clr-primary, #7A2419);font-size:1.2rem;font-weight:700;cursor:pointer;padding:0.2rem 0.5rem;border-radius:9999px;line-height:1;" title="Next Year">›</button>
+        </div>
+
+        <div id="djv-year-indicator" style="font-size: 0.85rem; font-weight: 600; color: var(--clr-text-muted, #7A6F68);">
+          <span class="djv-lang-field" data-lang="en">Calculated for Year <strong id="djv-current-year-label" style="color:var(--clr-primary, #7A2419);"><?php echo esc_html( $current_page_year ); ?></strong></span>
+          <span class="djv-lang-field" data-lang="te" style="display:none;"><strong id="djv-current-year-label-te" style="color:var(--clr-primary, #7A2419);"><?php echo esc_html( $current_page_year ); ?></strong> సంవత్సర పంచాంగ పండుగలు</span>
+          <span class="djv-lang-field" data-lang="hi" style="display:none;">वर्ष <strong id="djv-current-year-label-hi" style="color:var(--clr-primary, #7A2419);"><?php echo esc_html( $current_page_year ); ?></strong> के प्रामाणिक व्रत एवं त्योहार</span>
+        </div>
+      </div>
+
       <!-- Search Box -->
       <div style="position: relative; margin-bottom: 1.25rem; max-width: 600px;">
         <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--clr-text-muted, #7A6F68);">🔍</span>
@@ -294,6 +320,207 @@ document.addEventListener('DOMContentLoaded', function() {
       filterFestivals();
     });
   });
+
+  // ── Dynamic Year Selector Engine ──
+  const availableYears = [ 2025, 2026, 2027, 2028, 2029, 2030 ];
+  let currentYear = <?php echo (int) $current_page_year; ?>;
+  const grid = document.getElementById('djv-festival-grid');
+
+  function updateYearButtonStyles(year) {
+    document.querySelectorAll('.djv-year-btn').forEach(btn => {
+      const btnYear = parseInt(btn.getAttribute('data-year'), 10);
+      if (btnYear === year) {
+        btn.classList.add('active');
+        btn.style.background = 'var(--clr-primary, #7A2419)';
+        btn.style.color = '#FFF';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--clr-text, #2A1F1D)';
+      }
+    });
+
+    const lEn = document.getElementById('djv-current-year-label');
+    const lTe = document.getElementById('djv-current-year-label-te');
+    const lHi = document.getElementById('djv-current-year-label-hi');
+    if (lEn) lEn.textContent = year;
+    if (lTe) lTe.textContent = year;
+    if (lHi) lHi.textContent = year;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function renderFestivalCard(f) {
+    const titleEn = f.title_en || f.title || '';
+    const titleTe = f.title_te || '';
+    const titleHi = f.title_hi || '';
+    const dateFormatted = f.formatted_date || (f.date ? f.date : '');
+    const tithiRule = f.tithi_rule || '';
+    const link = f.link || '#';
+    const excerpt = f.excerpt || f.content_en || '';
+    const category = (f.categories && f.categories.length) ? f.categories[0] : '';
+
+    // Date badge (e.g. "OCT 20")
+    let badge = '';
+    if (f.date) {
+      const dParts = f.date.split('-');
+      if (dParts.length === 3) {
+        const dObj = new Date(parseInt(dParts[0]), parseInt(dParts[1]) - 1, parseInt(dParts[2]));
+        badge = dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+      }
+    }
+
+    // Filter classes
+    const classes = ['festival-card', 'djv-filter-item'];
+    if (f.deity_slug) classes.push(f.deity_slug);
+    if (f.is_major) classes.push('major-festivals');
+    if (f.is_telugu) classes.push('regional');
+    if (f.categories) {
+      f.categories.forEach(c => {
+        const cSlug = c.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        classes.push(cSlug);
+      });
+    }
+    const filterClassStr = Array.from(new Set(classes)).join(' ');
+
+    return `
+      <div class="${filterClassStr}" id="festival-card-${f.id || f.slug}"
+           data-title-en="${escapeHtml(titleEn.toLowerCase())}"
+           data-title-te="${escapeHtml(titleTe.toLowerCase())}"
+           data-title-hi="${escapeHtml(titleHi.toLowerCase())}"
+           style="border:1px solid var(--clr-border, #E8DFD3);background:#FFF;border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));position:relative;display:flex;flex-direction:column;transition:transform 0.2s,box-shadow 0.2s;">
+        
+        ${badge ? `
+          <span class="festival-card-badge" style="position:absolute;top:1rem;right:1rem;background:var(--clr-primary, #7A2419);color:#FFF;padding:0.25rem 0.65rem;border-radius:0.4rem;font-size:0.72rem;font-weight:700;letter-spacing:0.04em;">
+            ${escapeHtml(badge)}
+          </span>
+        ` : ''}
+
+        <div style="width:48px;height:48px;background:rgba(200,148,50,0.12);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.75rem;margin-bottom:0.85rem;" aria-hidden="true">
+          🪔
+        </div>
+
+        <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.35rem 0;line-height:1.35;">
+          <a href="${escapeHtml(link)}" style="color:inherit;text-decoration:none;">
+            <span class="djv-lang-field" data-lang="en">${escapeHtml(titleEn)}</span>
+            <span class="djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu, sans-serif);">${escapeHtml(titleTe || titleEn)}</span>
+            <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari', serif;">${escapeHtml(titleHi || titleEn)}</span>
+          </a>
+        </h3>
+
+        ${titleTe ? `
+          <div class="festival-card-te-sub djv-lang-field" data-lang="en" style="font-family:var(--font-telugu, sans-serif);font-size:0.92rem;color:var(--clr-accent, #C89432);font-weight:600;margin-bottom:0.4rem;">
+            ${escapeHtml(titleTe)}
+          </div>
+        ` : ''}
+
+        ${dateFormatted ? `
+          <div style="font-size:0.85rem;color:var(--clr-primary, #7A2419);font-weight:600;margin-bottom:0.4rem;">
+            📅 ${escapeHtml(dateFormatted)}
+          </div>
+        ` : ''}
+
+        ${tithiRule ? `
+          <div style="font-size:0.78rem;color:var(--clr-text-muted, #7A6F68);margin-bottom:0.6rem;line-height:1.4;">
+            🌙 ${escapeHtml(tithiRule)}
+          </div>
+        ` : ''}
+
+        <p style="font-size:0.875rem;color:var(--clr-text-secondary, #55433C);line-height:1.6;margin:0 0 1rem 0;flex:1;">
+          ${escapeHtml(excerpt)}
+        </p>
+
+        <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;">
+          <a href="${escapeHtml(link)}" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;">
+            <span class="djv-lang-field" data-lang="en">View Vidhi &amp; Muhurat →</span>
+            <span class="djv-lang-field" data-lang="te" style="display:none;">పూజా విధానం &amp; ముహూర్తం →</span>
+            <span class="djv-lang-field" data-lang="hi" style="display:none;">पूजा विधि एवं मुहूर्त →</span>
+          </a>
+          ${category ? `
+            <span style="font-size:0.72rem;background:#FFF9F0;color:var(--clr-text-muted, #7A6F68);padding:0.2rem 0.5rem;border-radius:0.25rem;border:1px solid var(--clr-border, #E8DFD3);">
+              ${escapeHtml(category)}
+            </span>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function switchYear(targetYear) {
+    currentYear = targetYear;
+    updateYearButtonStyles(targetYear);
+
+    if (grid) {
+      grid.style.opacity = '0.5';
+    }
+
+    fetch(`/wp-json/djv/v1/festivals?year=${targetYear}&language=${currentLang}`)
+      .then(res => res.json())
+      .then(payload => {
+        if (!payload.success || !Array.isArray(payload.data)) {
+          console.warn('DJV: Could not fetch year occurrences', payload);
+          if (grid) grid.style.opacity = '1';
+          return;
+        }
+
+        const occurrences = payload.data;
+        if (grid) {
+          if (occurrences.length === 0) {
+            grid.innerHTML = `
+              <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: #FFF; border-radius: 1rem; border: 1px solid var(--clr-border, #E8DFD3);">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🪔</div>
+                <h3>No festivals calculated for ${targetYear}</h3>
+                <p style="color: var(--clr-text-muted, #7A6F68);">Please select another year.</p>
+              </div>
+            `;
+          } else {
+            grid.innerHTML = occurrences.map(renderFestivalCard).join('');
+          }
+          grid.style.opacity = '1';
+        }
+
+        // Re-apply language and category filter on newly rendered cards
+        applyLanguage(currentLang);
+        filterFestivals();
+      })
+      .catch(err => {
+        console.error('DJV: Year fetch error:', err);
+        if (grid) grid.style.opacity = '1';
+      });
+  }
+
+  // Bind year buttons
+  document.querySelectorAll('.djv-year-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const yr = parseInt(this.getAttribute('data-year'), 10);
+      if (yr && yr !== currentYear) {
+        switchYear(yr);
+      }
+    });
+  });
+
+  const prevYearBtn = document.getElementById('djv-year-prev-btn');
+  if (prevYearBtn) {
+    prevYearBtn.addEventListener('click', function() {
+      const prevIdx = availableYears.indexOf(currentYear) - 1;
+      if (prevIdx >= 0) {
+        switchYear(availableYears[prevIdx]);
+      }
+    });
+  }
+
+  const nextYearBtn = document.getElementById('djv-year-next-btn');
+  if (nextYearBtn) {
+    nextYearBtn.addEventListener('click', function() {
+      const nextIdx = availableYears.indexOf(currentYear) + 1;
+      if (nextIdx < availableYears.length) {
+        switchYear(availableYears[nextIdx]);
+      }
+    });
+  }
 });
 </script>
 

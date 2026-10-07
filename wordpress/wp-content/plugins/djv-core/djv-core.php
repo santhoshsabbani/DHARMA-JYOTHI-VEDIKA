@@ -39,6 +39,8 @@ require_once DJV_PLUGIN_DIR . 'includes/class-djv-rest-api.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-panchangam.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-admin.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-festivals.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-festival-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-festival-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-poojas.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
@@ -46,6 +48,7 @@ function djv_load(): void {
 	DJV_REST_API::init();
 	if ( is_admin() ) {
 		new DJV_Admin();
+		add_action( 'add_meta_boxes', [ 'DJV_Festival_Master', 'register_admin_metabox' ] );
 	}
 	add_action( DJV_CRON_HOOK, 'djv_run_nightly_precalculate' );
 }

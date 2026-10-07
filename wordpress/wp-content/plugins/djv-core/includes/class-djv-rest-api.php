@@ -42,8 +42,17 @@ class DJV_REST_API {
 			'callback'            => [ __CLASS__, 'get_festivals' ],
 			'permission_callback' => '__return_true',
 			'args'                => [
-				'year'  => [ 'type' => 'integer', 'default' => date('Y') ],
-				'month' => [ 'type' => 'integer', 'default' => 0 ],
+				'year'      => [ 'type' => 'integer', 'default' => (int) date('Y') ],
+				'month'     => [ 'type' => 'integer', 'default' => 0 ],
+				'latitude'  => [ 'type' => 'number', 'default' => 17.3850 ],
+				'longitude' => [ 'type' => 'number', 'default' => 78.4867 ],
+				'timezone'  => [ 'type' => 'string', 'default' => 'Asia/Kolkata' ],
+				'region'    => [ 'type' => 'string', 'default' => 'all' ],
+				'state'     => [ 'type' => 'string', 'default' => 'all' ],
+				'category'  => [ 'type' => 'string', 'default' => 'all' ],
+				'deity'     => [ 'type' => 'string', 'default' => 'all' ],
+				'language'  => [ 'type' => 'string', 'default' => 'en' ],
+				'search'    => [ 'type' => 'string', 'default' => '' ],
 			],
 		] );
 
@@ -284,27 +293,51 @@ class DJV_REST_API {
 	 * GET /djv/v1/festivals
 	 */
 	public static function get_festivals( WP_REST_Request $req ): WP_REST_Response {
-		$year  = intval( $req->get_param( 'year' ) );
-		$month = intval( $req->get_param( 'month' ) );
+		$year     = intval( $req->get_param( 'year' ) ?: date( 'Y' ) );
+		$month    = intval( $req->get_param( 'month' ) ?: 0 );
+		$lat      = floatval( $req->get_param( 'latitude' ) ?: 17.3850 );
+		$lon      = floatval( $req->get_param( 'longitude' ) ?: 78.4867 );
+		$tz       = sanitize_text_field( $req->get_param( 'timezone' ) ?: 'Asia/Kolkata' );
+		$region   = sanitize_text_field( $req->get_param( 'region' ) ?: 'all' );
+		$state    = sanitize_text_field( $req->get_param( 'state' ) ?: 'all' );
+		$category = sanitize_text_field( $req->get_param( 'category' ) ?: 'all' );
+		$deity    = sanitize_text_field( $req->get_param( 'deity' ) ?: 'all' );
+		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		$search   = sanitize_text_field( $req->get_param( 'search' ) ?: '' );
 
 		// Validate year range
-		if ( $year < 2020 || $year > 2100 ) {
-			return self::respond_error( 'Year out of range (2020–2100)', 400 );
+		if ( $year < 1900 || $year > 2200 ) {
+			return self::respond_error( 'Year out of range (1900–2200)', 400 );
 		}
 
-		// Fetch from djv_festival CPT
-		$posts = get_posts( [
-			'post_type'      => 'djv_festival',
-			'posts_per_page' => -1,
-			'post_status'    => 'publish',
+		require_once __DIR__ . '/class-djv-festival-master.php';
+		$occurrences = DJV_Festival_Master::get_occurrences( $year, [
+			'latitude'  => $lat,
+			'longitude' => $lon,
+			'timezone'  => $tz,
+			'region'    => $region,
+			'state'     => $state,
+			'category'  => $category,
+			'deity'     => $deity,
+			'month'     => $month,
+			'language'  => $lang,
+			'search'    => $search,
 		] );
 
-		$festivals = array_map( [ __CLASS__, 'format_festival_post' ], $posts );
-
-		return self::respond( $festivals, [
-			'year'  => $year,
-			'month' => $month,
-			'count' => count( $festivals )
+		return self::respond( $occurrences, [
+			'year'      => $year,
+			'month'     => $month,
+			'location'  => [
+				'city'      => 'Hyderabad',
+				'latitude'  => $lat,
+				'longitude' => $lon,
+				'timezone'  => $tz,
+			],
+			'region'    => $region,
+			'state'     => $state,
+			'category'  => $category,
+			'count'     => count( $occurrences ),
+			'engine'    => 'DJV Astronomical Panchangam Engine v1.0',
 		] );
 	}
 
@@ -313,13 +346,33 @@ class DJV_REST_API {
 	 */
 	public static function get_festival_single( WP_REST_Request $req ): WP_REST_Response {
 		$slug = sanitize_key( $req->get_param( 'slug' ) );
+		$year = intval( $req->get_param( 'year' ) ?: date( 'Y' ) );
 
 		$post = get_page_by_path( $slug, OBJECT, 'djv_festival' );
 		if ( ! $post ) {
 			return self::respond_error( 'Festival not found', 404, 'not_found' );
 		}
 
-		return self::respond( self::format_festival_post( $post ) );
+		$data = self::format_festival_post( $post );
+
+		// Add calculated occurrence for requested year
+		require_once __DIR__ . '/class-djv-festival-master.php';
+		$occurrences = DJV_Festival_Master::get_occurrences( $year, [
+			'latitude'  => floatval( $req->get_param( 'latitude' ) ?: 17.3850 ),
+			'longitude' => floatval( $req->get_param( 'longitude' ) ?: 78.4867 ),
+			'timezone'  => sanitize_text_field( $req->get_param( 'timezone' ) ?: 'Asia/Kolkata' ),
+		] );
+
+		foreach ( $occurrences as $occ ) {
+			if ( $occ['slug'] === $slug ) {
+				$data['year_occurrence'] = $occ;
+				$data['date'] = $occ['date'];
+				$data['formatted_date'] = $occ['formatted_date'];
+				break;
+			}
+		}
+
+		return self::respond( $data );
 	}
 
 	/**
