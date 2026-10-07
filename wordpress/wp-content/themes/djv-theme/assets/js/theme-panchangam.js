@@ -148,9 +148,9 @@
 
   function formatPeriod(period, timezone = 'Asia/Kolkata') {
     if (!period) return '—';
-    if (typeof period === 'string') return period;
-    if (period.text) return period.text;
-    if (period.startStr && period.endStr) return `${period.startStr} – ${period.endStr}`;
+    if (typeof period === 'string') return decodeUnicodeEscapes(period);
+    if (period.text) return decodeUnicodeEscapes(period.text);
+    if (period.startStr && period.endStr) return `${decodeUnicodeEscapes(period.startStr)} – ${decodeUnicodeEscapes(period.endStr)}`;
     if (period.start && period.end) {
       return `${formatTime(period.start, timezone)} – ${formatTime(period.end, timezone)}`;
     }
@@ -254,10 +254,24 @@
 
   function decodeUnicodeEscapes(str) {
     if (!str || typeof str !== 'string') return str;
-    if (str.includes('u0c') || str.includes('u09') || str.includes('\\u')) {
-      return str.replace(/\\?u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+    let s = str;
+    if (s.includes('u2013')) {
+      s = s.replace(/\\?u2013/g, '–');
     }
-    return str;
+    if (s.includes('u0c') || s.includes('u09') || s.includes('\\u')) {
+      s = s.replace(/\\?u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+    }
+    return s;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   /**
@@ -271,6 +285,44 @@
   function setHTML(id, html) {
     const el = document.getElementById(id);
     if (el) el.innerHTML = html;
+  }
+
+  /**
+   * Render timing periods supporting multiple slots (e.g. 2 Dur Muhurtham slots)
+   * Displays each slot clearly on its own line and defaults to '—' if empty.
+   */
+  function renderTimingSlotList(elementId, timingData, timezone = 'Asia/Kolkata') {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    if (!timingData) {
+      el.textContent = '—';
+      return;
+    }
+
+    if (Array.isArray(timingData)) {
+      const validSlots = timingData
+        .map(slot => formatPeriod(slot, timezone))
+        .filter(text => text && text !== '—');
+
+      if (validSlots.length === 0) {
+        el.textContent = '—';
+        return;
+      }
+
+      if (validSlots.length === 1) {
+        el.textContent = decodeUnicodeEscapes(validSlots[0]);
+        return;
+      }
+
+      el.innerHTML = validSlots
+        .map(slot => `<span class="timing-period-slot">${escapeHtml(decodeUnicodeEscapes(slot))}</span>`)
+        .join('');
+      return;
+    }
+
+    const formatted = formatPeriod(timingData, timezone);
+    el.textContent = decodeUnicodeEscapes(formatted || '—');
   }
 
   /**
@@ -409,26 +461,28 @@
       }
 
       // ── 3. Auspicious Timings ──
-      if (data.timings) {
-        setText('val-abhijit', formatPeriod(data.timings.abhijitMuhurtham, tz));
-        setText('val-amritkalam', formatPeriod(data.timings.amritKalam, tz));
-        setText('val-brahmamuhurtham', formatPeriod(data.timings.brahmaMuhurtham, tz));
+      const timings = data.timings || {};
 
-        // ── 4. Inauspicious Timings ──
-        setText('val-rahukalam', formatPeriod(data.timings.rahuKalam, tz));
-        setText('val-yamagandam', formatPeriod(data.timings.yamagandam, tz));
-        setText('val-gulikakalam', formatPeriod(data.timings.gulikaKalam, tz));
+      const abhijit = timings.abhijitMuhurtham || timings.abhijit || timings.abhijit_muhurtham || data.abhijitMuhurtham;
+      const amrit = timings.amritKalam || timings.amrit_kalam || timings.amritakalam || data.amritKalam;
+      const brahma = timings.brahmaMuhurtham || timings.brahma_muhurtham || timings.brahmamuhurtham || data.brahmaMuhurtham;
 
-        if (data.timings.durMuhurtham) {
-          if (Array.isArray(data.timings.durMuhurtham)) {
-            const periods = data.timings.durMuhurtham.map(dm => formatPeriod(dm, tz)).filter(Boolean);
-            setText('val-durmuhurtham', periods.join(' & ') || '—');
-          } else {
-            setText('val-durmuhurtham', formatPeriod(data.timings.durMuhurtham, tz));
-          }
-        }
-        setText('val-varjyam', formatPeriod(data.timings.varjyam, tz));
-      }
+      renderTimingSlotList('val-abhijit', abhijit, tz);
+      renderTimingSlotList('val-amritkalam', amrit, tz);
+      renderTimingSlotList('val-brahmamuhurtham', brahma, tz);
+
+      // ── 4. Inauspicious Timings ──
+      const rahu = timings.rahuKalam || timings.rahukalam || timings.rahu_kalam || data.rahuKalam;
+      const yama = timings.yamagandam || timings.yamaGandam || timings.yamaganda || data.yamagandam;
+      const gulika = timings.gulikaKalam || timings.gulikakalam || timings.gulika || data.gulikaKalam;
+      const dur = timings.durMuhurtham || timings.durMuhurtam || timings.durmuhurtham || timings.dur_muhurtam || timings.durmuhurta || data.durMuhurtham || data.durmuhurtham;
+      const varj = timings.varjyam || timings.tyajyam || timings.varjyamPeriods || timings.varjam || data.varjyam;
+
+      renderTimingSlotList('val-rahukalam', rahu, tz);
+      renderTimingSlotList('val-yamagandam', yama, tz);
+      renderTimingSlotList('val-gulikakalam', gulika, tz);
+      renderTimingSlotList('val-durmuhurtham', dur, tz);
+      renderTimingSlotList('val-varjyam', varj, tz);
 
       // ── 5. Lunar Phase & Illumination ──
       if (data.lunar) {
@@ -578,20 +632,16 @@
       setText('fp-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
 
       // Auspicious & Inauspicious Timings
-      if (data.timings) {
-        if (data.timings.abhijitMuhurtham) {
-          setText('fp-abhijit', formatPeriod(data.timings.abhijitMuhurtham, tz));
-        }
-        if (data.timings.rahuKalam) {
-          setText('fp-rahu', formatPeriod(data.timings.rahuKalam, tz));
-        }
-        if (data.timings.yamagandam) {
-          setText('fp-yamagandam', formatPeriod(data.timings.yamagandam, tz));
-        }
-        if (data.timings.gulikaKalam) {
-          setText('fp-gulika', formatPeriod(data.timings.gulikaKalam, tz));
-        }
-      }
+      const timings = data.timings || {};
+      const fpAbhijit = timings.abhijitMuhurtham || timings.abhijit || timings.abhijit_muhurtham || data.abhijitMuhurtham;
+      const fpRahu = timings.rahuKalam || timings.rahukalam || timings.rahu_kalam || data.rahuKalam;
+      const fpYama = timings.yamagandam || timings.yamaGandam || timings.yamaganda || data.yamagandam;
+      const fpGulika = timings.gulikaKalam || timings.gulikakalam || timings.gulika || data.gulikaKalam;
+
+      renderTimingSlotList('fp-abhijit', fpAbhijit, tz);
+      renderTimingSlotList('fp-rahu', fpRahu, tz);
+      renderTimingSlotList('fp-yamagandam', fpYama, tz);
+      renderTimingSlotList('fp-gulika', fpGulika, tz);
 
       // Footer Location info
       const metaLoc = document.getElementById('fp-meta-location');

@@ -12,7 +12,130 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 
 $today_iso = date( 'Y-m-d' );
+$ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchangam() : null;
 ?>
+
+<style>
+  .pc-controls-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 1rem !important;
+    background: #fff !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 1rem !important;
+    border: 1px solid #e8d5c4 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .pc-location-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    background: rgba(200, 148, 50, 0.12) !important;
+    border: 1px solid rgba(200, 148, 50, 0.35) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 9999px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: #2b1810 !important;
+    cursor: pointer !important;
+    font-family: var(--font-primary, sans-serif) !important;
+    transition: all 0.2s ease !important;
+    line-height: 1.4 !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-shadow: none !important;
+  }
+  .pc-location-pill:hover {
+    background: rgba(200, 148, 50, 0.22) !important;
+    border-color: #7a2419 !important;
+    color: #7a2419 !important;
+  }
+  .pc-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    padding: 0.55rem 0.95rem !important;
+    border-radius: 0.5rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: var(--font-primary, sans-serif) !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid #e8d5c4 !important;
+    background: #fdfaf6 !important;
+    color: #333 !important;
+    text-decoration: none !important;
+    line-height: 1.4 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+  .pc-btn:hover {
+    border-color: #7a2419 !important;
+    color: #7a2419 !important;
+    background: rgba(122, 36, 25, 0.06) !important;
+  }
+  .pc-btn--primary {
+    background: #7a2419 !important;
+    color: #fff !important;
+    border-color: #7a2419 !important;
+  }
+  .pc-btn--primary:hover {
+    background: #5c1a11 !important;
+    border-color: #5c1a11 !important;
+    color: #fff !important;
+  }
+  .pc-date-picker-input {
+    padding: 0.45rem 0.75rem !important;
+    border: 1px solid #e8d5c4 !important;
+    border-radius: 0.5rem !important;
+    font-family: var(--font-primary, sans-serif) !important;
+    font-size: 0.875rem !important;
+    color: #2b1810 !important;
+    background: #fff !important;
+    cursor: pointer !important;
+    outline: none !important;
+  }
+  .pc-date-picker-input:focus {
+    border-color: #7a2419 !important;
+  }
+  .pc-preset-btn {
+    padding: 0.35rem 0.85rem !important;
+    font-size: 0.78rem !important;
+    border-radius: 9999px !important;
+    background: #fff !important;
+    border: 1px solid #e8d5c4 !important;
+    color: #333 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    line-height: 1.4 !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-shadow: none !important;
+  }
+  .pc-preset-btn:hover {
+    background: rgba(122, 36, 25, 0.06) !important;
+    border-color: #7a2419 !important;
+    color: #7a2419 !important;
+  }
+  .timing-period-slot {
+    display: block !important;
+    font-size: 0.95rem !important;
+    line-height: 1.4 !important;
+    margin-top: 0.25rem !important;
+    white-space: nowrap !important;
+  }
+  .timing-period-slot:first-child {
+    margin-top: 0 !important;
+  }
+</style>
 
 <!-- ════════════════════════════════════════════════════════════
      PAGE HERO: TODAY'S PANCHANGAM
@@ -163,22 +286,22 @@ $today_iso = date( 'Y-m-d' );
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌅</span>
             <div class="solar-label"><?php esc_html_e( 'Sunrise (సూర్యోదయం)', 'djv-theme' ); ?></div>
-            <div class="solar-time" id="val-sunrise">—</div>
+            <div class="solar-time" id="val-sunrise"><?php echo esc_html( $ssr_data['solar']['sunriseStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunrise'] ?? null ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌇</span>
             <div class="solar-label"><?php esc_html_e( 'Sunset (సూర్యాస్తమయం)', 'djv-theme' ); ?></div>
-            <div class="solar-time" id="val-sunset">—</div>
+            <div class="solar-time" id="val-sunset"><?php echo esc_html( $ssr_data['solar']['sunsetStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunset'] ?? null ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌕</span>
             <div class="solar-label"><?php esc_html_e( 'Moonrise (చంద్రోదయం)', 'djv-theme' ); ?></div>
-            <div class="solar-time" id="val-moonrise">—</div>
+            <div class="solar-time" id="val-moonrise"><?php echo esc_html( $ssr_data['moonrise']['time'] ?? ( $ssr_data['solar']['moonrise'] ?? djv_format_ssr_time( $ssr_data['moonrise']['datetime'] ?? null ) ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌑</span>
             <div class="solar-label"><?php esc_html_e( 'Moonset (చంద్రాస్తమయం)', 'djv-theme' ); ?></div>
-            <div class="solar-time" id="val-moonset">—</div>
+            <div class="solar-time" id="val-moonset"><?php echo esc_html( $ssr_data['moonset']['time'] ?? ( $ssr_data['solar']['moonset'] ?? djv_format_ssr_time( $ssr_data['moonset']['datetime'] ?? null ) ) ); ?></div>
           </div>
         </div>
 
@@ -286,7 +409,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Abhijit Muhurtham', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'అభిజిత్ ముహూర్తం · 8వ ముహూర్తం (విజయప్రదం)', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--good" id="val-abhijit">—</div>
+                <div class="timing-period timing-period--good" id="val-abhijit"><?php
+                  $ssr_abh = $ssr_data['timings']['abhijitMuhurtham'] ?? null;
+                  echo $ssr_abh ? djv_format_ssr_period_list( $ssr_abh ) : '—';
+                ?></div>
               </div>
 
               <!-- Amrit Kalam -->
@@ -296,7 +422,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Amrit Kalam', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'అమృత కాలం · శుభ ప్రదం', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--good" id="val-amritkalam">—</div>
+                <div class="timing-period timing-period--good" id="val-amritkalam"><?php
+                  $ssr_amr = $ssr_data['timings']['amritKalam'] ?? null;
+                  echo $ssr_amr ? djv_format_ssr_period_list( $ssr_amr ) : '—';
+                ?></div>
               </div>
 
               <!-- Brahma Muhurtham -->
@@ -306,7 +435,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Brahma Muhurtham', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'బ్రహ్మ ముహూర్తం · సూర్యోదయానికి పూర్వం', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--good" id="val-brahmamuhurtham">—</div>
+                <div class="timing-period timing-period--good" id="val-brahmamuhurtham"><?php
+                  $ssr_bm = $ssr_data['timings']['brahmaMuhurtham'] ?? null;
+                  echo $ssr_bm ? djv_format_ssr_period_list( $ssr_bm ) : '—';
+                ?></div>
               </div>
             </div>
           </div>
@@ -329,7 +461,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Rahu Kalam', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'రాహు కాలం · రాహువు అధిపతి', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--warn" id="val-rahukalam">—</div>
+                <div class="timing-period timing-period--warn" id="val-rahukalam"><?php
+                  $ssr_rahu = $ssr_data['timings']['rahuKalam'] ?? null;
+                  echo $ssr_rahu ? djv_format_ssr_period_list( $ssr_rahu ) : '—';
+                ?></div>
               </div>
 
               <!-- Yamagandam -->
@@ -339,7 +474,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Yamagandam', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'యమగండం · యముని అధిపత్యం', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--warn" id="val-yamagandam">—</div>
+                <div class="timing-period timing-period--warn" id="val-yamagandam"><?php
+                  $ssr_yama = $ssr_data['timings']['yamagandam'] ?? null;
+                  echo $ssr_yama ? djv_format_ssr_period_list( $ssr_yama ) : '—';
+                ?></div>
               </div>
 
               <!-- Gulika Kalam -->
@@ -349,7 +487,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Gulika Kalam', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'గుళిక కాలం · శని పుత్ర గుళిక', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--neutral" id="val-gulikakalam">—</div>
+                <div class="timing-period timing-period--neutral" id="val-gulikakalam"><?php
+                  $ssr_gul = $ssr_data['timings']['gulikaKalam'] ?? null;
+                  echo $ssr_gul ? djv_format_ssr_period_list( $ssr_gul ) : '—';
+                ?></div>
               </div>
 
               <!-- Dur Muhurtam -->
@@ -359,7 +500,10 @@ $today_iso = date( 'Y-m-d' );
                   <?php esc_html_e( 'Dur Muhurtam', 'djv-theme' ); ?>
                   <small><?php esc_html_e( 'దుర్ముహూర్తం · నిషిద్ధ సమయం', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--warn" id="val-durmuhurtham">—</div>
+                <div class="timing-period timing-period--warn" id="val-durmuhurtham"><?php
+                  $ssr_dur = $ssr_data['timings']['durMuhurtham'] ?? ( $ssr_data['durMuhurtham'] ?? null );
+                  echo $ssr_dur ? djv_format_ssr_period_list( $ssr_dur ) : '—';
+                ?></div>
               </div>
 
               <!-- Varjyam (Tyajyam) -->
@@ -367,9 +511,12 @@ $today_iso = date( 'Y-m-d' );
                 <span class="timing-icon" aria-hidden="true">⛔</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Varjyam (Tyajyam)', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'వర్జ్యం · త్యాజ్య కాలం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'వర్జ్యం / త్యాజ్యం · త్యాజ్య కాలం', 'djv-theme' ); ?></small>
                 </div>
-                <div class="timing-period timing-period--warn" id="val-varjyam">—</div>
+                <div class="timing-period timing-period--warn" id="val-varjyam"><?php
+                  $ssr_varj = $ssr_data['timings']['varjyam'] ?? ( $ssr_data['varjyam'] ?? null );
+                  echo $ssr_varj ? djv_format_ssr_period_list( $ssr_varj ) : '—';
+                ?></div>
               </div>
             </div>
           </div>

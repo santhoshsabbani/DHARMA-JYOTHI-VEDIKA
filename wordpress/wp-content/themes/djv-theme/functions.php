@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DJV_THEME_VERSION', '1.0.0' );
+define( 'DJV_THEME_VERSION', '1.0.1' );
 define( 'DJV_THEME_DIR', get_template_directory() );
 define( 'DJV_THEME_URI', get_template_directory_uri() );
 
@@ -222,6 +222,9 @@ function djv_format_ssr_period( $period, string $tz = 'Asia/Kolkata' ): string {
 		return $period;
 	}
 	if ( is_array( $period ) ) {
+		if ( isset( $period[0] ) ) {
+			return djv_format_ssr_period( $period[0], $tz );
+		}
 		if ( ! empty( $period['text'] ) ) {
 			return $period['text'];
 		}
@@ -234,6 +237,47 @@ function djv_format_ssr_period( $period, string $tz = 'Asia/Kolkata' ): string {
 			if ( $s !== '—' && $e !== '—' ) {
 				return $s . ' – ' . $e;
 			}
+		}
+	}
+	return '—';
+}
+
+/**
+ * Safely format an array or single timing period into HTML lines.
+ *
+ * @param array|string|null $periods
+ * @param string            $tz
+ * @return string
+ */
+function djv_format_ssr_period_list( $periods, string $tz = 'Asia/Kolkata' ): string {
+	if ( empty( $periods ) ) {
+		return '—';
+	}
+	if ( is_string( $periods ) ) {
+		return esc_html( $periods );
+	}
+	if ( is_array( $periods ) ) {
+		if ( isset( $periods[0] ) ) {
+			$slots = [];
+			foreach ( $periods as $p ) {
+				$formatted = djv_format_ssr_period( $p, $tz );
+				if ( $formatted && $formatted !== '—' ) {
+					$slots[] = $formatted;
+				}
+			}
+			if ( empty( $slots ) ) {
+				return '—';
+			}
+			if ( count( $slots ) === 1 ) {
+				return esc_html( $slots[0] );
+			}
+			$html = '';
+			foreach ( $slots as $slot ) {
+				$html .= '<span class="timing-period-slot">' . esc_html( $slot ) . '</span>';
+			}
+			return $html;
+		} else {
+			return esc_html( djv_format_ssr_period( $periods, $tz ) );
 		}
 	}
 	return '—';

@@ -454,7 +454,7 @@ class DJV_Panchangam {
         update_post_meta( $post_id, '_djv_panchangam_lon',     round( (float)$longitude, 4 ) );
         update_post_meta( $post_id, '_djv_panchangam_tz',      $timezone );
         update_post_meta( $post_id, '_djv_panchangam_version', self::ENGINE_VERSION );
-        update_post_meta( $post_id, '_djv_panchangam_data',    wp_json_encode( $data ) );
+        update_post_meta( $post_id, '_djv_panchangam_data',    wp_slash( wp_json_encode( $data, JSON_UNESCAPED_UNICODE ) ) );
     }
 
     /**
@@ -595,8 +595,39 @@ class DJV_Panchangam {
             }
         }
 
-        // 2. Timings intervals formatting
+        // 2. Timings intervals formatting & missing calculations
         if ( isset( $data['timings'] ) && is_array( $data['timings'] ) ) {
+            // If Dur Muhurtham is missing or empty, calculate using astronomical formula
+            if ( empty( $data['timings']['durMuhurtham'] ) && ! empty( $data['solar']['sunrise'] ) && ! empty( $data['solar']['sunset'] ) ) {
+                $weekday_id = isset( $data['vara']['id'] ) ? (int) $data['vara']['id'] : (int) date( 'w', strtotime( $date ) );
+                $data['timings']['durMuhurtham'] = self::calculate_dur_muhurtham( $data['solar']['sunrise'], $data['solar']['sunset'], $weekday_id, $timezone );
+            }
+
+            // If Brahma Muhurtham is missing or empty, calculate (96 to 48 min before sunrise)
+            if ( empty( $data['timings']['brahmaMuhurtham'] ) && ! empty( $data['solar']['sunrise'] ) ) {
+                $bm = self::calculate_brahma_muhurtham( $data['solar']['sunrise'], $timezone );
+                if ( ! empty( $bm ) ) {
+                    $data['timings']['brahmaMuhurtham'] = $bm;
+                }
+            }
+
+            // If Varjyam or Amrit Kalam is missing, calculate based on Nakshatra
+            if ( ( empty( $data['timings']['varjyam'] ) || empty( $data['timings']['amritKalam'] ) ) && ! empty( $data['nakshatra'] ) ) {
+                $nak_id      = $data['nakshatra']['nakshatra']['id'] ?? ( $data['nakshatra']['id'] ?? 1 );
+                $nak_start   = $data['nakshatra']['start'] ?? null;
+                $nak_end     = $data['nakshatra']['end'] ?? null;
+                $deg_in_nak  = $data['nakshatra']['degreeInNakshatra'] ?? null;
+                $sunrise_iso = $data['solar']['sunrise'] ?? null;
+
+                $va = self::calculate_varjyam_and_amrit_kalam( (int) $nak_id, $nak_start, $nak_end, $sunrise_iso, $deg_in_nak ? (float) $deg_in_nak : null, $timezone );
+                if ( empty( $data['timings']['varjyam'] ) && ! empty( $va['varjyam'] ) ) {
+                    $data['timings']['varjyam'] = $va['varjyam'];
+                }
+                if ( empty( $data['timings']['amritKalam'] ) && ! empty( $va['amritKalam'] ) ) {
+                    $data['timings']['amritKalam'] = $va['amritKalam'];
+                }
+            }
+
             $timing_keys = [ 'rahuKalam', 'yamagandam', 'gulikaKalam', 'abhijitMuhurtham', 'brahmaMuhurtham', 'amritKalam', 'varjyam' ];
             foreach ( $timing_keys as $t_key ) {
                 if ( ! empty( $data['timings'][ $t_key ] ) && is_array( $data['timings'][ $t_key ] ) ) {
@@ -642,6 +673,13 @@ class DJV_Panchangam {
                     }
                 }
             }
+
+            // Sanitize any literal unescaped u2013 in strings across timings
+            array_walk_recursive( $data['timings'], function( &$val ) {
+                if ( is_string( $val ) && strpos( $val, 'u2013' ) !== false ) {
+                    $val = str_replace( 'u2013', '–', $val );
+                }
+            } );
         }
 
         // 3. Moonrise and Moonset
@@ -933,5 +971,168 @@ class DJV_Panchangam {
             }
         }
         return ( $low + $high ) / 2.0;
+    }
+
+    /**
+     * Standard Varjyam start ghatis for all 27 Nakshatras (Ashwini to Revati).
+     * Sourced identically from packages/panchangam-engine/src/core.js.
+     */
+    const VARJYAM_START_GHATIS = [
+        50, 24, 30, 40, 14, 21, 30, 20, 32, // 1–9: Ashwini to Ashlesha
+        30, 20, 18, 21, 20, 14, 14, 10, 14, // 10–18: Magha to Jyeshtha
+        56, 24, 20, 10, 10, 18, 16, 24, 30  // 19–27: Mula to Revati
+    ];
+
+    /**
+     * Calculate Dur Muhurtham slots for a day based on local sunrise, sunset, and weekday.
+     * Identical to packages/panchangam-engine/src/core.js calcDurMuhurtham.
+     *
+     * @param string $sunrise_iso
+     * @param string $sunset_iso
+     * @param int    $weekday  0=Sunday, 6=Saturday
+     * @param string $timezone
+     * @return array
+     */
+    public static function calculate_dur_muhurtham( string $sunrise_iso, string $sunset_iso, int $weekday, string $timezone = 'Asia/Kolkata' ): array {
+        $rise_ts = strtotime( $sunrise_iso );
+        $set_ts  = strtotime( $sunset_iso );
+        if ( ! $rise_ts || ! $set_ts || $set_ts <= $rise_ts ) {
+            return [];
+        }
+
+        $day_sec = $set_ts - $rise_ts;
+        $m_len   = $day_sec / 15.0;
+
+        $slots_map = [
+            0 => [ 14 ],
+            1 => [ 8, 12 ],
+            2 => [ 4, 11 ],
+            3 => [ 5 ],
+            4 => [ 6, 7 ],
+            5 => [ 4, 9 ],
+            6 => [ 2, 3 ],
+        ];
+
+        $slots   = $slots_map[ $weekday % 7 ] ?? [ 14 ];
+        $results = [];
+        try {
+            $tz = new DateTimeZone( $timezone );
+        } catch ( Exception $e ) {
+            $tz = new DateTimeZone( 'Asia/Kolkata' );
+        }
+
+        foreach ( $slots as $slot ) {
+            $s = (int) round( $rise_ts + ( $slot - 1 ) * $m_len );
+            $e = (int) round( $rise_ts + $slot * $m_len );
+            $s_str = ( new DateTimeImmutable( "@{$s}" ) )->setTimezone( $tz )->format( 'g:i A' );
+            $e_str = ( new DateTimeImmutable( "@{$e}" ) )->setTimezone( $tz )->format( 'g:i A' );
+
+            $results[] = [
+                'start'    => gmdate( 'Y-m-d\TH:i:s.000\Z', $s ),
+                'end'      => gmdate( 'Y-m-d\TH:i:s.000\Z', $e ),
+                'slot'     => $slot,
+                'startStr' => $s_str,
+                'endStr'   => $e_str,
+                'text'     => $s_str . ' – ' . $e_str,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * Calculate Brahma Muhurtham (96m to 48m prior to sunrise).
+     *
+     * @param string $sunrise_iso
+     * @param string $timezone
+     * @return array
+     */
+    public static function calculate_brahma_muhurtham( string $sunrise_iso, string $timezone = 'Asia/Kolkata' ): array {
+        $rise_ts = strtotime( $sunrise_iso );
+        if ( ! $rise_ts ) {
+            return [];
+        }
+        $s = $rise_ts - ( 96 * 60 );
+        $e = $rise_ts - ( 48 * 60 );
+        try {
+            $tz = new DateTimeZone( $timezone );
+        } catch ( Exception $e ) {
+            $tz = new DateTimeZone( 'Asia/Kolkata' );
+        }
+        $s_str = ( new DateTimeImmutable( "@{$s}" ) )->setTimezone( $tz )->format( 'g:i A' );
+        $e_str = ( new DateTimeImmutable( "@{$e}" ) )->setTimezone( $tz )->format( 'g:i A' );
+
+        return [
+            'start'    => gmdate( 'Y-m-d\TH:i:s.000\Z', $s ),
+            'end'      => gmdate( 'Y-m-d\TH:i:s.000\Z', $e ),
+            'startStr' => $s_str,
+            'endStr'   => $e_str,
+            'text'     => $s_str . ' – ' . $e_str,
+        ];
+    }
+
+    /**
+     * Calculate Varjyam (Tyajyam) and Amrit Kalam based on Nakshatra.
+     * Identical to packages/panchangam-engine/src/core.js calcVarjyamAndAmritKalam.
+     *
+     * @param int         $nak_id 1–27
+     * @param string|null $nak_start_iso
+     * @param string|null $nak_end_iso
+     * @param string|null $sunrise_iso
+     * @param float|null  $deg_in_nak
+     * @param string      $timezone
+     * @return array
+     */
+    public static function calculate_varjyam_and_amrit_kalam( int $nak_id, ?string $nak_start_iso, ?string $nak_end_iso, ?string $sunrise_iso, ?float $deg_in_nak = null, string $timezone = 'Asia/Kolkata' ): array {
+        try {
+            $tz = new DateTimeZone( $timezone );
+        } catch ( Exception $e ) {
+            $tz = new DateTimeZone( 'Asia/Kolkata' );
+        }
+
+        if ( $nak_start_iso && $nak_end_iso ) {
+            $n_start = strtotime( $nak_start_iso );
+            $n_end   = strtotime( $nak_end_iso );
+            $span    = max( 18 * 3600, min( 30 * 3600, $n_end - $n_start ) );
+            $ghati   = $span / 60.0;
+        } else {
+            $ref_ts = $sunrise_iso ? strtotime( $sunrise_iso ) : time();
+            $deg    = ( $deg_in_nak !== null ) ? $deg_in_nak : 6.666;
+            $frac   = max( 0.0, min( 1.0, $deg / 13.3333333 ) );
+            $span   = 24 * 3600;
+            $ghati  = $span / 60.0;
+            $n_start = (int) round( $ref_ts - $frac * $span );
+        }
+
+        $idx = max( 0, min( 26, ( $nak_id - 1 ) % 27 ) );
+        $start_ghati = self::VARJYAM_START_GHATIS[ $idx ];
+
+        $v_start = (int) round( $n_start + $start_ghati * $ghati );
+        $v_end   = (int) round( $v_start + 4 * $ghati );
+
+        $a_start = (int) round( $v_start + 14 * $ghati );
+        $a_end   = (int) round( $a_start + 4 * $ghati );
+
+        $vs = ( new DateTimeImmutable( "@{$v_start}" ) )->setTimezone( $tz )->format( 'g:i A' );
+        $ve = ( new DateTimeImmutable( "@{$v_end}" ) )->setTimezone( $tz )->format( 'g:i A' );
+        $as = ( new DateTimeImmutable( "@{$a_start}" ) )->setTimezone( $tz )->format( 'g:i A' );
+        $ae = ( new DateTimeImmutable( "@{$a_end}" ) )->setTimezone( $tz )->format( 'g:i A' );
+
+        return [
+            'varjyam'    => [
+                'start'    => gmdate( 'Y-m-d\TH:i:s.000\Z', $v_start ),
+                'end'      => gmdate( 'Y-m-d\TH:i:s.000\Z', $v_end ),
+                'startStr' => $vs,
+                'endStr'   => $ve,
+                'text'     => $vs . ' – ' . $ve,
+            ],
+            'amritKalam' => [
+                'start'    => gmdate( 'Y-m-d\TH:i:s.000\Z', $a_start ),
+                'end'      => gmdate( 'Y-m-d\TH:i:s.000\Z', $a_end ),
+                'startStr' => $as,
+                'endStr'   => $ae,
+                'text'     => $as . ' – ' . $ae,
+            ],
+        ];
     }
 }

@@ -228,6 +228,80 @@ test('Ekadashi — Tithi ID = 11 or 26', () => {
   warn('Ekadashi date', 'Replace with verified Ekadashi date from reference Panchangam before launch');
 });
 
+/* ─── Moonrise / Moonset Validation ─────────────────────────── */
+console.log('\n── Moonrise / Moonset Validation ───────────────────────');
+
+test('Moonrise & Moonset structure exists and contains normal status on 2026-10-06', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 6, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  if (!p.moonrise) throw new Error('p.moonrise missing');
+  if (!p.moonset) throw new Error('p.moonset missing');
+  if (p.moonrise.status !== 'normal') throw new Error(`Expected status normal, got ${p.moonrise.status}`);
+  if (!p.moonrise.time) throw new Error('moonrise.time is missing');
+  if (!p.moonrise.datetime) throw new Error('moonrise.datetime is missing');
+  if (p.moonset.status !== 'normal') throw new Error(`Expected status normal, got ${p.moonset.status}`);
+});
+
+test('Hyderabad Oct 6, 2026: Moonrise is ~1:56 AM, Moonset is ~3:06 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 6, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  assertEqual(p.moonrise.time, '1:56 AM', 'Hyderabad 2026-10-06 Moonrise');
+  assertEqual(p.moonset.time, '3:06 PM', 'Hyderabad 2026-10-06 Moonset');
+});
+
+test('Hyderabad Oct 7, 2026: Moonrise is ~2:54 AM, Moonset is ~3:46 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 7, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  assertEqual(p.moonrise.time, '2:54 AM', 'Hyderabad 2026-10-07 Moonrise');
+  assertEqual(p.moonset.time, '3:46 PM', 'Hyderabad 2026-10-07 Moonset');
+});
+
+test('Hyderabad Oct 8, 2026: Moonrise is ~3:50 AM, Moonset is ~4:24 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 8, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  assertEqual(p.moonrise.time, '3:50 AM', 'Hyderabad 2026-10-08 Moonrise');
+  assertEqual(p.moonset.time, '4:24 PM', 'Hyderabad 2026-10-08 Moonset');
+});
+
+test('Hyderabad Oct 15, 2026: Moonset is ~9:13 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 15, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  if (!p.moonrise.time) throw new Error('Expected moonrise on Oct 15');
+  assertEqual(p.moonset.time, '9:13 PM', 'Hyderabad 2026-10-15 Moonset');
+});
+
+test('Hyderabad Oct 20, 2026: Moonrise is ~1:56 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 20, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  assertEqual(p.moonrise.time, '1:56 PM', 'Hyderabad 2026-10-20 Moonrise');
+});
+
+test('Hyderabad Oct 25, 2026: Moonrise is ~5:03 PM', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 25, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  assertEqual(p.moonrise.time, '5:03 PM', 'Hyderabad 2026-10-25 Moonrise');
+});
+
+test('No-event detection: Hyderabad Oct 4, 2026 has no Moonrise (no_event status)', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 4, ...HYDERABAD, timezone: 'Asia/Kolkata' });
+  if (p.moonrise.status !== 'no_event') throw new Error(`Expected no_event, got ${p.moonrise.status}`);
+  if (p.moonrise.time !== null) throw new Error(`Expected null time, got ${p.moonrise.time}`);
+  if (p.moonrise.datetime !== null) throw new Error(`Expected null datetime, got ${p.moonrise.datetime}`);
+});
+
+test('Multi-location moonrise checks (Hyderabad, Delhi, Mumbai, Chennai, Bengaluru)', () => {
+  const testCities = [
+    { name: 'Hyderabad', lat: 17.3850, lon: 78.4867, timezone: 'Asia/Kolkata' },
+    { name: 'Delhi',     lat: 28.6139, lon: 77.2090, timezone: 'Asia/Kolkata' },
+    { name: 'Mumbai',    lat: 19.0760, lon: 72.8777, timezone: 'Asia/Kolkata' },
+    { name: 'Chennai',   lat: 13.0827, lon: 80.2707, timezone: 'Asia/Kolkata' },
+    { name: 'Bengaluru', lat: 12.9716, lon: 77.5946, timezone: 'Asia/Kolkata' },
+  ];
+  testCities.forEach(c => {
+    const p = calculatePanchangam({ year: 2026, month: 10, day: 6, ...c });
+    if (!p.moonrise.time) throw new Error(`Moonrise missing for ${c.name}`);
+    if (!p.moonset.time) throw new Error(`Moonset missing for ${c.name}`);
+  });
+});
+
+test('High-latitude location (Tromsø, Norway 69.65°N)', () => {
+  const p = calculatePanchangam({ year: 2026, month: 10, day: 6, lat: 69.6492, lon: 18.9553, timezone: 'Europe/Oslo' });
+  if (!p.moonrise.status) throw new Error('Status missing for Tromsø');
+});
+
 /* ─── Summary ────────────────────────────────────────────────── */
 console.log('\n════════════════════════════════════════════════════════');
 console.log(` Results: ${passed} passed, ${failed} failed, ${warnings} warnings`);

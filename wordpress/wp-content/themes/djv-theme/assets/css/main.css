@@ -2411,3 +2411,148 @@
     gap: 0.85rem !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PANCHANGAM INTERACTIVE CONTROLS & TIMING SLOTS
+   Eliminates browser-default button styling & ensures DJV polish
+   ══════════════════════════════════════════════════════════════ */
+.pc-controls-bar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  background: var(--clr-white, #fff) !important;
+  padding: 1rem 1.5rem !important;
+  border-radius: var(--radius-xl, 1rem) !important;
+  border: 1px solid var(--clr-border, #e8d5c4) !important;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04)) !important;
+  margin-bottom: 1.25rem !important;
+}
+
+.pc-location-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: rgba(200, 148, 50, 0.12) !important;
+  border: 1px solid rgba(200, 148, 50, 0.35) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  color: var(--clr-dark, #2b1810) !important;
+  cursor: pointer !important;
+  font-family: var(--font-primary, sans-serif) !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.4 !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+}
+.pc-location-pill:hover {
+  background: rgba(200, 148, 50, 0.22) !important;
+  border-color: var(--clr-primary, #7a2419) !important;
+  color: var(--clr-primary, #7a2419) !important;
+}
+
+.pc-nav-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.pc-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  padding: 0.55rem 0.95rem !important;
+  border-radius: var(--radius-md, 0.5rem) !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: var(--font-primary, sans-serif) !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid var(--clr-border, #e8d5c4) !important;
+  background: var(--clr-bg, #fdfaf6) !important;
+  color: var(--clr-text, #333) !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+.pc-btn:hover {
+  border-color: var(--clr-primary, #7a2419) !important;
+  color: var(--clr-primary, #7a2419) !important;
+  background: var(--clr-primary-faint, rgba(122,36,25,0.06)) !important;
+}
+
+.pc-btn--primary {
+  background: var(--clr-primary, #7a2419) !important;
+  color: #fff !important;
+  border-color: var(--clr-primary, #7a2419) !important;
+}
+.pc-btn--primary:hover {
+  background: #5c1a11 !important;
+  border-color: #5c1a11 !important;
+  color: #fff !important;
+}
+
+.pc-date-picker-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.pc-date-picker-input {
+  padding: 0.45rem 0.75rem !important;
+  border: 1px solid var(--clr-border, #e8d5c4) !important;
+  border-radius: var(--radius-md, 0.5rem) !important;
+  font-family: var(--font-primary, sans-serif) !important;
+  font-size: 0.875rem !important;
+  color: var(--clr-dark, #2b1810) !important;
+  background: #fff !important;
+  cursor: pointer !important;
+  outline: none !important;
+  transition: border-color 0.2s ease !important;
+  -webkit-appearance: auto !important;
+}
+.pc-date-picker-input:focus {
+  border-color: var(--clr-primary, #7a2419) !important;
+}
+
+.pc-preset-btn {
+  padding: 0.35rem 0.85rem !important;
+  font-size: 0.78rem !important;
+  border-radius: 9999px !important;
+  background: #fff !important;
+  border: 1px solid var(--clr-border, #e8d5c4) !important;
+  color: var(--clr-text, #333) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.4 !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+}
+.pc-preset-btn:hover {
+  background: var(--clr-primary-faint, rgba(122,36,25,0.06)) !important;
+  border-color: var(--clr-primary, #7a2419) !important;
+  color: var(--clr-primary, #7a2419) !important;
+}
+
+.timing-period-slot {
+  display: block !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+  margin-top: 0.25rem !important;
+  white-space: nowrap !important;
+}
+.timing-period-slot:first-child {
+  margin-top: 0 !important;
+}
+
