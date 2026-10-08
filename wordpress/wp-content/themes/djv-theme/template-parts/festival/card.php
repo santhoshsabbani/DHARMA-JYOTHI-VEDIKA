@@ -91,16 +91,18 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
     </span>
   <?php endif; ?>
 
-  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
-    <?php if ( has_post_thumbnail() ) : ?>
-      <div style="width:48px;height:48px;border-radius:0.75rem;overflow:hidden;flex-shrink:0;">
-        <?php the_post_thumbnail( 'thumbnail', [ 'style' => 'width:100%;height:100%;object-fit:cover;' ] ); ?>
-      </div>
-    <?php else : ?>
-      <div style="width:48px;height:48px;background:rgba(200,148,50,0.12);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;" aria-hidden="true">
-        🪔
-      </div>
-    <?php endif; ?>
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;position:relative;z-index:2;">
+    <a href="<?php echo esc_url( $card_url ); ?>" aria-label="<?php echo esc_attr( $title_en ); ?>" style="display:block;text-decoration:none;flex-shrink:0;position:relative;z-index:2;pointer-events:auto;">
+      <?php if ( has_post_thumbnail() ) : ?>
+        <div style="width:48px;height:48px;border-radius:0.75rem;overflow:hidden;flex-shrink:0;">
+          <?php the_post_thumbnail( 'thumbnail', [ 'style' => 'width:100%;height:100%;object-fit:cover;' ] ); ?>
+        </div>
+      <?php else : ?>
+        <div style="width:48px;height:48px;background:rgba(200,148,50,0.12);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;" aria-hidden="true">
+          🪔
+        </div>
+      <?php endif; ?>
+    </a>
 
     <!-- Regional / State Badge (Only for regional festivals, never show Pan-India) -->
     <?php if ( $scope !== 'pan_india' && ! empty( $state ) && $state !== 'Pan-India' ) : ?>
@@ -111,8 +113,8 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
   </div>
 
   <!-- Multilingual Title (English default, never leak Telugu into English) -->
-  <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;">
-    <a href="<?php echo esc_url( $card_url ); ?>" style="color:inherit;text-decoration:none;">
+  <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;position:relative;z-index:2;">
+    <a href="<?php echo esc_url( $card_url ); ?>" class="festival-card-title-link" style="color:inherit;text-decoration:none;display:inline-block;position:relative;z-index:2;pointer-events:auto;">
       <span class="djv-lang-field" data-lang="en"><?php echo esc_html( $title_en ); ?></span>
       <span class="djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu, sans-serif);"><?php echo esc_html( $title_te ?: $title_en ); ?></span>
       <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari', serif;"><?php echo esc_html( $title_hi ?: $title_en ); ?></span>
@@ -142,8 +144,8 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
     <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari', serif;"><?php echo esc_html( wp_trim_words( $desc_hi, 20 ) ); ?></span>
   </p>
 
-  <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;">
-    <a href="<?php echo esc_url( $card_url ); ?>" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;">
+  <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;position:relative;z-index:2;">
+    <a href="<?php echo esc_url( $card_url ); ?>" class="festival-card-cta-link" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;position:relative;z-index:2;pointer-events:auto;">
       <span class="djv-lang-field" data-lang="en">Puja Vidhi &amp; Muhurat →</span>
       <span class="djv-lang-field" data-lang="te" style="display:none;">పూజా విధానం &amp; ముహూర్తం →</span>
       <span class="djv-lang-field" data-lang="hi" style="display:none;">पूजा विधि एवं मुहूर्त →</span>

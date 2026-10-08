@@ -933,6 +933,7 @@
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,148,50,0.06) 0%, transparent 70%);
+      pointer-events: none;
     }
     .festivals-section .section-title { color: var(--clr-white); }
     .festivals-section .section-desc { color: rgba(255,255,255,0.6); }
@@ -967,6 +968,7 @@
       mask-composite: exclude;
       opacity: 0;
       transition: opacity var(--transition-base);
+      pointer-events: none;
     }
     .festival-card:hover {
       background: rgba(255,255,255,0.09);
@@ -974,6 +976,15 @@
       box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
     .festival-card:hover::after { opacity: 1; }
+
+    .festival-card a,
+    .festival-card .festival-card-title a,
+    .festival-card .festival-card-cta-link {
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+      cursor: pointer;
+    }
 
     .festival-card-emoji { font-size: 2rem; margin-bottom: 0.875rem; display: block; }
     .festival-card-name {

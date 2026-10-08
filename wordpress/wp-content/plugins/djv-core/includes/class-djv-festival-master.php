@@ -135,6 +135,15 @@ class DJV_Festival_Master {
 		}
 
 		// Dynamic Normalization:
+		// 0. Strip trailing year suffix (e.g. -2026, -2027) so /festivals/{slug}-2026/ cleanly resolves
+		if ( preg_match( '#^(.*?)-(20[2-9][0-9])$#', $slug, $yr_matches ) ) {
+			$base_slug = $yr_matches[1];
+			$resolved_base = self::resolve_slug_alias( $base_slug );
+			if ( $resolved_base !== $base_slug || isset( $known_slugs[ $resolved_base ] ) ) {
+				return $resolved_base;
+			}
+		}
+
 		// 1. paush- -> pausha-
 		if ( strpos( $slug, 'paush-' ) === 0 ) {
 			$candidate = 'pausha-' . substr( $slug, 6 );

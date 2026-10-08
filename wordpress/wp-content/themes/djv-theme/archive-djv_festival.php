@@ -145,7 +145,7 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
       $sp_date     = get_post_meta( $sp_id, '_djv_festival_date', true );
       $sp_timings  = get_post_meta( $sp_id, '_djv_puja_timings', true );
       $sp_tithi    = get_post_meta( $sp_id, '_djv_tithi_rule', true );
-      $sp_link     = get_permalink( $sp_id );
+      $sp_link     = add_query_arg( 'year', $current_page_year, get_permalink( $sp_id ) );
 
       $sp_date_en  = $sp_date ? ( class_exists( 'DJV_Festival_Master' ) ? DJV_Festival_Master::format_localized_date( $sp_date, 'en' ) : [ 'formatted' => date( 'F j, Y', strtotime( $sp_date ) ), 'day_of_week' => date( 'l', strtotime( $sp_date ) ) ] ) : [];
       $sp_date_te  = $sp_date ? ( class_exists( 'DJV_Festival_Master' ) ? DJV_Festival_Master::format_localized_date( $sp_date, 'te' ) : [] ) : [];
@@ -789,16 +789,18 @@ document.addEventListener('DOMContentLoaded', function() {
           </span>
         ` : ''}
 
-        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
-          ${f.thumbnail ? `
-            <div style="width:48px;height:48px;border-radius:0.75rem;overflow:hidden;flex-shrink:0;">
-              <img src="${escapeHtml(f.thumbnail)}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover;" />
-            </div>
-          ` : `
-            <div style="width:48px;height:48px;background:rgba(200,148,50,0.12);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;" aria-hidden="true">
-              🪔
-            </div>
-          `}
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;position:relative;z-index:2;">
+          <a href="${escapeHtml(link)}" aria-label="${escapeHtml(title)}" style="display:block;text-decoration:none;flex-shrink:0;position:relative;z-index:2;pointer-events:auto;">
+            ${f.thumbnail ? `
+              <div style="width:48px;height:48px;border-radius:0.75rem;overflow:hidden;flex-shrink:0;">
+                <img src="${escapeHtml(f.thumbnail)}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover;" />
+              </div>
+            ` : `
+              <div style="width:48px;height:48px;background:rgba(200,148,50,0.12);border-radius:0.75rem;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;" aria-hidden="true">
+                🪔
+              </div>
+            `}
+          </a>
 
           ${isRegional ? `
             <span class="festival-scope-pill" style="font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;">
@@ -807,8 +809,8 @@ document.addEventListener('DOMContentLoaded', function() {
           ` : ''}
         </div>
 
-        <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;">
-          <a href="${escapeHtml(link)}" style="color:inherit;text-decoration:none;">
+        <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;position:relative;z-index:2;">
+          <a href="${escapeHtml(link)}" class="festival-card-title-link" style="color:inherit;text-decoration:none;display:inline-block;position:relative;z-index:2;pointer-events:auto;">
             ${escapeHtml(title)}
           </a>
         </h3>
@@ -829,8 +831,8 @@ document.addEventListener('DOMContentLoaded', function() {
           ${escapeHtml(excerpt)}
         </p>
 
-        <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;">
-          <a href="${escapeHtml(link)}" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;">
+        <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;position:relative;z-index:2;">
+          <a href="${escapeHtml(link)}" class="festival-card-cta-link" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;position:relative;z-index:2;pointer-events:auto;">
             ${ctaText}
           </a>
           ${category ? `
