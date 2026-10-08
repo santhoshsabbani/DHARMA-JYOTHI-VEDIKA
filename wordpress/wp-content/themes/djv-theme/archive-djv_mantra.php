@@ -64,7 +64,7 @@ $popular_query = new WP_Query([
 $all_mantras_query = new WP_Query([
 	'post_type'      => 'djv_mantra',
 	'post_status'    => 'publish',
-	'posts_per_page' => 24,
+	'posts_per_page' => 18,
 	'paged'          => $paged,
 	'orderby'        => 'title',
 	'order'          => 'ASC',
@@ -923,7 +923,7 @@ $all_mantras_query = new WP_Query([
 
     try {
       const params = new URLSearchParams();
-      params.set('per_page', '24');
+      params.set('per_page', '18');
       params.set('page', page);
       if (activeCategory !== 'all') params.set('category', activeCategory);
       if (searchQuery) params.set('search', searchQuery);

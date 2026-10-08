@@ -42,7 +42,7 @@ get_header();
       <?php
       $temples_query = new WP_Query([
         'post_type'      => 'djv_temple',
-        'posts_per_page' => 24,
+        'posts_per_page' => 18,
         'post_status'    => 'publish',
         'orderby'        => 'title',
         'order'          => 'ASC',

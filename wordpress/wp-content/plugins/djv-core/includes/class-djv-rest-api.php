@@ -95,7 +95,7 @@ class DJV_REST_API {
 				'category' => [ 'type' => 'string', 'default' => '' ],
 				'search'   => [ 'type' => 'string', 'default' => '' ],
 				'page'     => [ 'type' => 'integer', 'default' => 1 ],
-				'per_page' => [ 'type' => 'integer', 'default' => 24, 'maximum' => 100 ],
+				'per_page' => [ 'type' => 'integer', 'default' => 18, 'maximum' => 100 ],
 			],
 		] );
 

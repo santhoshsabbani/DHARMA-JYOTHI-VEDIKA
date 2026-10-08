@@ -39,6 +39,51 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
 }
 ?>
 
+<style>
+.festival-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 0.85rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--clr-border, #E8DFD3);
+  background: #FFF;
+  color: var(--clr-text, #2A1F1D);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm, 0 2px 6px rgba(0,0,0,0.04));
+  font-family: inherit;
+  text-decoration: none;
+}
+.festival-page-btn:hover {
+  border-color: var(--clr-primary, #7A2419);
+  color: var(--clr-primary, #7A2419);
+  background: var(--clr-bg, #FDFBF7);
+  transform: translateY(-1px);
+}
+.festival-page-btn.active {
+  background: var(--clr-primary, #7A2419) !important;
+  color: #FFF !important;
+  border-color: var(--clr-primary, #7A2419) !important;
+  cursor: default;
+  box-shadow: 0 4px 12px rgba(122, 36, 25, 0.25);
+  transform: none;
+}
+.festival-page-btn.dots {
+  border: none;
+  background: transparent;
+  cursor: default;
+  min-width: 28px;
+  box-shadow: none;
+  color: var(--clr-text-muted, #7A6F68);
+  font-size: 1.1rem;
+}
+</style>
+
 <div class="archive-festival-wrapper" style="padding: 2rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container">
 
@@ -318,6 +363,14 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
       </p>
     </div>
 
+    <!-- ── Pagination Area (18 per view) ── -->
+    <div class="festival-pagination-area" id="djv-festival-pagination-area" style="margin-top: 3rem; display: none; flex-direction: column; align-items: center; gap: 0.85rem;">
+      <div id="djv-festival-page-info" style="font-size: 0.85rem; color: var(--clr-text-muted, #7A6F68); font-weight: 600;">
+      </div>
+      <div class="festival-pagination-controls" id="djv-festival-pagination-controls" style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -356,6 +409,10 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentYear = <?php echo (int) $current_page_year; ?>;
   let currentScope = 'relevant'; // 'relevant', 'pan_india', 'my_state', 'all_india'
   let currentCategory = 'all';
+
+  // ── Pagination State (18 per view) ──
+  const PER_PAGE = 18;
+  let currentPage = 1;
 
   const grid = document.getElementById('djv-festival-grid');
   const searchInput = document.getElementById('djv-festival-search');
@@ -543,21 +600,25 @@ document.addEventListener('DOMContentLoaded', function() {
       this.style.borderColor = 'var(--clr-primary, #7A2419)';
 
       currentCategory = this.getAttribute('data-filter') || 'all';
-      filterClientSideCards();
+      filterClientSideCards(true);
     });
   });
 
   // ── Search Input ──
   if (searchInput) {
     searchInput.addEventListener('input', function() {
-      filterClientSideCards();
+      filterClientSideCards(true);
     });
   }
 
-  function filterClientSideCards() {
+  function filterClientSideCards(resetPage = false) {
+    if (resetPage) {
+      currentPage = 1;
+    }
+
     const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
-    const cards = document.querySelectorAll('#djv-festival-grid .festival-card');
-    let visibleCount = 0;
+    const cards = Array.from(document.querySelectorAll('#djv-festival-grid .festival-card'));
+    const matchingCards = [];
 
     cards.forEach(card => {
       const matchCat = (currentCategory === 'all') || card.classList.contains(currentCategory);
@@ -574,16 +635,105 @@ document.addEventListener('DOMContentLoaded', function() {
         textContent.includes(query);
 
       if (matchCat && matchSearch) {
+        matchingCards.push(card);
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    const totalMatching = matchingCards.length;
+    const totalPages = Math.ceil(totalMatching / PER_PAGE) || 1;
+
+    if (currentPage > totalPages) {
+      currentPage = 1;
+    }
+
+    const startIdx = (currentPage - 1) * PER_PAGE;
+    const endIdx = startIdx + PER_PAGE;
+
+    matchingCards.forEach((card, idx) => {
+      if (idx >= startIdx && idx < endIdx) {
         card.style.display = 'flex';
-        visibleCount++;
       } else {
         card.style.display = 'none';
       }
     });
 
     if (noMatch) {
-      noMatch.style.display = visibleCount === 0 ? 'block' : 'none';
+      noMatch.style.display = totalMatching === 0 ? 'block' : 'none';
     }
+
+    renderPagination(totalMatching, totalPages, currentPage);
+  }
+
+  function renderPagination(total, totalPages, page) {
+    const pagArea = document.getElementById('djv-festival-pagination-area');
+    const pagControls = document.getElementById('djv-festival-pagination-controls');
+    const pagInfo = document.getElementById('djv-festival-page-info');
+    if (!pagArea || !pagControls) return;
+
+    if (total <= PER_PAGE) {
+      pagArea.style.display = 'none';
+      return;
+    }
+
+    pagArea.style.display = 'flex';
+
+    // Trilingual page info text
+    const startNum = (page - 1) * PER_PAGE + 1;
+    const endNum = Math.min(page * PER_PAGE, total);
+    let infoText = '';
+    if (currentLanguage === 'te') {
+      infoText = `మొత్తం ${total} పండుగలలో ${startNum}–${endNum} చూపిస్తోంది (పేజీ ${page} / ${totalPages})`;
+    } else if (currentLanguage === 'hi') {
+      infoText = `कुल ${total} में से ${startNum}–${endNum} त्योहार प्रदर्शित (पृष्ठ ${page} / ${totalPages})`;
+    } else {
+      infoText = `Showing ${startNum}–${endNum} of ${total} festivals (Page ${page} of ${totalPages})`;
+    }
+    if (pagInfo) pagInfo.textContent = infoText;
+
+    // Trilingual Prev / Next
+    const prevLabel = currentLanguage === 'te' ? '← మునుపటి' : (currentLanguage === 'hi' ? '← पिछला' : '← Previous');
+    const nextLabel = currentLanguage === 'te' ? 'తరువాతి →' : (currentLanguage === 'hi' ? 'अगला →' : 'Next →');
+
+    let html = '';
+
+    // Prev button
+    if (page > 1) {
+      html += `<button type="button" class="festival-page-btn prev" data-page="${page - 1}">${prevLabel}</button>`;
+    }
+
+    // Numbered buttons with ellipsis
+    for (let p = 1; p <= totalPages; p++) {
+      if (p === page) {
+        html += `<button type="button" class="festival-page-btn active" data-page="${p}">${p}</button>`;
+      } else if (p === 1 || p === totalPages || Math.abs(p - page) <= 2) {
+        html += `<button type="button" class="festival-page-btn" data-page="${p}">${p}</button>`;
+      } else if (p === page - 3 || p === page + 3) {
+        html += `<span class="festival-page-btn dots">…</span>`;
+      }
+    }
+
+    // Next button
+    if (page < totalPages) {
+      html += `<button type="button" class="festival-page-btn next" data-page="${page + 1}">${nextLabel}</button>`;
+    }
+
+    pagControls.innerHTML = html;
+
+    pagControls.querySelectorAll('.festival-page-btn[data-page]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetPage = parseInt(this.getAttribute('data-page'), 10);
+        if (targetPage && targetPage !== currentPage) {
+          currentPage = targetPage;
+          filterClientSideCards(false);
+          const gridEl = document.getElementById('djv-festival-grid');
+          if (gridEl) {
+            gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
   }
 
   function escapeHtml(str) {
@@ -725,7 +875,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Re-apply static text toggle on newly rendered DOM elements
         applyLanguage(currentLanguage, false);
-        filterClientSideCards();
+        filterClientSideCards(true);
       })
       .catch(err => {
         console.error('DJV: Festivals fetch error:', err);
@@ -737,6 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateLocationDisplayUI();
   updateYearButtonStyles(currentYear);
   applyLanguage(currentLanguage, false);
+  filterClientSideCards(true);
 });
 </script>
 

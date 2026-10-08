@@ -333,3 +333,15 @@ function djv_theme_custom_route_fallback(): void {
 	}
 }
 add_action( 'template_redirect', 'djv_theme_custom_route_fallback', 5 );
+
+/**
+ * Global Pagination: Set archive queries to 18 posts per view.
+ */
+function djv_theme_archive_posts_per_page( $query ): void {
+	if ( ! is_admin() && $query->is_main_query() ) {
+		if ( $query->is_post_type_archive( [ 'djv_festival', 'djv_mantra', 'djv_temple', 'djv_service', 'djv_muhurtham', 'djv_pooja' ] ) || $query->is_tax( [ 'djv_festival_cat', 'djv_festival_type', 'djv_deity' ] ) ) {
+			$query->set( 'posts_per_page', 18 );
+		}
+	}
+}
+add_action( 'pre_get_posts', 'djv_theme_archive_posts_per_page' );
