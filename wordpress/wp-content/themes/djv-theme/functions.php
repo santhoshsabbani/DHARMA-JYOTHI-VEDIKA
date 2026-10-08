@@ -455,3 +455,46 @@ function djv_fix_year_query_on_archives( $query ): void {
 }
 add_action( 'pre_get_posts', 'djv_fix_year_query_on_archives', 1 );
 
+/**
+ * Ensure State & Region Taxonomy Archives query djv_temple CPT with 12 posts per page.
+ * Keeps taxonomy archive results strictly isolated to published sacred temples.
+ */
+function djv_state_taxonomy_pre_get_posts( $query ): void {
+	if ( ! is_admin() && $query->is_main_query() && ( $query->is_tax( 'djv_state' ) || $query->is_tax( 'djv_region' ) ) ) {
+		$query->set( 'post_type', 'djv_temple' );
+		$query->set( 'post_status', 'publish' );
+		$query->set( 'posts_per_page', 12 );
+		$query->set( 'orderby', 'title' );
+		$query->set( 'order', 'ASC' );
+
+		// Preserve state search if query param provided
+		if ( ! empty( $_GET['q'] ) ) {
+			$query->set( 's', sanitize_text_field( wp_unslash( $_GET['q'] ) ) );
+		}
+
+		// Preserve deity filter while keeping state constraint
+		if ( ! empty( $_GET['deity'] ) ) {
+			$tax_query = (array) ( $query->get( 'tax_query' ) ?: [] );
+			$tax_query[] = [
+				'taxonomy' => 'djv_deity',
+				'field'    => 'slug',
+				'terms'    => sanitize_title( wp_unslash( $_GET['deity'] ) ),
+			];
+			$query->set( 'tax_query', $tax_query );
+		}
+
+		// Preserve category filter while keeping state constraint
+		if ( ! empty( $_GET['category'] ) ) {
+			$tax_query = (array) ( $query->get( 'tax_query' ) ?: [] );
+			$tax_query[] = [
+				'taxonomy' => 'djv_temple_category',
+				'field'    => 'slug',
+				'terms'    => sanitize_title( wp_unslash( $_GET['category'] ) ),
+			];
+			$query->set( 'tax_query', $tax_query );
+		}
+	}
+}
+add_action( 'pre_get_posts', 'djv_state_taxonomy_pre_get_posts', 2 );
+
+
