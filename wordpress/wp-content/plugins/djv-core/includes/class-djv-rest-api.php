@@ -121,10 +121,43 @@ class DJV_REST_API {
 			'callback'            => [ __CLASS__, 'get_temples' ],
 			'permission_callback' => '__return_true',
 			'args'                => [
-				'state'    => [ 'type' => 'string', 'default' => '' ],
-				'deity'    => [ 'type' => 'string', 'default' => '' ],
-				'per_page' => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+				'state'     => [ 'type' => 'string', 'default' => '' ],
+				'district'  => [ 'type' => 'string', 'default' => '' ],
+				'city'      => [ 'type' => 'string', 'default' => '' ],
+				'deity'     => [ 'type' => 'string', 'default' => '' ],
+				'category'  => [ 'type' => 'string', 'default' => '' ],
+				'tradition' => [ 'type' => 'string', 'default' => '' ],
+				'search'    => [ 'type' => 'string', 'default' => '' ],
+				'page'      => [ 'type' => 'integer', 'default' => 1 ],
+				'per_page'  => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+				'language'  => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+				'lat'       => [ 'type' => 'number', 'required' => false ],
+				'lon'       => [ 'type' => 'number', 'required' => false ],
+				'radius'    => [ 'type' => 'number', 'required' => false ],
+			],
+		] );
+
+		register_rest_route( $ns, '/temples/nearby', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_temples_nearby' ],
+			'permission_callback' => '__return_true',
+			'args'                => [
+				'lat'      => [ 'type' => 'number', 'default' => 17.3850 ],
+				'lon'      => [ 'type' => 'number', 'default' => 78.4867 ],
+				'radius'   => [ 'type' => 'number', 'default' => 100 ],
 				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+				'limit'    => [ 'type' => 'integer', 'default' => 12, 'maximum' => 50 ],
+			],
+		] );
+
+		register_rest_route( $ns, '/temples/(?P<slug>[a-z0-9-]+)', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_temple_single' ],
+			'permission_callback' => '__return_true',
+			'args'                => [
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+				'lat'      => [ 'type' => 'number', 'required' => false ],
+				'lon'      => [ 'type' => 'number', 'required' => false ],
 			],
 		] );
 
@@ -819,66 +852,291 @@ class DJV_REST_API {
 	 * GET /djv/v1/temples
 	 */
 	public static function get_temples( WP_REST_Request $req ): WP_REST_Response {
-		$state    = sanitize_text_field( $req->get_param( 'state' ) );
-		$deity    = sanitize_key( $req->get_param( 'deity' ) );
-		$per_page = min( intval( $req->get_param( 'per_page' ) ?: 20 ), 100 );
-		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		$state     = sanitize_text_field( $req->get_param( 'state' ) );
+		$district  = sanitize_text_field( $req->get_param( 'district' ) );
+		$city      = sanitize_text_field( $req->get_param( 'city' ) );
+		$deity     = sanitize_key( $req->get_param( 'deity' ) );
+		$category  = sanitize_key( $req->get_param( 'category' ) );
+		$tradition = sanitize_key( $req->get_param( 'tradition' ) );
+		$search    = sanitize_text_field( $req->get_param( 'search' ) ?: $req->get_param( 's' ) );
+		$page      = max( 1, intval( $req->get_param( 'page' ) ?: 1 ) );
+		$per_page  = min( max( 1, intval( $req->get_param( 'per_page' ) ?: 20 ) ), 100 );
+		$lang      = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
 		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
 			$lang = 'en';
 		}
 
+		$user_lat = $req->get_param( 'lat' ) !== null ? floatval( $req->get_param( 'lat' ) ) : null;
+		$user_lon = $req->get_param( 'lon' ) !== null ? floatval( $req->get_param( 'lon' ) ) : null;
+		$radius   = $req->get_param( 'radius' ) !== null ? floatval( $req->get_param( 'radius' ) ) : null;
+
 		$args = [
 			'post_type'      => 'djv_temple',
-			'posts_per_page' => $per_page,
+			'posts_per_page' => ( $radius !== null || $user_lat !== null ) ? 100 : $per_page,
+			'paged'          => ( $radius !== null || $user_lat !== null ) ? 1 : $page,
 			'post_status'    => 'publish',
 		];
 
+		if ( ! empty( $search ) ) {
+			$args['s'] = $search;
+		}
+
 		$tax_query = [];
 		if ( $state ) {
-			$tax_query[] = [ 'taxonomy' => 'djv_region', 'field' => 'slug', 'terms' => sanitize_key( $state ) ];
+			$tax_query[] = [
+				'relation' => 'OR',
+				[ 'taxonomy' => 'djv_state', 'field' => 'slug', 'terms' => sanitize_title( $state ) ],
+				[ 'taxonomy' => 'djv_region', 'field' => 'slug', 'terms' => sanitize_title( $state ) ],
+			];
 		}
 		if ( $deity ) {
 			$tax_query[] = [ 'taxonomy' => 'djv_deity', 'field' => 'slug', 'terms' => $deity ];
+		}
+		if ( $category ) {
+			$tax_query[] = [ 'taxonomy' => 'djv_temple_category', 'field' => 'slug', 'terms' => $category ];
+		}
+		if ( $tradition ) {
+			$tax_query[] = [ 'taxonomy' => 'djv_tradition', 'field' => 'slug', 'terms' => $tradition ];
 		}
 		if ( ! empty( $tax_query ) ) {
 			$args['tax_query'] = array_merge( [ 'relation' => 'AND' ], $tax_query );
 		}
 
-		$posts = get_posts( $args );
+		$meta_query = [];
+		if ( $district ) {
+			$meta_query[] = [ 'key' => '_djv_district', 'value' => $district, 'compare' => 'LIKE' ];
+		}
+		if ( $city ) {
+			$meta_query[] = [ 'key' => '_djv_city', 'value' => $city, 'compare' => 'LIKE' ];
+		}
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = array_merge( [ 'relation' => 'AND' ], $meta_query );
+		}
 
-		$temples = array_map( function( $post ) use ( $lang ) {
-			$id      = $post->ID;
-			$name_en = get_the_title( $post );
-			$name_te = get_post_meta( $id, '_djv_name_te', true ) ?: get_post_meta( $id, '_djv_title_te', true );
-			$name_hi = get_post_meta( $id, '_djv_name_hi', true ) ?: get_post_meta( $id, '_djv_title_hi', true );
+		$query = new WP_Query( $args );
+		$temples = [];
 
-			$display_name = $name_en;
-			if ( $lang === 'te' && ! empty( $name_te ) ) {
-				$display_name = $name_te;
-			} elseif ( $lang === 'hi' && ! empty( $name_hi ) ) {
-				$display_name = $name_hi;
+		foreach ( $query->posts as $post ) {
+			$formatted = self::format_temple_payload( $post, $lang, $user_lat, $user_lon, false );
+
+			if ( $radius !== null && $user_lat !== null && $user_lon !== null ) {
+				if ( isset( $formatted['distance_km'] ) && $formatted['distance_km'] > $radius ) {
+					continue;
+				}
 			}
 
-			return [
-				'id'          => $id,
-				'slug'        => $post->post_name,
-				'name'        => $display_name,
-				'name_en'     => $name_en,
-				'name_te'     => $name_te,
-				'name_hi'     => $name_hi,
-				'deity'       => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
-				'address'     => get_post_meta( $id, '_djv_address', true ),
-				'coordinates' => [
-					'lat' => get_post_meta( $id, '_djv_lat', true ),
-					'lon' => get_post_meta( $id, '_djv_lon', true ),
-				],
-				'timings'     => get_post_meta( $id, '_djv_timings', true ),
-				'link'        => get_permalink( $post ),
-				'thumbnail'   => get_the_post_thumbnail_url( $post, 'medium' ),
-			];
-		}, $posts );
+			$temples[] = $formatted;
+		}
 
-		return self::respond( $temples, [ 'count' => count( $temples ), 'language' => $lang ] );
+		// Sort by distance if user coordinates were provided
+		if ( $user_lat !== null && $user_lon !== null ) {
+			usort( $temples, function( $a, $b ) {
+				$da = $a['distance_km'] ?? 999999;
+				$db = $b['distance_km'] ?? 999999;
+				return $da <=> $db;
+			} );
+
+			// Slice if needed for pagination
+			if ( count( $temples ) > $per_page ) {
+				$temples = array_slice( $temples, ( $page - 1 ) * $per_page, $per_page );
+			}
+		}
+
+		return self::respond( $temples, [
+			'count'        => count( $temples ),
+			'total'        => $query->found_posts,
+			'total_pages'  => (int) $query->max_num_pages,
+			'current_page' => $page,
+			'page'         => $page,
+			'per_page'     => $per_page,
+			'items'        => $temples,
+			'language'     => $lang,
+			'user_coords'  => ( $user_lat !== null && $user_lon !== null ) ? [ 'lat' => $user_lat, 'lon' => $user_lon ] : null,
+		] );
+	}
+
+	/**
+	 * GET /djv/v1/temples/(?P<slug>[a-z0-9-]+)
+	 */
+	public static function get_temple_single( WP_REST_Request $req ): WP_REST_Response {
+		$slug = sanitize_title( $req->get_param( 'slug' ) );
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+
+		$user_lat = $req->get_param( 'lat' ) !== null ? floatval( $req->get_param( 'lat' ) ) : null;
+		$user_lon = $req->get_param( 'lon' ) !== null ? floatval( $req->get_param( 'lon' ) ) : null;
+
+		$post = get_page_by_path( $slug, OBJECT, 'djv_temple' );
+		if ( ! $post ) {
+			return self::respond( [ 'message' => 'Temple not found' ], [ 'slug' => $slug ], 404 );
+		}
+
+		$payload = self::format_temple_payload( $post, $lang, $user_lat, $user_lon, true );
+
+		return self::respond( $payload, [ 'language' => $lang ] );
+	}
+
+	/**
+	 * GET /djv/v1/temples/nearby
+	 */
+	public static function get_temples_nearby( WP_REST_Request $req ): WP_REST_Response {
+		$lat    = floatval( $req->get_param( 'lat' ) ?: 17.3850 );
+		$lon    = floatval( $req->get_param( 'lon' ) ?: 78.4867 );
+		$radius = floatval( $req->get_param( 'radius' ) ?: 150.0 );
+		$limit  = min( max( 1, intval( $req->get_param( 'limit' ) ?: 12 ) ), 50 );
+		$lang   = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+
+		$posts = get_posts( [
+			'post_type'      => 'djv_temple',
+			'posts_per_page' => 100,
+			'post_status'    => 'publish',
+		] );
+
+		$list = [];
+		foreach ( $posts as $p ) {
+			$formatted = self::format_temple_payload( $p, $lang, $lat, $lon, false );
+			if ( isset( $formatted['distance_km'] ) && $formatted['distance_km'] <= $radius ) {
+				$list[] = $formatted;
+			}
+		}
+
+		usort( $list, function( $a, $b ) {
+			return ( $a['distance_km'] ?? 999999 ) <=> ( $b['distance_km'] ?? 999999 );
+		} );
+
+		$results = array_slice( $list, 0, $limit );
+
+		return self::respond( $results, [
+			'count'        => count( $results ),
+			'origin'       => [ 'lat' => $lat, 'lon' => $lon ],
+			'radius_km'    => $radius,
+			'language'     => $lang,
+		] );
+	}
+
+	/**
+	 * Comprehensive Formatter for Temple payload adhering to strict language fallback
+	 */
+	public static function format_temple_payload( WP_Post $post, string $lang = 'en', ?float $user_lat = null, ?float $user_lon = null, bool $detailed = false ): array {
+		$id      = $post->ID;
+		$name_en = get_the_title( $post );
+		$name_te = get_post_meta( $id, '_djv_name_te', true ) ?: get_post_meta( $id, '_djv_title_te', true );
+		$name_hi = get_post_meta( $id, '_djv_name_hi', true ) ?: get_post_meta( $id, '_djv_title_hi', true );
+
+		$display_name = $name_en;
+		if ( $lang === 'te' && ! empty( $name_te ) ) {
+			$display_name = $name_te;
+		} elseif ( $lang === 'hi' && ! empty( $name_hi ) ) {
+			$display_name = $name_hi;
+		}
+
+		$t_lat = get_post_meta( $id, '_djv_lat', true );
+		$t_lon = get_post_meta( $id, '_djv_lon', true );
+		$lat_val = ( $t_lat !== '' && $t_lat !== false ) ? (float) $t_lat : null;
+		$lon_val = ( $t_lon !== '' && $t_lon !== false ) ? (float) $t_lon : null;
+
+		$dist_km = null;
+		$bearing = null;
+		$compass = null;
+		$direction_sentence = null;
+
+		if ( $user_lat !== null && $user_lon !== null && $lat_val !== null && $lon_val !== null ) {
+			if ( class_exists( 'DJV_Temple_Master' ) ) {
+				$dist_km = DJV_Temple_Master::haversine_distance( $user_lat, $user_lon, $lat_val, $lon_val );
+				$bearing = DJV_Temple_Master::calculate_bearing( $user_lat, $user_lon, $lat_val, $lon_val );
+				$compass = DJV_Temple_Master::bearing_to_compass( $bearing, $lang );
+				$direction_sentence = DJV_Temple_Master::format_direction_sentence( $dist_km, $compass['code'], $lang );
+			}
+		}
+
+		$item = [
+			'id'          => $id,
+			'slug'        => $post->post_name,
+			'name'        => $display_name,
+			'name_en'     => $name_en,
+			'name_te'     => $name_te,
+			'name_hi'     => $name_hi,
+			'deity'       => get_post_meta( $id, '_djv_deity', true ) ?: implode( ', ', wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ) ),
+			'category'    => get_post_meta( $id, '_djv_category', true ) ?: implode( ', ', wp_get_post_terms( $id, 'djv_temple_category', [ 'fields' => 'names' ] ) ),
+			'tradition'   => get_post_meta( $id, '_djv_tradition', true ) ?: implode( ', ', wp_get_post_terms( $id, 'djv_tradition', [ 'fields' => 'names' ] ) ),
+			'state'       => get_post_meta( $id, '_djv_state', true ),
+			'district'    => get_post_meta( $id, '_djv_district', true ),
+			'city'        => get_post_meta( $id, '_djv_city', true ),
+			'address'     => get_post_meta( $id, '_djv_address', true ),
+			'pincode'     => get_post_meta( $id, '_djv_pincode', true ),
+			'coordinates' => [
+				'lat' => $lat_val,
+				'lon' => $lon_val,
+			],
+			'distance_km'          => $dist_km,
+			'bearing_deg'          => $bearing,
+			'compass_direction'    => $compass ? $compass['code'] : null,
+			'compass_label'        => $compass ? $compass['label'] : null,
+			'direction_sentence'   => $direction_sentence,
+			'timings'              => get_post_meta( $id, '_djv_timings', true ),
+			'morning_open'         => get_post_meta( $id, '_djv_morning_open', true ),
+			'morning_close'        => get_post_meta( $id, '_djv_morning_close', true ),
+			'evening_open'         => get_post_meta( $id, '_djv_evening_open', true ),
+			'evening_close'        => get_post_meta( $id, '_djv_evening_close', true ),
+			'dress_code'           => get_post_meta( $id, '_djv_dress_code', true ),
+			'verification_status'  => get_post_meta( $id, '_djv_verification_status', true ) ?: 'Verified',
+			'source_name'          => get_post_meta( $id, '_djv_source_name', true ) ?: 'Dharma Jyothi Vedika',
+			'source_url'           => get_post_meta( $id, '_djv_source_url', true ) ?: '',
+			'source_type'          => get_post_meta( $id, '_djv_source_type', true ) ?: 'official_directory',
+			'link'                 => get_permalink( $post ),
+			'thumbnail'            => get_the_post_thumbnail_url( $post, 'medium' ) ?: false,
+		];
+
+		if ( $detailed ) {
+			// Multilingual content selection with strict fallback
+			$about = get_post_meta( $id, '_djv_about_en', true ) ?: $post->post_content;
+			if ( $lang === 'te' && get_post_meta( $id, '_djv_about_te', true ) ) {
+				$about = get_post_meta( $id, '_djv_about_te', true );
+			} elseif ( $lang === 'hi' && get_post_meta( $id, '_djv_about_hi', true ) ) {
+				$about = get_post_meta( $id, '_djv_about_hi', true );
+			}
+
+			$history = get_post_meta( $id, '_djv_history_en', true );
+			if ( $lang === 'te' && get_post_meta( $id, '_djv_history_te', true ) ) {
+				$history = get_post_meta( $id, '_djv_history_te', true );
+			} elseif ( $lang === 'hi' && get_post_meta( $id, '_djv_history_hi', true ) ) {
+				$history = get_post_meta( $id, '_djv_history_hi', true );
+			}
+
+			$purana = get_post_meta( $id, '_djv_sthala_purana_en', true );
+			if ( $lang === 'te' && get_post_meta( $id, '_djv_sthala_purana_te', true ) ) {
+				$purana = get_post_meta( $id, '_djv_sthala_purana_te', true );
+			} elseif ( $lang === 'hi' && get_post_meta( $id, '_djv_sthala_purana_hi', true ) ) {
+				$purana = get_post_meta( $id, '_djv_sthala_purana_hi', true );
+			}
+
+			$item['about']           = $about;
+			$item['history']         = $history;
+			$item['sthala_purana']   = $purana;
+			$item['railway']         = get_post_meta( $id, '_djv_railway', true );
+			$item['airport']         = get_post_meta( $id, '_djv_airport', true );
+			$item['bus_station']     = get_post_meta( $id, '_djv_bus_station', true );
+			$item['highway']         = get_post_meta( $id, '_djv_highway', true );
+			$item['website']             = get_post_meta( $id, '_djv_website', true );
+			$item['contact']             = get_post_meta( $id, '_djv_contact', true );
+			$item['trust_name']          = get_post_meta( $id, '_djv_trust_name', true );
+			$item['official_source']     = get_post_meta( $id, '_djv_official_source', true );
+			$item['last_verified']       = get_post_meta( $id, '_djv_last_verified', true );
+			$item['source_name']         = get_post_meta( $id, '_djv_source_name', true ) ?: 'Dharma Jyothi Vedika';
+			$item['source_url']          = get_post_meta( $id, '_djv_source_url', true ) ?: '';
+			$item['source_type']         = get_post_meta( $id, '_djv_source_type', true ) ?: 'official_directory';
+			$item['architecture']        = get_post_meta( $id, '_djv_architecture', true ) ?: '';
+			$item['visiting_guide']      = get_post_meta( $id, '_djv_visiting_guide', true ) ?: '';
+			$item['scripture_reference'] = get_post_meta( $id, '_djv_scripture_reference', true ) ?: '';
+			$item['maps_url']            = ( $lat_val && $lon_val ) ? "https://www.google.com/maps/dir/?api=1&destination={$lat_val},{$lon_val}" : '';
+		}
+
+		return $item;
 	}
 
 	/**

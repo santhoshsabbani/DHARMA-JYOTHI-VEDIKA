@@ -102,9 +102,27 @@
 
 ---
 
+## OPEN SOURCE DATASETS
+
+### Hindu Temples Seed Dataset
+
+| Property | Details |
+|---|---|
+| **Dataset Repository** | `rishabhmodi03/hindu-temples` (GitHub) |
+| **URL** | https://github.com/rishabhmodi03/hindu-temples |
+| **License** | MIT License |
+| **Commercial Use** | ✅ Permitted |
+| **Attribution Requirement** | ✅ Preserved across DJV documentation, API metadata, and temple profiles |
+| **Verification Status** | `needs_verification` (Open source seed data pending independent field audit) |
+| **Stored Raw Metadata** | `_djv_source_raw_name`, `_djv_source_raw_state`, `_djv_source_raw_deity`, `_djv_source_raw_description` |
+
+---
+
 ## AUDIT HISTORY
 
 | Date | Auditor | Changes |
 |------|---------|---------|
 | 2026-10-03 | DJV Engineering | Initial audit for Phase 1 |
+| 2026-10-08 | DJV Engineering | Audited and added MIT attribution for `rishabhmodi03/hindu-temples` dataset |
+
 

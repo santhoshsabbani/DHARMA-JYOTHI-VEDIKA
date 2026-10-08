@@ -141,7 +141,9 @@ All visual design tokens are in `website/assets/css/design-system.css`.
 
 ---
 
-## License
-WordPress plugin: GPL v2+
-Panchangam engine: Proprietary (original code)
-See `LICENSE-CHECK.md` for full dependency audit.
+## License & Data Source Attributions
+- **WordPress plugin & theme:** GPL v2+
+- **Panchangam engine:** Proprietary (original code)
+- **Hindu Temples Seed Dataset:** [rishabhmodi03/hindu-temples](https://github.com/rishabhmodi03/hindu-temples) (MIT License). Open-source seed dataset for Hindu temple cataloging across Indian states and deities, utilized under MIT terms with full source preservation and attribution metadata.
+- See `LICENSE-CHECK.md` for full dependency and dataset audit.
+

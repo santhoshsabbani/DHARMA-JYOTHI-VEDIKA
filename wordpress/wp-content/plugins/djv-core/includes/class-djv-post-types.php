@@ -233,7 +233,7 @@ class DJV_Post_Types {
 		] );
 
 		// State / Region taxonomy (Telangana, Andhra Pradesh, Karnataka, Tamil Nadu, Kerala, Maharashtra, Gujarat, etc.)
-		register_taxonomy( 'djv_state', [ 'djv_festival' ], [
+		register_taxonomy( 'djv_state', [ 'djv_festival', 'djv_temple' ], [
 			'labels' => [
 				'name'          => __( 'States & Regions', 'djv-core' ),
 				'singular_name' => __( 'State / Region', 'djv-core' ),
@@ -245,6 +245,36 @@ class DJV_Post_Types {
 			'show_in_rest' => true,
 			'hierarchical' => true,
 			'rewrite'      => [ 'slug' => 'state' ],
+		] );
+
+		// Temple Category taxonomy (Jyotirlinga, Shakti Peetha, Char Dham, Divya Desam, Pancha Bhoota, Pancharama, etc.)
+		register_taxonomy( 'djv_temple_category', [ 'djv_temple' ], [
+			'labels' => [
+				'name'          => __( 'Temple Categories', 'djv-core' ),
+				'singular_name' => __( 'Temple Category', 'djv-core' ),
+				'all_items'     => __( 'All Temple Categories', 'djv-core' ),
+				'edit_item'     => __( 'Edit Temple Category', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Temple Category', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'temple-category' ],
+		] );
+
+		// Temple Tradition / Sampradaya taxonomy (Shaiva, Vaishnava, Shakta, Ganapatya, Kaumara, Saura, Smarta, Other)
+		register_taxonomy( 'djv_tradition', [ 'djv_temple' ], [
+			'labels' => [
+				'name'          => __( 'Traditions / Sampradayas', 'djv-core' ),
+				'singular_name' => __( 'Tradition', 'djv-core' ),
+				'all_items'     => __( 'All Traditions', 'djv-core' ),
+				'edit_item'     => __( 'Edit Tradition', 'djv-core' ),
+				'add_new_item'  => __( 'Add New Tradition', 'djv-core' ),
+			],
+			'public'       => true,
+			'show_in_rest' => true,
+			'hierarchical' => true,
+			'rewrite'      => [ 'slug' => 'tradition' ],
 		] );
 
 		// Rule Type taxonomy (lunar_tithi, solar_transit, ekadashi, pradosham, etc.)

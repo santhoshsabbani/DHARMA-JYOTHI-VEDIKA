@@ -42,6 +42,8 @@ require_once DJV_PLUGIN_DIR . 'includes/data-festivals.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-festival-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-festival-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-poojas.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-temple-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-temple-master.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
 function djv_load(): void {
@@ -49,6 +51,8 @@ function djv_load(): void {
 	if ( is_admin() ) {
 		new DJV_Admin();
 		add_action( 'add_meta_boxes', [ 'DJV_Festival_Master', 'register_admin_metabox' ] );
+		add_action( 'add_meta_boxes', [ 'DJV_Temple_Master', 'register_admin_metabox' ] );
+		add_action( 'save_post_djv_temple', [ 'DJV_Temple_Master', 'save_admin_metabox' ] );
 	}
 	add_action( DJV_CRON_HOOK, 'djv_run_nightly_precalculate' );
 }
@@ -60,6 +64,7 @@ function djv_init_textdomain(): void {
 add_action( 'init', 'djv_init_textdomain', 5 );
 
 add_action( 'init', [ 'DJV_Post_Types', 'register' ] );
+add_action( 'init', [ 'DJV_Temple_Master', 'maybe_auto_sync' ], 20 );
 
 // Disable WordPress Admin Bar on the Frontend for all users (including Administrators)
 add_filter( 'show_admin_bar', function( $show ) {
