@@ -21,9 +21,6 @@ get_header();
     <header class="page-header" style="margin-bottom: 2.5rem;">
       <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">
         <?php esc_html_e( 'Shubh Muhurtham Finder', 'djv-theme' ); ?>
-        <span style="font-family: var(--font-telugu); font-size: 1.6rem; display: block; color: var(--clr-accent); margin-top: 0.25rem;">
-          శుభ ముహూర్తములు &amp; కాల నిర్ణయం
-        </span>
       </h1>
       <p style="color: var(--clr-text-secondary); margin: 0; font-size: 1rem; max-width: 780px; line-height: 1.6;">
         <?php esc_html_e( 'Find auspicious timings for Vivaha (Marriage), Griha Pravesha (House Warming), Namakarana, and new beginnings. Grounded in Vedic Jyotish principles.', 'djv-theme' ); ?>

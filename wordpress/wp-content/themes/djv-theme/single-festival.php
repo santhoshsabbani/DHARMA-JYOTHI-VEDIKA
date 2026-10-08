@@ -69,6 +69,8 @@ $calculated_date = null;
 $calculated_occ  = null;
 $dynamic_timings = $static_timings;
 
+$current_lang = function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en';
+
 if ( class_exists( 'DJV_Festival_Master' ) ) {
 	$occurrences = DJV_Festival_Master::get_occurrences( $current_year, [
 		'latitude'  => $loc_lat,
@@ -77,7 +79,7 @@ if ( class_exists( 'DJV_Festival_Master' ) ) {
 		'city'      => $loc_city,
 		'state'     => $loc_state,
 		'scope'     => 'all_india',
-		'language'  => 'en',
+		'language'  => $current_lang,
 	] );
 
 	foreach ( $occurrences as $occ ) {
@@ -174,11 +176,15 @@ $canonical_url = home_url( '/festivals/' . $slug . '/' );
         <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
           <?php foreach ( $available_years as $yr ) :
             $active_yr = ( $current_year === $yr );
-            $yr_url = add_query_arg( [
+            $yr_args   = [
               'year'  => $yr,
               'city'  => $loc_city,
               'state' => $loc_state,
-            ], get_permalink() );
+            ];
+            if ( $current_lang !== 'en' ) {
+              $yr_args['lang'] = $current_lang;
+            }
+            $yr_url = add_query_arg( $yr_args, get_permalink() );
           ?>
             <a href="<?php echo esc_url( $yr_url ); ?>"
                class="djv-year-pill <?php echo $active_yr ? 'active' : ''; ?>"
@@ -228,9 +234,9 @@ $canonical_url = home_url( '/festivals/' . $slug . '/' );
             <!-- Language Switcher Bar -->
             <div class="djv-lang-bar" style="background: #FFF; border: 1.5px solid var(--clr-border, #E8DFD3); border-radius: 9999px; padding: 0.25rem 0.4rem; display: inline-flex; align-items: center; gap: 0.25rem; box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));">
               <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-text-muted, #7A6F68); padding: 0 0.4rem; text-transform: uppercase;">🌐 Script:</span>
-              <button type="button" class="djv-lang-btn active" data-lang="en" style="border:none;background:var(--clr-primary, #7A2419);color:#FFF;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;">English</button>
-              <button type="button" class="djv-lang-btn" data-lang="te" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:var(--font-telugu, sans-serif);">తెలుగు</button>
-              <button type="button" class="djv-lang-btn" data-lang="hi" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Noto Sans Devanagari', serif;">हिन्दी</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'en' ? 'active' : ''; ?>" data-lang="en" style="border:none;background:<?php echo $current_lang === 'en' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'en' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;">English</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'te' ? 'active' : ''; ?>" data-lang="te" style="border:none;background:<?php echo $current_lang === 'te' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'te' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:var(--font-telugu, sans-serif);">తెలుగు</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'hi' ? 'active' : ''; ?>" data-lang="hi" style="border:none;background:<?php echo $current_lang === 'hi' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'hi' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Noto Sans Devanagari', serif;">हिन्दी</button>
             </div>
           </div>
 

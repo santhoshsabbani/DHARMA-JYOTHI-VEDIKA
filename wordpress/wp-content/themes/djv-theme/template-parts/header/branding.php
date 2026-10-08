@@ -39,8 +39,13 @@ $site_desc = get_bloginfo( 'description' ) ?: 'ధర్మ జ్యోతి �
       </svg>
     </div>
     <div class="logo-text">
-      <span class="brand-en"><?php echo esc_html( $site_name ); ?></span>
-      <span class="brand-te"><?php echo esc_html( $site_desc ); ?></span>
+      <span class="brand-name djv-lang-field" data-lang="en"><?php echo esc_html( $site_name ); ?></span>
+      <span class="brand-name djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu, sans-serif);">ధర్మ జ్యోతి వేదిక</span>
+      <span class="brand-name djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari', serif;">धर्म ज्योति वेदिका</span>
+
+      <span class="brand-sub djv-lang-field" data-lang="en" style="font-size:0.75rem;color:var(--clr-accent,#C89432);font-weight:600;">Vedic Panchangam &amp; Devotion</span>
+      <span class="brand-sub djv-lang-field" data-lang="te" style="display:none;font-size:0.75rem;color:var(--clr-accent,#C89432);font-family:var(--font-telugu, sans-serif);font-weight:600;">వేద పంచాంగం &amp; భక్తి వేదిక</span>
+      <span class="brand-sub djv-lang-field" data-lang="hi" style="display:none;font-size:0.75rem;color:var(--clr-accent,#C89432);font-family:'Noto Sans Devanagari', serif;font-weight:600;">वैदिक पंचांग एवं भक्ति मंच</span>
     </div>
   <?php endif; ?>
 </a>

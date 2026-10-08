@@ -114,3 +114,4 @@ mobile/.env
 *.orig
 *.patch
 *.rej
+scratch/

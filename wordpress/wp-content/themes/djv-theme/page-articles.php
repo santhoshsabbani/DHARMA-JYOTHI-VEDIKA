@@ -29,7 +29,7 @@ $articles_query = new WP_Query( [
         <span style="color: var(--clr-primary); font-weight: 600;"><?php esc_html_e( 'Articles', 'djv-theme' ); ?></span>
       </nav>
       <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">
-        <?php esc_html_e( 'Vedic Articles & Knowledge (వేద జ్ఞానం)', 'djv-theme' ); ?>
+        <?php esc_html_e( 'Vedic Articles & Knowledge', 'djv-theme' ); ?>
       </h1>
       <p style="color: var(--clr-text-secondary); margin: 0; font-size: 1rem; max-width: 680px; margin: 0 auto;">
         <?php esc_html_e( 'Authentic teachings, Jyotish insights, Sanatana Dharma traditions, and devotional spiritual guides.', 'djv-theme' ); ?>

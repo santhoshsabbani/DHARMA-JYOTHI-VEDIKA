@@ -75,10 +75,17 @@ $thumb_url = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_
       </a>
     </h3>
 
-    <!-- Telugu Title -->
-    <?php if ( $telugu_title ) : ?>
-      <div class="mantra-telugu-title" lang="te">
+    <!-- Localized Subtitle -->
+    <?php 
+    $hindi_title = get_post_meta( $post_id, '_djv_hindi_title', true );
+    if ( $telugu_title ) : ?>
+      <div class="mantra-telugu-title djv-lang-field" data-lang="te" lang="te" style="display:none; font-family:var(--font-telugu, sans-serif);">
         <?php echo esc_html( $telugu_title ); ?>
+      </div>
+    <?php endif; ?>
+    <?php if ( $hindi_title ) : ?>
+      <div class="mantra-hindi-title djv-lang-field" data-lang="hi" lang="hi" style="display:none; font-family:'Noto Sans Devanagari', serif;">
+        <?php echo esc_html( $hindi_title ); ?>
       </div>
     <?php endif; ?>
 

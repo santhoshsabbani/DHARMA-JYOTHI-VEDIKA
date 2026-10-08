@@ -97,9 +97,16 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
             <?php the_title(); ?>
           </h1>
 
-          <?php if ( $telugu_title ) : ?>
-            <div class="single-mantra-telugu-title" lang="te">
+          <?php 
+          $hindi_title = get_post_meta( $post_id, '_djv_hindi_title', true );
+          if ( $telugu_title ) : ?>
+            <div class="single-mantra-telugu-title djv-lang-field" data-lang="te" lang="te" style="display:none; font-family:var(--font-telugu, sans-serif);">
               <?php echo esc_html( $telugu_title ); ?>
+            </div>
+          <?php endif; ?>
+          <?php if ( $hindi_title ) : ?>
+            <div class="single-mantra-hindi-title djv-lang-field" data-lang="hi" lang="hi" style="display:none; font-family:'Noto Sans Devanagari', serif;">
+              <?php echo esc_html( $hindi_title ); ?>
             </div>
           <?php endif; ?>
 

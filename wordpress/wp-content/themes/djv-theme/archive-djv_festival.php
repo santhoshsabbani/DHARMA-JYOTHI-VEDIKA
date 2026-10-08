@@ -12,7 +12,7 @@
 get_header();
 
 $current_page_year = (int) date( 'Y' );
-$initial_lang      = isset( $_GET['lang'] ) && in_array( sanitize_key( $_GET['lang'] ), [ 'en', 'te', 'hi' ], true ) ? sanitize_key( $_GET['lang'] ) : 'en';
+$initial_lang      = function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en';
 
 // Fetch initial published festivals for default view
 $all_festivals = get_posts([

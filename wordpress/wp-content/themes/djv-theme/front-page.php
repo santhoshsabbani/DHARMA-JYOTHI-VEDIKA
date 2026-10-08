@@ -31,7 +31,6 @@ get_header();
 
       <h1 class="hero-title" id="hero-heading">
         <?php esc_html_e( "Today's Hindu Panchangam", 'djv-theme' ); ?>
-        <span class="hero-title-te">నేటి పంచాంగం</span>
       </h1>
 
       <p class="hero-desc">

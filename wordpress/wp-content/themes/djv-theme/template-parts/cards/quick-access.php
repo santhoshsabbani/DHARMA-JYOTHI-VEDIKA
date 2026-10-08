@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( "Today's Panchangam", 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">నేటి పంచాంగం</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Daily Vedic Calendar', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/festivals/' ) ); ?>" class="qa-card" id="qa-festivals" role="listitem">
@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Festivals', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">పండుగలు</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Annual Vrats & Days', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/muhurtham/' ) ); ?>" class="qa-card" id="qa-muhurtham" role="listitem">
@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Muhurtham', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">శుభముహూర్తం</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Auspicious Timings', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/pooja/' ) ); ?>" class="qa-card" id="qa-pooja" role="listitem">
@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Pooja Guides', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">పూజా విధానం</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Vedic Vidhi & Rituals', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/mantras/' ) ); ?>" class="qa-card" id="qa-mantras" role="listitem">
@@ -58,7 +58,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Mantras', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">మంత్రాలు</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Sacred Chants & Stotras', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/temples/' ) ); ?>" class="qa-card" id="qa-temples" role="listitem">
@@ -68,7 +68,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Temples', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">దేవాలయాలు</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Sacred Shrines of Bharat', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/calendar/' ) ); ?>" class="qa-card" id="qa-calendar" role="listitem">
@@ -78,7 +78,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Calendar', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">క్యాలెండర్</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Monthly Hindu Calendar', 'djv-theme' ); ?></span>
       </a>
 
       <a href="<?php echo esc_url( home_url( '/services/' ) ); ?>" class="qa-card" id="qa-services" role="listitem">
@@ -88,7 +88,7 @@ defined( 'ABSPATH' ) || exit;
           </svg>
         </div>
         <span class="qa-label"><?php esc_html_e( 'Services', 'djv-theme' ); ?></span>
-        <span class="qa-sublabel">సేవలు</span>
+        <span class="qa-sublabel"><?php esc_html_e( 'Purohit & Vedic Seva', 'djv-theme' ); ?></span>
       </a>
 
     </div>

@@ -89,7 +89,6 @@ $all_mantras_query = new WP_Query([
 
     <h1 class="hero-title" id="mantras-hero-title">
       <?php esc_html_e( 'Sacred Mantras', 'djv-theme' ); ?>
-      <span class="hero-title-telugu">పవిత్ర మంత్రాలు</span>
     </h1>
 
     <p class="hero-subtitle">
@@ -222,7 +221,6 @@ $all_mantras_query = new WP_Query([
           <span class="section-badge">📿 <?php esc_html_e( 'Complete Library', 'djv-theme' ); ?></span>
           <h2 class="section-title" id="all-mantras-heading">
             <?php esc_html_e( 'All Sacred Mantras', 'djv-theme' ); ?>
-            <span class="section-title-te">అన్ని పవిత్ర మంత్రాలు</span>
           </h2>
         </div>
         <div class="results-counter" id="mantras-counter" aria-live="polite">

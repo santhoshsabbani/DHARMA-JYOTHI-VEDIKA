@@ -1683,6 +1683,8 @@
     .pt-label{font-size:.8125rem;color:var(--clr-text-muted);font-weight:500;width:42%;padding-right:.5rem}
     .pt-value{font-size:.9375rem;font-weight:700;color:var(--clr-dark)}
     .pt-value-te{display:block;font-family:var(--font-telugu);font-size:.8rem;font-weight:400;color:var(--clr-text-secondary);margin-top:.1rem}
+    html[lang="hi"] .pt-value-te, html[lang="en"] .pt-value-te{font-family:var(--font-primary,sans-serif)!important}
+    .pt-value-te:empty{display:none}
     .pt-time{font-size:.75rem;color:var(--clr-text-muted);font-style:italic;margin-top:.125rem;display:block}
     .pt-warn{color:var(--clr-error)!important}
     .pt-good{color:var(--clr-success)!important}

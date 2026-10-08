@@ -313,6 +313,12 @@ const TITHI_NAMES_TE = [
   'ఏకాదశి', 'ద్వాదశి', 'త్రయోదశి', 'చతుర్దశి', 'పౌర్ణమి / అమావాస్య'
 ];
 
+const TITHI_NAMES_HI = [
+  'प्रतिपदा', 'द्वितीया', 'तृतीया', 'चतुर्थी', 'पंचमी',
+  'षष्ठी', 'सप्तमी', 'अष्टमी', 'नवमी', 'दशमी',
+  'एकादशी', 'द्वादशी', 'त्रयोदशी', 'चतुर्दशी', 'पूर्णिमा / अमावस्या'
+];
+
 /**
  * Calculate Tithi from the Moon–Sun longitude difference.
  * One Tithi = 12° of separation.
@@ -321,7 +327,7 @@ const TITHI_NAMES_TE = [
  *
  * @param {number} moonLon - Sidereal Moon longitude (degrees)
  * @param {number} sunLon  - Sidereal Sun longitude (degrees)
- * @returns {{ id: number, name: string, nameTe: string, paksha: string, pakshaId: string, degreeStart: number }}
+ * @returns {{ id: number, name: string, nameTe: string, nameHi: string, paksha: string, pakshaTe: string, pakshaHi: string, pakshaId: string, degreeStart: number }}
  */
 function calcTithi(moonLon, sunLon) {
   const diff = normalizeDeg(moonLon - sunLon);
@@ -329,6 +335,8 @@ function calcTithi(moonLon, sunLon) {
 
   const isShukla = tithiId <= 15;
   const paksha   = isShukla ? 'Shukla' : 'Krishna';
+  const pakshaTe = isShukla ? 'శుక్ల పక్షం' : 'కృష్ణ పక్షం';
+  const pakshaHi = isShukla ? 'शुक्ल पक्ष' : 'कृष्ण पक्ष';
 
   let nameIndex = (tithiId - 1) % 15;
   let displayId = tithiId <= 15 ? tithiId : tithiId - 15;
@@ -338,7 +346,10 @@ function calcTithi(moonLon, sunLon) {
     displayId,                       // 1–15 within each paksha
     name:        TITHI_NAMES[nameIndex],
     nameTe:      TITHI_NAMES_TE[nameIndex],
+    nameHi:      TITHI_NAMES_HI[nameIndex],
     paksha,
+    pakshaTe,
+    pakshaHi,
     pakshaId:    isShukla ? 'shukla' : 'krishna',
     degreeStart: (tithiId - 1) * 12,
     degreeEnd:   tithiId * 12,
@@ -349,33 +360,33 @@ function calcTithi(moonLon, sunLon) {
 /* ─── Nakshatra Calculation ─────────────────────────────────── */
 
 const NAKSHATRA_DATA = [
-  { id:  1, name: 'Ashwini',         nameTe: 'అశ్విని',        deity: 'Ashwins',      ruler: 'Ketu'    },
-  { id:  2, name: 'Bharani',         nameTe: 'భరణి',           deity: 'Yama',         ruler: 'Venus'   },
-  { id:  3, name: 'Krittika',        nameTe: 'కృత్తిక',        deity: 'Agni',         ruler: 'Sun'     },
-  { id:  4, name: 'Rohini',          nameTe: 'రోహిణి',         deity: 'Brahma',       ruler: 'Moon'    },
-  { id:  5, name: 'Mrigashira',      nameTe: 'మృగశిర',         deity: 'Soma',         ruler: 'Mars'    },
-  { id:  6, name: 'Ardra',           nameTe: 'ఆర్ద్ర',         deity: 'Rudra',        ruler: 'Rahu'    },
-  { id:  7, name: 'Punarvasu',       nameTe: 'పునర్వసు',       deity: 'Aditi',        ruler: 'Jupiter' },
-  { id:  8, name: 'Pushya',          nameTe: 'పుష్య',          deity: 'Brihaspati',   ruler: 'Saturn'  },
-  { id:  9, name: 'Ashlesha',        nameTe: 'ఆశ్లేష',         deity: 'Sarpa',        ruler: 'Mercury' },
-  { id: 10, name: 'Magha',           nameTe: 'మఘ',             deity: 'Pitri',        ruler: 'Ketu'    },
-  { id: 11, name: 'Purva Phalguni',  nameTe: 'పూర్వ ఫల్గుణి', deity: 'Bhaga',        ruler: 'Venus'   },
-  { id: 12, name: 'Uttara Phalguni', nameTe: 'ఉత్తర ఫల్గుణి', deity: 'Aryaman',      ruler: 'Sun'     },
-  { id: 13, name: 'Hasta',           nameTe: 'హస్త',           deity: 'Savitar',      ruler: 'Moon'    },
-  { id: 14, name: 'Chitra',          nameTe: 'చిత్ర',          deity: 'Tvashtar',     ruler: 'Mars'    },
-  { id: 15, name: 'Swati',           nameTe: 'స్వాతి',         deity: 'Vayu',         ruler: 'Rahu'    },
-  { id: 16, name: 'Vishakha',        nameTe: 'విశాఖ',          deity: 'Indra-Agni',   ruler: 'Jupiter' },
-  { id: 17, name: 'Anuradha',        nameTe: 'అనురాధ',         deity: 'Mitra',        ruler: 'Saturn'  },
-  { id: 18, name: 'Jyeshtha',        nameTe: 'జ్యేష్ఠ',       deity: 'Indra',        ruler: 'Mercury' },
-  { id: 19, name: 'Mula',            nameTe: 'మూల',             deity: 'Nirriti',      ruler: 'Ketu'    },
-  { id: 20, name: 'Purva Ashadha',   nameTe: 'పూర్వాషాఢ',     deity: 'Apas',         ruler: 'Venus'   },
-  { id: 21, name: 'Uttara Ashadha',  nameTe: 'ఉత్తరాషాఢ',     deity: 'Vishwadevas',  ruler: 'Sun'     },
-  { id: 22, name: 'Shravana',        nameTe: 'శ్రవణ',          deity: 'Vishnu',       ruler: 'Moon'    },
-  { id: 23, name: 'Dhanishtha',      nameTe: 'ధనిష్ఠ',        deity: 'Vasus',        ruler: 'Mars'    },
-  { id: 24, name: 'Shatabhisha',     nameTe: 'శతభిష',          deity: 'Varuna',       ruler: 'Rahu'    },
-  { id: 25, name: 'Purva Bhadra',    nameTe: 'పూర్వ భాద్ర',   deity: 'Ajaikapada',   ruler: 'Jupiter' },
-  { id: 26, name: 'Uttara Bhadra',   nameTe: 'ఉత్తర భాద్ర',   deity: 'Ahirbudhnya',  ruler: 'Saturn'  },
-  { id: 27, name: 'Revati',          nameTe: 'రేవతి',          deity: 'Pushan',       ruler: 'Mercury' }
+  { id:  1, name: 'Ashwini',         nameTe: 'అశ్విని',        nameHi: 'अश्विनी',        deity: 'Ashwins',      deityTe: 'అశ్వినులు',    deityHi: 'अश्विनीकुमार', ruler: 'Ketu',    rulerTe: 'కేతువు',    rulerHi: 'केतु'    },
+  { id:  2, name: 'Bharani',         nameTe: 'భరణి',           nameHi: 'भरणी',           deity: 'Yama',         deityTe: 'యముడు',       deityHi: 'यम',           ruler: 'Venus',   rulerTe: 'శుక్రుడు',  rulerHi: 'शुक्र'   },
+  { id:  3, name: 'Krittika',        nameTe: 'కృత్తిక',        nameHi: 'कृत्तिका',       deity: 'Agni',         deityTe: 'అగ్ని',        deityHi: 'अग्नि',         ruler: 'Sun',     rulerTe: 'సూర్యుడు',  rulerHi: 'सूर्य'   },
+  { id:  4, name: 'Rohini',          nameTe: 'రోహిణి',         nameHi: 'रोहिणी',         deity: 'Brahma',       deityTe: 'బ్రహ్మ',       deityHi: 'ब्रह्मा',       ruler: 'Moon',    rulerTe: 'చంద్రుడు',  rulerHi: 'चंद्र'   },
+  { id:  5, name: 'Mrigashira',      nameTe: 'మృగశిర',         nameHi: 'मृगशिरा',        deity: 'Soma',         deityTe: 'సోముడు',       deityHi: 'सोम',           ruler: 'Mars',    rulerTe: 'కుజుడు',    rulerHi: 'मंगल'    },
+  { id:  6, name: 'Ardra',           nameTe: 'ఆర్ద్ర',         nameHi: 'आर्द्रा',        deity: 'Rudra',        deityTe: 'రుద్రుడు',     deityHi: 'रुद्र',         ruler: 'Rahu',    rulerTe: 'రాహువు',    rulerHi: 'राहु'    },
+  { id:  7, name: 'Punarvasu',       nameTe: 'పునర్వసు',       nameHi: 'पुनर्वसु',       deity: 'Aditi',        deityTe: 'అదితి',        deityHi: 'अदिति',         ruler: 'Jupiter', rulerTe: 'బృహస్పతి',  rulerHi: 'बृहस्पति'},
+  { id:  8, name: 'Pushya',          nameTe: 'పుష్య',          nameHi: 'पुष्य',          deity: 'Brihaspati',   deityTe: 'బృహస్పతి',     deityHi: 'बृहस्पति',     ruler: 'Saturn',  rulerTe: 'శని',       rulerHi: 'शनि'     },
+  { id:  9, name: 'Ashlesha',        nameTe: 'ఆశ్లేష',         nameHi: 'आश्लेषा',        deity: 'Sarpa',        deityTe: 'సర్పాలు',      deityHi: 'सर्प',         ruler: 'Mercury', rulerTe: 'బుధుడు',    rulerHi: 'बुध'     },
+  { id: 10, name: 'Magha',           nameTe: 'మఘ',             nameHi: 'मघा',            deity: 'Pitri',        deityTe: 'పితృదేవతలు',   deityHi: 'पितृ',          ruler: 'Ketu',    rulerTe: 'కేతువు',    rulerHi: 'केतु'    },
+  { id: 11, name: 'Purva Phalguni',  nameTe: 'పూర్వ ఫల్గుణి', nameHi: 'पूर्वा फाल्गुनी', deity: 'Bhaga',        deityTe: 'భగుడు',       deityHi: 'भग',           ruler: 'Venus',   rulerTe: 'శుక్రుడు',  rulerHi: 'शुक्र'   },
+  { id: 12, name: 'Uttara Phalguni', nameTe: 'ఉత్తర ఫల్గుణి', nameHi: 'उत्तरा फाल्गुनी', deity: 'Aryaman',      deityTe: 'అర్యముడు',     deityHi: 'अर्यमा',       ruler: 'Sun',     rulerTe: 'సూర్యుడు',  rulerHi: 'सूर्य'   },
+  { id: 13, name: 'Hasta',           nameTe: 'హస్త',           nameHi: 'हस्त',           deity: 'Savitar',      deityTe: 'సవితృడు',      deityHi: 'सविता',         ruler: 'Moon',    rulerTe: 'చంద్రుడు',  rulerHi: 'चंद्र'   },
+  { id: 14, name: 'Chitra',          nameTe: 'చిత్ర',          nameHi: 'चित్రా',         deity: 'Tvashtar',     deityTe: 'త్వష్ట',       deityHi: 'त्वष्टा',       ruler: 'Mars',    rulerTe: 'కుజుడు',    rulerHi: 'मंगल'    },
+  { id: 15, name: 'Swati',           nameTe: 'స్వాతి',         nameHi: 'స్వాతి',         deity: 'Vayu',         deityTe: 'వాయువు',       deityHi: 'वायु',         ruler: 'Rahu',    rulerTe: 'రాహువు',    rulerHi: 'राहु'    },
+  { id: 16, name: 'Vishakha',        nameTe: 'విశాఖ',          nameHi: 'विशाखा',         deity: 'Indra-Agni',   deityTe: 'ఇంద్రాగ్నులు', deityHi: 'इन्द्राग्नि',   ruler: 'Jupiter', rulerTe: 'బృహస్పతి',  rulerHi: 'बृहस्पति'},
+  { id: 17, name: 'Anuradha',        nameTe: 'అనురాధ',         nameHi: 'अनुराधा',        deity: 'Mitra',        deityTe: 'మిత్రుడు',     deityHi: 'मित्र',         ruler: 'Saturn',  rulerTe: 'శని',       rulerHi: 'शनि'     },
+  { id: 18, name: 'Jyeshtha',        nameTe: 'జ్యేష్ఠ',       nameHi: 'ज्येष्ठा',       deity: 'Indra',        deityTe: 'ఇంద్రుడు',     deityHi: 'इन्द्र',       ruler: 'Mercury', rulerTe: 'బుధుడు',    rulerHi: 'बुध'     },
+  { id: 19, name: 'Mula',            nameTe: 'మూల',             nameHi: 'मूल',            deity: 'Nirriti',      deityTe: 'నిరృతి',       deityHi: 'निरृति',       ruler: 'Ketu',    rulerTe: 'కేతువు',    rulerHi: 'केतु'    },
+  { id: 20, name: 'Purva Ashadha',   nameTe: 'పూర్వాషాఢ',     nameHi: 'पूर्वाषाढ़ा',     deity: 'Apas',         deityTe: 'జలం',          deityHi: 'आपः',          ruler: 'Venus',   rulerTe: 'శుక్రుడు',  rulerHi: 'शुक्र'   },
+  { id: 21, name: 'Uttara Ashadha',  nameTe: 'ఉత్తరాషాఢ',     nameHi: 'उत्तराषाढ़ा',     deity: 'Vishwadevas',  deityTe: 'విశ్వేదేవతలు', deityHi: 'विश्वेदेवा',   ruler: 'Sun',     rulerTe: 'సూర్యుడు',  rulerHi: 'सूर्य'   },
+  { id: 22, name: 'Shravana',        nameTe: 'శ్రవణ',          nameHi: 'श्रवण',          deity: 'Vishnu',       deityTe: 'విష్ణువు',     deityHi: 'विष्णु',       ruler: 'Moon',    rulerTe: 'చంద్రుడు',  rulerHi: 'चंद्र'   },
+  { id: 23, name: 'Dhanishtha',      nameTe: 'ధనిష్ఠ',        nameHi: 'धनिष्ठा',        deity: 'Vasus',        deityTe: 'వసువులు',      deityHi: 'अष्ट वसु',     ruler: 'Mars',    rulerTe: 'కుజుడు',    rulerHi: 'मंगल'    },
+  { id: 24, name: 'Shatabhisha',     nameTe: 'శతభిష',          nameHi: 'शतभिषा',         deity: 'Varuna',       deityTe: 'వరుణుడు',      deityHi: 'Varuna',       ruler: 'Rahu',    rulerTe: 'రాహువు',    rulerHi: 'राहु'    },
+  { id: 25, name: 'Purva Bhadra',    nameTe: 'పూర్వ భాద్ర',   nameHi: 'पूर्वा भाद्रपद',  deity: 'Ajaikapada',   deityTe: 'అజైకపాదుడు',   deityHi: 'अजैकपाद',      ruler: 'Jupiter', rulerTe: 'బృహస్పతి',  rulerHi: 'बृहस्पति'},
+  { id: 26, name: 'Uttara Bhadra',   nameTe: 'ఉత్తర భాద్ర',   nameHi: 'उत्तरा भाद्रपद',  deity: 'Ahirbudhnya',  deityTe: 'అహిర్బుధ్న్యుడు', deityHi: 'अहिर्बुध्न्य', ruler: 'Saturn',  rulerTe: 'శని',       rulerHi: 'शनि'     },
+  { id: 27, name: 'Revati',          nameTe: 'రేవతి',          nameHi: 'रेवती',          deity: 'Pushan',       deityTe: 'పూష',          deityHi: 'पूषा',         ruler: 'Mercury', rulerTe: 'బుధుడు',    rulerHi: 'बुध'     }
 ];
 
 /**
@@ -422,13 +433,22 @@ const YOGA_NAMES_TE = [
   'ఇంద్ర', 'వైధృతి'
 ];
 
+const YOGA_NAMES_HI = [
+  'विष्कुम्भ', 'प्रीति', 'आयुष्मान', 'सौभाग्य', 'शोभन',
+  'अतिगण्ड', 'सुकर्मा', 'धृति', 'शूल', 'गण्ड',
+  'वृद्धि', 'ध्रुव', 'व्याघात', 'हर्षण', 'वज्र',
+  'सिद्धि', 'व्यतीपात', 'वरीयान', 'परिघ', 'शिव',
+  'सिद्ध', 'साध्य', 'शुभ', 'शुक्ल', 'ब्रह्म',
+  'इन्द्र', 'वैधृति'
+];
+
 /**
  * Calculate Yoga from (Sun + Moon) sidereal longitude.
  * One Yoga = 13°20' = 800' of combined longitude.
  *
  * @param {number} sunSiderealLon  - Sidereal Sun longitude (degrees)
  * @param {number} moonSiderealLon - Sidereal Moon longitude (degrees)
- * @returns {{ id: number, name: string, nameTe: string }}
+ * @returns {{ id: number, name: string, nameTe: string, nameHi: string }}
  */
 function calcYoga(sunSiderealLon, moonSiderealLon) {
   const YOGA_SIZE = 360 / 27;
@@ -439,6 +459,7 @@ function calcYoga(sunSiderealLon, moonSiderealLon) {
     id:     index + 1,
     name:   YOGA_NAMES[index],
     nameTe: YOGA_NAMES_TE[index],
+    nameHi: YOGA_NAMES_HI[index],
     degreeStart: index * YOGA_SIZE,
     degreeEnd:   (index + 1) * YOGA_SIZE,
     currentAngle: combined
@@ -448,20 +469,20 @@ function calcYoga(sunSiderealLon, moonSiderealLon) {
 /* ─── Karana Calculation ────────────────────────────────────── */
 
 const KARANA_FIXED = [
-  { name: 'Kimstughna', nameTe: 'కింస్తుఘ్న' },
-  { name: 'Shakuni',    nameTe: 'శకుని' },
-  { name: 'Chatushpada',nameTe: 'చతుష్పద' },
-  { name: 'Naga',       nameTe: 'నాగ' }
+  { name: 'Kimstughna', nameTe: 'కింస్తుఘ్న', nameHi: 'किंस्तुघ्न' },
+  { name: 'Shakuni',    nameTe: 'శకుని',    nameHi: 'शकुनि' },
+  { name: 'Chatushpada',nameTe: 'చతుష్పద', nameHi: 'चतुष्पद' },
+  { name: 'Naga',       nameTe: 'నాగ',       nameHi: 'नाग' }
 ];
 
 const KARANA_MOVABLE = [
-  { name: 'Bava',      nameTe: 'బవ' },
-  { name: 'Balava',    nameTe: 'బాలవ' },
-  { name: 'Kaulava',   nameTe: 'కౌలవ' },
-  { name: 'Taitila',   nameTe: 'తైతిల' },
-  { name: 'Gara',      nameTe: 'గర' },
-  { name: 'Vanija',    nameTe: 'వణిజ' },
-  { name: 'Vishti',    nameTe: 'విష్టి' }
+  { name: 'Bava',      nameTe: 'బవ',      nameHi: 'बव' },
+  { name: 'Balava',    nameTe: 'బాలవ',    nameHi: 'बालव' },
+  { name: 'Kaulava',   nameTe: 'కౌలవ',   nameHi: 'कौलव' },
+  { name: 'Taitila',   nameTe: 'తైతిల',   nameHi: 'तैतिल' },
+  { name: 'Gara',      nameTe: 'గర',      nameHi: 'गर' },
+  { name: 'Vanija',    nameTe: 'వణిజ',    nameHi: 'वणिज' },
+  { name: 'Vishti',    nameTe: 'విష్టి',    nameHi: 'विष्टि (भद्रा)' }
 ];
 
 /**
@@ -470,7 +491,7 @@ const KARANA_MOVABLE = [
  *
  * @param {number} tithiId    - Tithi ID (1–30)
  * @param {number} halfTithi  - 0 = first half, 1 = second half of the Tithi
- * @returns {{ name: string, nameTe: string, isFixed: boolean }}
+ * @returns {{ name: string, nameTe: string, nameHi: string, isFixed: boolean }}
  */
 function calcKarana(tithiId, moonLon, sunLon) {
   const diff = normalizeDeg(moonLon - sunLon);
@@ -492,13 +513,13 @@ function calcKarana(tithiId, moonLon, sunLon) {
 /* ─── Vara (Weekday) ────────────────────────────────────────── */
 
 const VARA_DATA = [
-  { id: 0, name: 'Ravivara',   nameTe: 'ఆదివారం',   en: 'Sunday',    ruler: 'Sun'    },
-  { id: 1, name: 'Somavara',   nameTe: 'సోమవారం',   en: 'Monday',    ruler: 'Moon'   },
-  { id: 2, name: 'Mangalavara',nameTe: 'మంగళవారం',  en: 'Tuesday',   ruler: 'Mars'   },
-  { id: 3, name: 'Budhavara',  nameTe: 'బుధవారం',   en: 'Wednesday', ruler: 'Mercury'},
-  { id: 4, name: 'Guruvara',   nameTe: 'గురువారం',  en: 'Thursday',  ruler: 'Jupiter'},
-  { id: 5, name: 'Shukravara', nameTe: 'శుక్రవారం', en: 'Friday',    ruler: 'Venus'  },
-  { id: 6, name: 'Shanivara',  nameTe: 'శనివారం',   en: 'Saturday',  ruler: 'Saturn' }
+  { id: 0, name: 'Ravivara',   nameTe: 'ఆదివారం',   nameHi: 'रविवार',   en: 'Sunday',    ruler: 'Sun'    },
+  { id: 1, name: 'Somavara',   nameTe: 'సోమవారం',   nameHi: 'सोमवार',   en: 'Monday',    ruler: 'Moon'   },
+  { id: 2, name: 'Mangalavara',nameTe: 'మంగళవారం',  nameHi: 'मंगलवार',  en: 'Tuesday',   ruler: 'Mars'   },
+  { id: 3, name: 'Budhavara',  nameTe: 'బుధవారం',   nameHi: 'बुधवार',   en: 'Wednesday', ruler: 'Mercury'},
+  { id: 4, name: 'Guruvara',   nameTe: 'గురువారం',  nameHi: 'गुरुवार',  en: 'Thursday',  ruler: 'Jupiter'},
+  { id: 5, name: 'Shukravara', nameTe: 'శుక్రవారం', nameHi: 'शुक्रवार', en: 'Friday',    ruler: 'Venus'  },
+  { id: 6, name: 'Shanivara',  nameTe: 'శనివారం',   nameHi: 'शनिवार',   en: 'Saturday',  ruler: 'Saturn' }
 ];
 
 /**
@@ -718,33 +739,42 @@ function calcMoonPhaseAndIllumination(jd) {
 
   let phaseName = 'New Moon';
   let phaseNameTe = 'అమావాస్య';
+  let phaseNameHi = 'अमावस्या';
 
   if (elongation >= 22.5 && elongation < 67.5) {
     phaseName = 'Waxing Crescent';
     phaseNameTe = 'వృద్ధి చెందుతున్న చంద్రుడు';
+    phaseNameHi = 'शुक्ल पक्ष बाल चंद्र';
   } else if (elongation >= 67.5 && elongation < 112.5) {
     phaseName = 'First Quarter';
     phaseNameTe = 'ప్రథమ పాదం';
+    phaseNameHi = 'प्रथम चरण';
   } else if (elongation >= 112.5 && elongation < 157.5) {
     phaseName = 'Waxing Gibbous';
     phaseNameTe = 'శుక్ల పక్ష చతుర్దశి దిశగా';
+    phaseNameHi = 'शुक्ल पक्ष कुब्ज चंद्र';
   } else if (elongation >= 157.5 && elongation < 202.5) {
     phaseName = 'Full Moon';
     phaseNameTe = 'పౌర్ణమి';
+    phaseNameHi = 'पूर्णिमा';
   } else if (elongation >= 202.5 && elongation < 247.5) {
     phaseName = 'Waning Gibbous';
     phaseNameTe = 'క్షీణిస్తున్న చంద్రుడు';
+    phaseNameHi = 'कृष्ण पक्ष कुब्ज चंद्र';
   } else if (elongation >= 247.5 && elongation < 292.5) {
     phaseName = 'Last Quarter';
     phaseNameTe = 'అంతిమ పాదం';
+    phaseNameHi = 'अंतिम चरण';
   } else if (elongation >= 292.5 && elongation < 337.5) {
     phaseName = 'Waning Crescent';
     phaseNameTe = 'కృష్ణ పక్ష క్షీణ చంద్రుడు';
+    phaseNameHi = 'कृष्ण पक्ष क्षीण चंद्र';
   }
 
   return {
     phaseName,
     phaseNameTe,
+    phaseNameHi,
     illumination: k,
     illuminationPercent,
     elongation
@@ -1406,7 +1436,7 @@ function calculatePanchangam(params) {
       calculation_method:    'Drik Ganita (Surya Siddhanta & Modern Ephemeris)',
       ayanamsa:              ayanamsa,
       calculation_timestamp: new Date().toISOString(),
-      engineVersion:         '1.2.0',
+      engineVersion:         '1.3.0',
       ruleVersion:           'telugu-drik-1.2',
       generatedAt:           new Date().toISOString()
     },
@@ -1459,6 +1489,7 @@ function calculatePanchangam(params) {
       moonset:      moonTimes.moonset,
       phase:        moonPhase.phaseName,
       phaseTe:      moonPhase.phaseNameTe,
+      phaseHi:      moonPhase.phaseNameHi,
       illumination: moonPhase.illuminationPercent,
       elongation:   parseFloat(moonPhase.elongation.toFixed(1))
     },

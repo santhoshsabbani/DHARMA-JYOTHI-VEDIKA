@@ -515,24 +515,49 @@
     }
 
     // ── Global Trilingual Switcher Controller ──────────────────
-    const globalLangKey = 'djv_lang';
+    const globalLangKey = 'djv_language';
+    const legacyLangKey = 'djv_lang';
+    const supportedLangs = ['en', 'te', 'hi'];
+
     const currentUrlParams = new URLSearchParams(window.location.search);
     const paramLang = currentUrlParams.get('lang');
-    let activeGlobalLang = (paramLang && ['en', 'te', 'hi'].includes(paramLang))
-      ? paramLang
-      : (localStorage.getItem(globalLangKey) || 'en');
 
-    if (!['en', 'te', 'hi'].includes(activeGlobalLang)) {
-      activeGlobalLang = 'en';
+    // Priority: 1. Valid ?lang=, 2. window.DJV_LANGUAGE.current, 3. localStorage, 4. default 'en'
+    let activeGlobalLang = 'en';
+    if (paramLang && supportedLangs.includes(paramLang)) {
+      activeGlobalLang = paramLang;
+    } else if (typeof window !== 'undefined' && window.DJV_LANGUAGE && supportedLangs.includes(window.DJV_LANGUAGE.current)) {
+      activeGlobalLang = window.DJV_LANGUAGE.current;
+    } else {
+      const stored = localStorage.getItem(globalLangKey) || localStorage.getItem(legacyLangKey);
+      if (stored && supportedLangs.includes(stored)) {
+        activeGlobalLang = stored;
+      }
     }
 
-    function syncGlobalLanguage(lang) {
+    // Always persist normalized language
+    try {
+      localStorage.setItem(globalLangKey, activeGlobalLang);
+      localStorage.setItem(legacyLangKey, activeGlobalLang);
+      document.cookie = 'djv_language=' + encodeURIComponent(activeGlobalLang) + '; path=/; max-age=31536000; SameSite=Lax';
+    } catch(e) {}
+
+    // Expose centralized configuration on window.DJV_LANGUAGE
+    window.DJV_LANGUAGE = window.DJV_LANGUAGE || {};
+    window.DJV_LANGUAGE.current = activeGlobalLang;
+    window.DJV_LANGUAGE.supported = supportedLangs;
+    window.DJV_LANGUAGE.switch = switchGlobalLanguage;
+    window.DJV_LANGUAGE.setLanguage = switchGlobalLanguage;
+
+    function syncGlobalLanguageUI(lang) {
       activeGlobalLang = lang;
-      localStorage.setItem(globalLangKey, lang);
+      if (window.DJV_LANGUAGE) {
+        window.DJV_LANGUAGE.current = lang;
+      }
       document.documentElement.setAttribute('lang', lang);
 
-      // Update Header Lang buttons
-      document.querySelectorAll('.hdr-lang-btn').forEach(btn => {
+      // Update Header & In-page Language buttons
+      document.querySelectorAll('.hdr-lang-btn, .djv-lang-btn').forEach(btn => {
         if (btn.getAttribute('data-lang') === lang) {
           btn.classList.add('active');
           btn.style.background = 'var(--clr-primary, #7A2419)';
@@ -544,7 +569,7 @@
         }
       });
 
-      // Toggle page lang fields
+      // Toggle trilingual text elements
       document.querySelectorAll('.djv-lang-field').forEach(el => {
         if (el.getAttribute('data-lang') === lang) {
           el.style.display = '';
@@ -556,22 +581,42 @@
       window.dispatchEvent(new CustomEvent('djv:languageChanged', { detail: { lang: lang } }));
     }
 
-    document.querySelectorAll('.hdr-lang-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
+    function switchGlobalLanguage(targetLang) {
+      if (!supportedLangs.includes(targetLang)) return;
+
+      // 1. Update localStorage
+      try {
+        localStorage.setItem(globalLangKey, targetLang);
+        localStorage.setItem(legacyLangKey, targetLang);
+        document.cookie = 'djv_language=' + encodeURIComponent(targetLang) + '; path=/; max-age=31536000; SameSite=Lax';
+      } catch(e) {}
+
+      // 2. Preserve all URL query parameters while setting ?lang=
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.set('lang', targetLang);
+        // Reload page so WordPress SSR renders all headers, content, and templates in selected language
+        window.location.href = u.toString();
+      } catch(err) {
+        syncGlobalLanguageUI(targetLang);
+      }
+    }
+
+    // Attach click listeners to all language switcher buttons globally
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.hdr-lang-btn, .djv-lang-btn');
+      if (btn) {
         e.preventDefault();
-        const l = this.getAttribute('data-lang');
-        if (l && l !== activeGlobalLang) {
-          try {
-            const u = new URL(window.location.href);
-            u.searchParams.set('lang', l);
-            window.history.replaceState({}, '', u);
-          } catch(err) {}
-          syncGlobalLanguage(l);
+        const l = btn.getAttribute('data-lang');
+        if (l && supportedLangs.includes(l)) {
+          if (l !== activeGlobalLang || !paramLang) {
+            switchGlobalLanguage(l);
+          }
         }
-      });
+      }
     });
 
-    syncGlobalLanguage(activeGlobalLang);
+    syncGlobalLanguageUI(activeGlobalLang);
 
     // ESC key closes modals
     document.addEventListener('keydown', function (e) {

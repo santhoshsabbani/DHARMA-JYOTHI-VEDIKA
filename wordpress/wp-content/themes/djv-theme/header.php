@@ -41,19 +41,19 @@ defined( 'ABSPATH' ) || exit;
 <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Navigation menu', 'djv-theme' ); ?>">
   <div class="mobile-nav-drawer" id="mobile-nav-drawer">
     <div class="mobile-nav-header" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--clr-border);">
-      <div style="font-weight:700;color:var(--clr-primary);"><?php bloginfo( 'name' ); ?></div>
+      <div style="font-weight:700;color:var(--clr-primary);"><?php echo esc_html( function_exists( 'djv__' ) ? djv__( 'DHARMA JYOTHI VEDIKA' ) : get_bloginfo( 'name' ) ); ?></div>
       <button id="mobile-nav-close-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--clr-text);" aria-label="<?php esc_attr_e( 'Close navigation menu', 'djv-theme' ); ?>">✕</button>
     </div>
     <nav aria-label="<?php esc_attr_e( 'Mobile Navigation', 'djv-theme' ); ?>" style="padding:1rem 0;">
-      <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="nav-link <?php echo is_front_page() ? 'active' : ''; ?>">🏠 <?php esc_html_e( 'Home', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/panchangam/' ) ); ?>" class="nav-link <?php echo is_page( 'panchangam' ) ? 'active' : ''; ?>">📅 <?php esc_html_e( 'Panchangam (నేటి పంచాంగం)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/festivals/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_festival' ) ? 'active' : ''; ?>">🎊 <?php esc_html_e( 'Festivals (పండుగలు)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/muhurtham/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_muhurtham' ) ? 'active' : ''; ?>">⏰ <?php esc_html_e( 'Muhurtham (శుభముహూర్తం)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/pooja/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_pooja' ) ? 'active' : ''; ?>">🪔 <?php esc_html_e( 'Pooja (పూజా విధానం)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/mantras/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_mantra' ) ? 'active' : ''; ?>">📿 <?php esc_html_e( 'Mantras (స్తోత్రాలు)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/temples/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_temple' ) ? 'active' : ''; ?>">🛕 <?php esc_html_e( 'Temples (దేవాలయాలు)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/articles/' ) ); ?>" class="nav-link <?php echo is_home() || is_archive() || is_singular( 'post' ) ? 'active' : ''; ?>">📰 <?php esc_html_e( 'Articles (వేద జ్ఞానం)', 'djv-theme' ); ?></a>
-      <a href="<?php echo esc_url( home_url( '/services/' ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_service' ) ? 'active' : ''; ?>">⭐ <?php esc_html_e( 'Services (సేవలు)', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/' ) ) ); ?>" class="nav-link <?php echo is_front_page() ? 'active' : ''; ?>">🏠 <?php esc_html_e( 'Home', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/panchangam/' ) ) ); ?>" class="nav-link <?php echo is_page( 'panchangam' ) ? 'active' : ''; ?>">📅 <?php esc_html_e( 'Panchangam', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/festivals/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_festival' ) ? 'active' : ''; ?>">🎊 <?php esc_html_e( 'Festivals', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/muhurtham/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_muhurtham' ) ? 'active' : ''; ?>">⏰ <?php esc_html_e( 'Muhurtham', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/pooja/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_pooja' ) ? 'active' : ''; ?>">🪔 <?php esc_html_e( 'Pooja', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/mantras/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_mantra' ) ? 'active' : ''; ?>">📿 <?php esc_html_e( 'Mantras', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/temples/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_temple' ) ? 'active' : ''; ?>">🛕 <?php esc_html_e( 'Temples', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/articles/' ) ) ); ?>" class="nav-link <?php echo is_home() || is_archive() || is_singular( 'post' ) ? 'active' : ''; ?>">📰 <?php esc_html_e( 'Articles', 'djv-theme' ); ?></a>
+      <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/services/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_service' ) ? 'active' : ''; ?>">⭐ <?php esc_html_e( 'Services', 'djv-theme' ); ?></a>
     </nav>
   </div>
 </div>

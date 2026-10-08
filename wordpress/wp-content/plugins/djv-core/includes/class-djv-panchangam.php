@@ -61,7 +61,7 @@ class DJV_Panchangam {
     /**
      * Panchangam engine version identifier.
      */
-    const ENGINE_VERSION = '1.2.0';
+    const ENGINE_VERSION = '1.3.0';
 
     /**
      * Path to the Node.js runner script.
@@ -177,14 +177,14 @@ class DJV_Panchangam {
         $cache_key = $this->get_cache_key( $date, $latitude, $longitude, $timezone, $region, $language );
         $cached    = get_transient( $cache_key );
         if ( false !== $cached && is_array( $cached ) ) {
-            $normalized = $this->normalize_payload( $cached, $timezone, $latitude, $longitude, $date );
+            $normalized = $this->normalize_payload( $cached, $timezone, $latitude, $longitude, $date, $language );
             return array_merge( $normalized, [ '_cache_hit' => 'transient' ] );
         }
 
         // 2. CPT database cache (version-aware)
         $from_cpt = $this->get_from_cpt_cache( $date, $latitude, $longitude, $timezone );
         if ( $from_cpt ) {
-            $normalized = $this->normalize_payload( $from_cpt, $timezone, $latitude, $longitude, $date );
+            $normalized = $this->normalize_payload( $from_cpt, $timezone, $latitude, $longitude, $date, $language );
             // Refresh transient from CPT data
             set_transient( $cache_key, $normalized, HOUR_IN_SECONDS );
             return array_merge( $normalized, [ '_cache_hit' => 'cpt' ] );
@@ -205,10 +205,10 @@ class DJV_Panchangam {
         }
 
         // Normalize result before caching
-        $normalized = $this->normalize_payload( $result, $timezone, $latitude, $longitude, $date );
+        $normalized = $this->normalize_payload( $result, $timezone, $latitude, $longitude, $date, $language );
 
         // Store result in both caches
-        $this->store_in_cpt_cache( $date, $latitude, $longitude, $normalized, $timezone );
+        $this->store_in_cpt_cache( $date, $latitude, $longitude, $result, $timezone );
         set_transient( $cache_key, $normalized, HOUR_IN_SECONDS );
 
         return array_merge( $normalized, [ '_cache_hit' => 'live' ] );
@@ -566,7 +566,7 @@ class DJV_Panchangam {
      * @param string $date
      * @return array
      */
-    public function normalize_payload( array $data, string $timezone, float $latitude, float $longitude, string $date ): array {
+    public function normalize_payload( array $data, string $timezone, float $latitude, float $longitude, string $date, string $language = 'en' ): array {
         if ( empty( $data ) ) {
             return $data;
         }
@@ -726,6 +726,47 @@ class DJV_Panchangam {
                     $item['spanStr'] = 'Up to ' . $item['endStr'];
                 }
             }
+        }
+        // 5. Localization presentation layer (Section 8 & 10)
+        $lang = in_array( $language, [ 'en', 'te', 'hi' ], true ) ? $language : 'en';
+
+        // Vara
+        if ( isset( $data['vara'] ) && is_array( $data['vara'] ) ) {
+            $data['weekday'] = ( $lang === 'hi' ) ? ( $data['vara']['nameHi'] ?? 'गुरुवार' ) : ( ( $lang === 'te' ) ? ( $data['vara']['nameTe'] ?? 'గురువారం' ) : ( $data['vara']['en'] ?? 'Thursday' ) );
+            $data['vara']['display'] = $data['weekday'];
+        }
+
+        // Tithi
+        if ( isset( $data['tithi'] ) && is_array( $data['tithi'] ) ) {
+            $data['tithi_name'] = ( $lang === 'hi' ) ? ( $data['tithi']['nameHi'] ?? $data['tithi']['name'] ) : ( ( $lang === 'te' ) ? ( $data['tithi']['nameTe'] ?? $data['tithi']['name'] ) : $data['tithi']['name'] );
+            $data['tithi']['display'] = $data['tithi_name'];
+            $data['paksha_name'] = ( $lang === 'hi' ) ? ( $data['tithi']['pakshaHi'] ?? 'कृष्ण पक्ष' ) : ( ( $lang === 'te' ) ? ( $data['tithi']['pakshaTe'] ?? 'కృష్ణ పక్షం' ) : ( ( $data['tithi']['paksha'] ?? '' ) . ' Paksha' ) );
+            $data['tithi']['pakshaDisplay'] = $data['paksha_name'];
+        }
+
+        // Nakshatra
+        if ( isset( $data['nakshatra'] ) && is_array( $data['nakshatra'] ) ) {
+            $nak_obj = $data['nakshatra']['nakshatra'] ?? $data['nakshatra'];
+            $data['nakshatra_name'] = ( $lang === 'hi' ) ? ( $nak_obj['nameHi'] ?? ( $nak_obj['name'] ?? '' ) ) : ( ( $lang === 'te' ) ? ( $nak_obj['nameTe'] ?? ( $nak_obj['name'] ?? '' ) ) : ( $nak_obj['name'] ?? '' ) );
+            $data['nakshatra']['display'] = $data['nakshatra_name'];
+        }
+
+        // Yoga
+        if ( isset( $data['yoga'] ) && is_array( $data['yoga'] ) ) {
+            $data['yoga_name'] = ( $lang === 'hi' ) ? ( $data['yoga']['nameHi'] ?? ( $data['yoga']['name'] ?? '' ) ) : ( ( $lang === 'te' ) ? ( $data['yoga']['nameTe'] ?? ( $data['yoga']['name'] ?? '' ) ) : ( $data['yoga']['name'] ?? '' ) );
+            $data['yoga']['display'] = $data['yoga_name'];
+        }
+
+        // Karana
+        if ( isset( $data['karana'] ) && is_array( $data['karana'] ) ) {
+            $data['karana_name'] = ( $lang === 'hi' ) ? ( $data['karana']['nameHi'] ?? ( $data['karana']['name'] ?? '' ) ) : ( ( $lang === 'te' ) ? ( $data['karana']['nameTe'] ?? ( $data['karana']['name'] ?? '' ) ) : ( $data['karana']['name'] ?? '' ) );
+            $data['karana']['display'] = $data['karana_name'];
+        }
+
+        // Lunar
+        if ( isset( $data['lunar'] ) && is_array( $data['lunar'] ) ) {
+            $data['lunar']['display'] = ( $lang === 'hi' ) ? ( $data['lunar']['phaseHi'] ?? ( $data['lunar']['phase'] ?? '' ) ) : ( ( $lang === 'te' ) ? ( $data['lunar']['phaseTe'] ?? ( $data['lunar']['phase'] ?? '' ) ) : ( $data['lunar']['phase'] ?? '' ) );
+            $data['lunar']['description'] = $data['lunar']['display'];
         }
 
         return $data;

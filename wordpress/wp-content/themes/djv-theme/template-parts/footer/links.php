@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
     <a href="<?php echo esc_url( home_url( '/festivals/' ) ); ?>"><?php esc_html_e( 'Festival Calendar', 'djv-theme' ); ?></a>
     <a href="<?php echo esc_url( home_url( '/calendar/' ) ); ?>"><?php esc_html_e( 'Monthly Vedic Calendar', 'djv-theme' ); ?></a>
     <a href="<?php echo esc_url( home_url( '/panchangam/?view=choghadiya' ) ); ?>"><?php esc_html_e( 'Day & Night Choghadiya', 'djv-theme' ); ?></a>
-    <a href="<?php echo esc_url( home_url( '/panchangam/?view=horai' ) ); ?>"><?php esc_html_e( 'Hora Timings (గ్రహ హోరలు)', 'djv-theme' ); ?></a>
+    <a href="<?php echo esc_url( home_url( '/panchangam/?view=horai' ) ); ?>"><?php esc_html_e( 'Hora Timings', 'djv-theme' ); ?></a>
   </nav>
 </div>
 
@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
   <p style="font-size:0.8125rem;color:#D8C4B4;margin-bottom:0.75rem;line-height:1.5;">
     <?php esc_html_e( "Receive tomorrow's auspicious timings, Tithi, Nakshatra, and festival alerts directly in your inbox.", 'djv-theme' ); ?>
   </p>
-  <form class="footer-newsletter-form" onsubmit="event.preventDefault(); alert('ధన్యవాదాలు! Thank you for subscribing to daily Panchangam updates.');" style="display:flex;gap:0.35rem;margin-bottom:0.75rem;">
+  <form class="footer-newsletter-form" onsubmit="event.preventDefault(); alert('<?php echo esc_js( __( 'Thank you for subscribing to daily Panchangam updates.', 'djv-theme' ) ); ?>');" style="display:flex;gap:0.35rem;margin-bottom:0.75rem;">
     <input type="email" placeholder="<?php esc_attr_e( 'Your email address', 'djv-theme' ); ?>" required style="padding:0.45rem 0.65rem;border-radius:0.35rem;border:1px solid #7A2419;font-size:0.8125rem;background:#FFF;color:#222;flex:1;" />
     <button type="submit" style="padding:0.45rem 0.75rem;background:#C89432;color:#241914;font-weight:700;border:none;border-radius:0.35rem;cursor:pointer;font-size:0.8125rem;">
       <?php esc_html_e( 'Subscribe', 'djv-theme' ); ?>

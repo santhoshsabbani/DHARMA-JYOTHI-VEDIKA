@@ -77,12 +77,18 @@ class DJV_REST_API {
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ __CLASS__, 'get_pooja' ],
 			'permission_callback' => '__return_true',
+			'args'                => [
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+			],
 		] );
 
 		register_rest_route( $ns, '/pooja/(?P<slug>[a-z0-9-]+)', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ __CLASS__, 'get_pooja_single' ],
 			'permission_callback' => '__return_true',
+			'args'                => [
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+			],
 		] );
 
 		// ── Mantras ───────────────────────────────────────────────
@@ -96,6 +102,7 @@ class DJV_REST_API {
 				'search'   => [ 'type' => 'string', 'default' => '' ],
 				'page'     => [ 'type' => 'integer', 'default' => 1 ],
 				'per_page' => [ 'type' => 'integer', 'default' => 18, 'maximum' => 100 ],
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
 			],
 		] );
 
@@ -103,6 +110,9 @@ class DJV_REST_API {
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ __CLASS__, 'get_mantra_single' ],
 			'permission_callback' => '__return_true',
+			'args'                => [
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
+			],
 		] );
 
 		// ── Temples ───────────────────────────────────────────────
@@ -111,9 +121,10 @@ class DJV_REST_API {
 			'callback'            => [ __CLASS__, 'get_temples' ],
 			'permission_callback' => '__return_true',
 			'args'                => [
-				'state'   => [ 'type' => 'string', 'default' => '' ],
-				'deity'   => [ 'type' => 'string', 'default' => '' ],
-				'per_page'=> [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+				'state'    => [ 'type' => 'string', 'default' => '' ],
+				'deity'    => [ 'type' => 'string', 'default' => '' ],
+				'per_page' => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
 			],
 		] );
 
@@ -125,6 +136,7 @@ class DJV_REST_API {
 			'args'                => [
 				'category' => [ 'type' => 'string', 'default' => '' ],
 				'per_page' => [ 'type' => 'integer', 'default' => 10, 'maximum' => 50 ],
+				'language' => [ 'type' => 'string', 'default' => 'en', 'enum' => [ 'en', 'te', 'hi' ] ],
 			],
 		] );
 
@@ -265,7 +277,10 @@ class DJV_REST_API {
 		$lon      = floatval( $req->get_param( 'longitude' ) );
 		$tz       = sanitize_text_field( $req->get_param( 'timezone' ) );
 		$region   = sanitize_key( $req->get_param( 'region' ) );
-		$language = sanitize_key( $req->get_param( 'language' ) );
+		$language = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $language, [ 'en', 'te', 'hi' ], true ) ) {
+			$language = 'en';
+		}
 
 		// Validate inputs
 		$errors = self::validate_panchangam_request( $date, $lat, $lon, $tz );
@@ -439,10 +454,14 @@ class DJV_REST_API {
 	 * GET /djv/v1/muhurtham
 	 */
 	public static function get_muhurtham( WP_REST_Request $req ): WP_REST_Response {
-		$date = sanitize_text_field( $req->get_param( 'date' ) );
-		$lat  = floatval( $req->get_param( 'latitude' ) );
-		$lon  = floatval( $req->get_param( 'longitude' ) );
-		$tz   = sanitize_text_field( $req->get_param( 'timezone' ) );
+		$date     = sanitize_text_field( $req->get_param( 'date' ) );
+		$lat      = floatval( $req->get_param( 'latitude' ) );
+		$lon      = floatval( $req->get_param( 'longitude' ) );
+		$tz       = sanitize_text_field( $req->get_param( 'timezone' ) );
+		$language = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $language, [ 'en', 'te', 'hi' ], true ) ) {
+			$language = 'en';
+		}
 
 		$errors = self::validate_panchangam_request( $date, $lat, $lon, $tz );
 		if ( ! empty( $errors ) ) {
@@ -450,7 +469,7 @@ class DJV_REST_API {
 		}
 
 		$panchangam_engine = new DJV_Panchangam();
-		$panchangam = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz );
+		$panchangam = $panchangam_engine->get_panchangam( $date, $lat, $lon, $tz, 'telugu', $language );
 		if ( is_wp_error( $panchangam ) ) {
 			$err_data = $panchangam->get_error_data();
 			$status   = is_array( $err_data ) && isset( $err_data['status'] ) ? (int) $err_data['status'] : 500;
@@ -477,6 +496,11 @@ class DJV_REST_API {
 	 * GET /djv/v1/pooja
 	 */
 	public static function get_pooja( WP_REST_Request $req ): WP_REST_Response {
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+
 		$posts = get_posts( [
 			'post_type'      => 'djv_pooja',
 			'posts_per_page' => -1,
@@ -485,16 +509,39 @@ class DJV_REST_API {
 			'post_status'    => 'publish',
 		] );
 
-		$pooja_list = array_map( function( $post ) {
-			$id = $post->ID;
+		$pooja_list = array_map( function( $post ) use ( $lang ) {
+			$id       = $post->ID;
+			$title_en = get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post );
+			$title_te = get_post_meta( $id, '_djv_title_te', true );
+			$title_hi = get_post_meta( $id, '_djv_title_hi', true );
+
+			$display_title = $title_en;
+			if ( $lang === 'te' && ! empty( $title_te ) ) {
+				$display_title = $title_te;
+			} elseif ( $lang === 'hi' && ! empty( $title_hi ) ) {
+				$display_title = $title_hi;
+			}
+
+			$intro_en = get_post_meta( $id, '_djv_intro_en', true ) ?: get_the_excerpt( $post );
+			$intro_te = get_post_meta( $id, '_djv_intro_te', true );
+			$intro_hi = get_post_meta( $id, '_djv_intro_hi', true );
+
+			$display_intro = $intro_en;
+			if ( $lang === 'te' && ! empty( $intro_te ) ) {
+				$display_intro = $intro_te;
+			} elseif ( $lang === 'hi' && ! empty( $intro_hi ) ) {
+				$display_intro = $intro_hi;
+			}
+
 			return [
 				'id'          => $id,
 				'slug'        => $post->post_name,
-				'title'       => get_the_title( $post ),
-				'title_en'    => get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post ),
-				'title_te'    => get_post_meta( $id, '_djv_title_te', true ),
-				'title_hi'    => get_post_meta( $id, '_djv_title_hi', true ),
-				'excerpt'     => get_the_excerpt( $post ),
+				'title'       => $display_title,
+				'title_en'    => $title_en,
+				'title_te'    => $title_te,
+				'title_hi'    => $title_hi,
+				'excerpt'     => $display_intro,
+				'intro'       => $display_intro,
 				'duration'    => get_post_meta( $id, '_djv_duration', true ),
 				'categories'  => wp_get_post_terms( $id, 'djv_pooja_cat', [ 'fields' => 'names' ] ),
 				'deity'       => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
@@ -503,7 +550,7 @@ class DJV_REST_API {
 			];
 		}, $posts );
 
-		return self::respond( $pooja_list, [ 'count' => count( $pooja_list ) ] );
+		return self::respond( $pooja_list, [ 'count' => count( $pooja_list ), 'language' => $lang ] );
 	}
 
 	/**
@@ -511,23 +558,51 @@ class DJV_REST_API {
 	 */
 	public static function get_pooja_single( WP_REST_Request $req ): WP_REST_Response {
 		$slug = sanitize_key( $req->get_param( 'slug' ) );
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+
 		$post = get_page_by_path( $slug, OBJECT, 'djv_pooja' );
 
 		if ( ! $post || $post->post_status !== 'publish' ) {
 			return self::respond_error( 'Pooja guide not found', 404, 'not_found' );
 		}
 
-		$id = $post->ID;
+		$id       = $post->ID;
+		$title_en = get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post );
+		$title_te = get_post_meta( $id, '_djv_title_te', true );
+		$title_hi = get_post_meta( $id, '_djv_title_hi', true );
+
+		$display_title = $title_en;
+		if ( $lang === 'te' && ! empty( $title_te ) ) {
+			$display_title = $title_te;
+		} elseif ( $lang === 'hi' && ! empty( $title_hi ) ) {
+			$display_title = $title_hi;
+		}
+
+		$intro_en = get_post_meta( $id, '_djv_intro_en', true ) ?: apply_filters( 'the_content', $post->post_content );
+		$intro_te = get_post_meta( $id, '_djv_intro_te', true );
+		$intro_hi = get_post_meta( $id, '_djv_intro_hi', true );
+
+		$display_intro = $intro_en;
+		if ( $lang === 'te' && ! empty( $intro_te ) ) {
+			$display_intro = $intro_te;
+		} elseif ( $lang === 'hi' && ! empty( $intro_hi ) ) {
+			$display_intro = $intro_hi;
+		}
+
 		return self::respond( [
 			'id'               => $id,
 			'slug'             => $post->post_name,
-			'title'            => get_the_title( $post ),
-			'title_en'         => get_post_meta( $id, '_djv_title_en', true ) ?: get_the_title( $post ),
-			'title_te'         => get_post_meta( $id, '_djv_title_te', true ),
-			'title_hi'         => get_post_meta( $id, '_djv_title_hi', true ),
-			'intro_en'         => get_post_meta( $id, '_djv_intro_en', true ) ?: apply_filters( 'the_content', $post->post_content ),
-			'intro_te'         => get_post_meta( $id, '_djv_intro_te', true ),
-			'intro_hi'         => get_post_meta( $id, '_djv_intro_hi', true ),
+			'title'            => $display_title,
+			'title_en'         => $title_en,
+			'title_te'         => $title_te,
+			'title_hi'         => $title_hi,
+			'intro'            => $display_intro,
+			'intro_en'         => $intro_en,
+			'intro_te'         => $intro_te,
+			'intro_hi'         => $intro_hi,
 			'duration'         => get_post_meta( $id, '_djv_duration', true ),
 			'samagri'          => get_post_meta( $id, '_djv_samagri', true ),
 			'preparation'      => get_post_meta( $id, '_djv_preparation', true ),
@@ -550,7 +625,7 @@ class DJV_REST_API {
 			'deity'            => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
 			'link'             => get_permalink( $post ),
 			'updated'          => $post->post_modified,
-		] );
+		], [ 'language' => $lang ] );
 	}
 
 	/**
@@ -565,6 +640,10 @@ class DJV_REST_API {
 		$page           = max( 1, intval( $req->get_param( 'page' ) ?: 1 ) );
 		$per_page_raw   = $req->get_param( 'per_page' );
 		$per_page       = $per_page_raw !== null && $per_page_raw !== '' ? min( max( 1, intval( $per_page_raw ) ), 100 ) : 24;
+		$lang           = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 
 		$args = [
 			'post_type'      => 'djv_mantra',
@@ -629,8 +708,8 @@ class DJV_REST_API {
 		$query = new WP_Query( $args );
 		$posts = $query->posts;
 
-		$mantras = array_map( function( $post ) {
-			return self::format_mantra_data( $post );
+		$mantras = array_map( function( $post ) use ( $lang ) {
+			return self::format_mantra_data( $post, false, $lang );
 		}, $posts );
 
 		return self::respond( $mantras, [
@@ -639,6 +718,7 @@ class DJV_REST_API {
 			'total_pages' => (int) $query->max_num_pages,
 			'page'        => $page,
 			'per_page'    => $per_page,
+			'language'    => $lang,
 		] );
 	}
 
@@ -647,19 +727,24 @@ class DJV_REST_API {
 	 */
 	public static function get_mantra_single( WP_REST_Request $req ): WP_REST_Response {
 		$slug = sanitize_title( $req->get_param( 'slug' ) );
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+
 		$post = get_page_by_path( $slug, OBJECT, 'djv_mantra' );
 
 		if ( ! $post || $post->post_status !== 'publish' ) {
-			return self::error( 'not_found', __( 'Mantra not found.', 'djv-core' ), 404 );
+			return self::respond_error( __( 'Mantra not found.', 'djv-core' ), 404, 'not_found' );
 		}
 
-		return self::respond( self::format_mantra_data( $post, true ) );
+		return self::respond( self::format_mantra_data( $post, true, $lang ), [ 'language' => $lang ] );
 	}
 
 	/**
 	 * Format single mantra item with rich metadata.
 	 */
-	private static function format_mantra_data( WP_Post $post, bool $detailed = false ): array {
+	private static function format_mantra_data( WP_Post $post, bool $detailed = false, string $lang = 'en' ): array {
 		$id        = $post->ID;
 		$deity     = get_post_meta( $id, '_djv_deity', true );
 		if ( empty( $deity ) ) {
@@ -668,20 +753,45 @@ class DJV_REST_API {
 		}
 		$categories = wp_get_post_terms( $id, 'djv_mantra_cat', [ 'fields' => 'names' ] );
 
+		$title_en = get_the_title( $post );
+		$title_te = get_post_meta( $id, '_djv_telugu_title', true );
+		$title_hi = get_post_meta( $id, '_djv_hindi_title', true );
+
+		$display_title = $title_en;
+		if ( $lang === 'te' && ! empty( $title_te ) ) {
+			$display_title = $title_te;
+		} elseif ( $lang === 'hi' && ! empty( $title_hi ) ) {
+			$display_title = $title_hi;
+		}
+
 		$sanskrit = get_post_meta( $id, '_djv_sanskrit_text', true ) ?: get_post_meta( $id, '_djv_original_text', true );
+
+		$meaning_en = get_post_meta( $id, '_djv_meaning', true );
+		$meaning_te = get_post_meta( $id, '_djv_meaning_te', true );
+		$meaning_hi = get_post_meta( $id, '_djv_meaning_hi', true );
+
+		$display_meaning = $meaning_en;
+		if ( $lang === 'te' && ! empty( $meaning_te ) ) {
+			$display_meaning = $meaning_te;
+		} elseif ( $lang === 'hi' && ! empty( $meaning_hi ) ) {
+			$display_meaning = $meaning_hi;
+		}
 
 		$data = [
 			'id'              => $id,
 			'slug'            => $post->post_name,
-			'title'           => get_the_title( $post ),
-			'telugu_title'    => get_post_meta( $id, '_djv_telugu_title', true ),
+			'title'           => $display_title,
+			'title_en'        => $title_en,
+			'title_te'        => $title_te,
+			'title_hi'        => $title_hi,
+			'telugu_title'    => $title_te,
 			'deity'           => $deity,
 			'categories'      => $categories,
 			'excerpt'         => get_the_excerpt( $post ),
 			'sanskrit_text'   => $sanskrit,
 			'telugu_text'     => get_post_meta( $id, '_djv_telugu_text', true ),
 			'transliteration' => get_post_meta( $id, '_djv_transliteration', true ),
-			'meaning'         => get_post_meta( $id, '_djv_meaning', true ),
+			'meaning'         => $display_meaning,
 			'chant_count'     => get_post_meta( $id, '_djv_chant_count', true ),
 			'best_time'       => get_post_meta( $id, '_djv_best_time', true ),
 			'is_featured'     => get_post_meta( $id, '_djv_is_featured', true ) === '1',
@@ -711,7 +821,11 @@ class DJV_REST_API {
 	public static function get_temples( WP_REST_Request $req ): WP_REST_Response {
 		$state    = sanitize_text_field( $req->get_param( 'state' ) );
 		$deity    = sanitize_key( $req->get_param( 'deity' ) );
-		$per_page = min( intval( $req->get_param( 'per_page' ) ), 100 );
+		$per_page = min( intval( $req->get_param( 'per_page' ) ?: 20 ), 100 );
+		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 
 		$args = [
 			'post_type'      => 'djv_temple',
@@ -732,24 +846,39 @@ class DJV_REST_API {
 
 		$posts = get_posts( $args );
 
-		$temples = array_map( function( $post ) {
+		$temples = array_map( function( $post ) use ( $lang ) {
+			$id      = $post->ID;
+			$name_en = get_the_title( $post );
+			$name_te = get_post_meta( $id, '_djv_name_te', true ) ?: get_post_meta( $id, '_djv_title_te', true );
+			$name_hi = get_post_meta( $id, '_djv_name_hi', true ) ?: get_post_meta( $id, '_djv_title_hi', true );
+
+			$display_name = $name_en;
+			if ( $lang === 'te' && ! empty( $name_te ) ) {
+				$display_name = $name_te;
+			} elseif ( $lang === 'hi' && ! empty( $name_hi ) ) {
+				$display_name = $name_hi;
+			}
+
 			return [
-				'id'          => $post->ID,
+				'id'          => $id,
 				'slug'        => $post->post_name,
-				'name'        => get_the_title( $post ),
-				'deity'       => wp_get_post_terms( $post->ID, 'djv_deity', [ 'fields' => 'names' ] ),
-				'address'     => get_post_meta( $post->ID, '_djv_address', true ),
+				'name'        => $display_name,
+				'name_en'     => $name_en,
+				'name_te'     => $name_te,
+				'name_hi'     => $name_hi,
+				'deity'       => wp_get_post_terms( $id, 'djv_deity', [ 'fields' => 'names' ] ),
+				'address'     => get_post_meta( $id, '_djv_address', true ),
 				'coordinates' => [
-					'lat' => get_post_meta( $post->ID, '_djv_lat', true ),
-					'lon' => get_post_meta( $post->ID, '_djv_lon', true ),
+					'lat' => get_post_meta( $id, '_djv_lat', true ),
+					'lon' => get_post_meta( $id, '_djv_lon', true ),
 				],
-				'timings'     => get_post_meta( $post->ID, '_djv_timings', true ),
+				'timings'     => get_post_meta( $id, '_djv_timings', true ),
 				'link'        => get_permalink( $post ),
 				'thumbnail'   => get_the_post_thumbnail_url( $post, 'medium' ),
 			];
 		}, $posts );
 
-		return self::respond( $temples, [ 'count' => count( $temples ) ] );
+		return self::respond( $temples, [ 'count' => count( $temples ), 'language' => $lang ] );
 	}
 
 	/**
@@ -757,7 +886,11 @@ class DJV_REST_API {
 	 */
 	public static function get_articles( WP_REST_Request $req ): WP_REST_Response {
 		$category = sanitize_text_field( $req->get_param( 'category' ) );
-		$per_page = min( intval( $req->get_param( 'per_page' ) ), 50 );
+		$per_page = min( intval( $req->get_param( 'per_page' ) ?: 10 ), 50 );
+		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 
 		$args = [
 			'post_type'      => 'post',
@@ -773,11 +906,26 @@ class DJV_REST_API {
 
 		$posts = get_posts( $args );
 
-		$articles = array_map( function( $post ) {
+		$articles = array_map( function( $post ) use ( $lang ) {
+			$id       = $post->ID;
+			$title_en = get_the_title( $post );
+			$title_te = get_post_meta( $id, '_djv_title_te', true );
+			$title_hi = get_post_meta( $id, '_djv_title_hi', true );
+
+			$display_title = $title_en;
+			if ( $lang === 'te' && ! empty( $title_te ) ) {
+				$display_title = $title_te;
+			} elseif ( $lang === 'hi' && ! empty( $title_hi ) ) {
+				$display_title = $title_hi;
+			}
+
 			return [
-				'id'           => $post->ID,
+				'id'           => $id,
 				'slug'         => $post->post_name,
-				'title'        => get_the_title( $post ),
+				'title'        => $display_title,
+				'title_en'     => $title_en,
+				'title_te'     => $title_te,
+				'title_hi'     => $title_hi,
 				'excerpt'      => get_the_excerpt( $post ),
 				'author'       => get_the_author_meta( 'display_name', $post->post_author ),
 				'published'    => $post->post_date,
@@ -789,7 +937,7 @@ class DJV_REST_API {
 			];
 		}, $posts );
 
-		return self::respond( $articles, [ 'count' => count( $articles ) ] );
+		return self::respond( $articles, [ 'count' => count( $articles ), 'language' => $lang ] );
 	}
 
 	/**

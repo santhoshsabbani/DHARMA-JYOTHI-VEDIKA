@@ -156,9 +156,6 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
 
     <h1 class="page-hero-title" id="page-title" style="font-family: var(--font-heading); font-size: 2.25rem; color: #fff; margin: 0 0 0.5rem 0; line-height: 1.2;">
       <?php esc_html_e( "Today's Hindu Panchangam", 'djv-theme' ); ?>
-      <span style="display: block; font-family: var(--font-telugu, sans-serif); font-size: 1.25rem; font-weight: 500; color: #f5c542; margin-top: 0.25rem;">
-        <?php esc_html_e( 'నేటి హిందూ పంచాంగం', 'djv-theme' ); ?>
-      </span>
     </h1>
 
     <p class="page-hero-sub" id="pc-date-heading" style="color: rgba(255,255,255,0.85); font-size: 1.05rem; margin: 0 0 1rem 0;">
@@ -285,22 +282,22 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
         <div class="solar-row fade-in" role="list" aria-label="<?php esc_attr_e( 'Solar and lunar astronomical timings', 'djv-theme' ); ?>">
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌅</span>
-            <div class="solar-label"><?php esc_html_e( 'Sunrise (సూర్యోదయం)', 'djv-theme' ); ?></div>
+            <div class="solar-label"><?php esc_html_e( 'Sunrise', 'djv-theme' ); ?></div>
             <div class="solar-time" id="val-sunrise"><?php echo esc_html( $ssr_data['solar']['sunriseStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunrise'] ?? null ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌇</span>
-            <div class="solar-label"><?php esc_html_e( 'Sunset (సూర్యాస్తమయం)', 'djv-theme' ); ?></div>
+            <div class="solar-label"><?php esc_html_e( 'Sunset', 'djv-theme' ); ?></div>
             <div class="solar-time" id="val-sunset"><?php echo esc_html( $ssr_data['solar']['sunsetStr'] ?? djv_format_ssr_time( $ssr_data['solar']['sunset'] ?? null ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌕</span>
-            <div class="solar-label"><?php esc_html_e( 'Moonrise (చంద్రోదయం)', 'djv-theme' ); ?></div>
+            <div class="solar-label"><?php esc_html_e( 'Moonrise', 'djv-theme' ); ?></div>
             <div class="solar-time" id="val-moonrise"><?php echo esc_html( $ssr_data['moonrise']['time'] ?? ( $ssr_data['solar']['moonrise'] ?? djv_format_ssr_time( $ssr_data['moonrise']['datetime'] ?? null ) ) ); ?></div>
           </div>
           <div class="solar-item" role="listitem">
             <span class="solar-icon" aria-hidden="true">🌑</span>
-            <div class="solar-label"><?php esc_html_e( 'Moonset (చంద్రాస్తమయం)', 'djv-theme' ); ?></div>
+            <div class="solar-label"><?php esc_html_e( 'Moonset', 'djv-theme' ); ?></div>
             <div class="solar-time" id="val-moonset"><?php echo esc_html( $ssr_data['moonset']['time'] ?? ( $ssr_data['solar']['moonset'] ?? djv_format_ssr_time( $ssr_data['moonset']['datetime'] ?? null ) ) ); ?></div>
           </div>
         </div>
@@ -311,7 +308,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
             <div style="display:flex; align-items:center; gap:0.5rem;">
               <span class="pc-card-icon" aria-hidden="true" style="font-size:1.25rem;">🕉</span>
               <h2 style="font-family:var(--font-heading); font-size:1.25rem; color:var(--clr-primary, #7a2419); margin:0;">
-                <?php esc_html_e( 'Pancha Angas Summary (పంచాంగ సంక్షేపం)', 'djv-theme' ); ?>
+                <?php esc_html_e( 'Pancha Angas Summary', 'djv-theme' ); ?>
               </h2>
             </div>
             <span class="paksha-pill" id="val-summary-paksha-pill">
@@ -325,7 +322,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <!-- 1. Vara (Weekday) -->
                 <tr>
                   <td class="pt-label">
-                    <strong><?php esc_html_e( 'Vara (వారం)', 'djv-theme' ); ?></strong>
+                    <strong><?php esc_html_e( 'Vara', 'djv-theme' ); ?></strong>
                     <div style="font-size:0.75rem; color:var(--clr-text-muted);"><?php esc_html_e( 'Weekday & Planetary Ruler', 'djv-theme' ); ?></div>
                   </td>
                   <td class="pt-value">
@@ -338,7 +335,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <!-- 2. Tithi -->
                 <tr>
                   <td class="pt-label">
-                    <strong><?php esc_html_e( 'Tithi (తిథి)', 'djv-theme' ); ?></strong>
+                    <strong><?php esc_html_e( 'Tithi', 'djv-theme' ); ?></strong>
                     <div style="font-size:0.75rem; color:var(--clr-text-muted);"><?php esc_html_e( 'Lunar Day & Ending Time', 'djv-theme' ); ?></div>
                   </td>
                   <td class="pt-value">
@@ -351,7 +348,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <!-- 3. Nakshatra -->
                 <tr>
                   <td class="pt-label">
-                    <strong><?php esc_html_e( 'Nakshatra (నక్షత్రం)', 'djv-theme' ); ?></strong>
+                    <strong><?php esc_html_e( 'Nakshatra', 'djv-theme' ); ?></strong>
                     <div style="font-size:0.75rem; color:var(--clr-text-muted);"><?php esc_html_e( 'Lunar Mansion, Pada & End Time', 'djv-theme' ); ?></div>
                   </td>
                   <td class="pt-value">
@@ -365,7 +362,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <!-- 4. Yoga -->
                 <tr>
                   <td class="pt-label">
-                    <strong><?php esc_html_e( 'Yoga (యోగం)', 'djv-theme' ); ?></strong>
+                    <strong><?php esc_html_e( 'Yoga', 'djv-theme' ); ?></strong>
                     <div style="font-size:0.75rem; color:var(--clr-text-muted);"><?php esc_html_e( 'Solar-Lunar Combination', 'djv-theme' ); ?></div>
                   </td>
                   <td class="pt-value">
@@ -378,7 +375,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <!-- 5. Karana -->
                 <tr>
                   <td class="pt-label">
-                    <strong><?php esc_html_e( 'Karana (కరణం)', 'djv-theme' ); ?></strong>
+                    <strong><?php esc_html_e( 'Karana', 'djv-theme' ); ?></strong>
                     <div style="font-size:0.75rem; color:var(--clr-text-muted);"><?php esc_html_e( 'Half Lunar Day', 'djv-theme' ); ?></div>
                   </td>
                   <td class="pt-value">
@@ -392,12 +389,12 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
           </div>
         </div>
 
-        <!-- 3. AUSPICIOUS TIMINGS (Shubha Muhurtham — శుభ సమయాలు) -->
+        <!-- 3. AUSPICIOUS TIMINGS (Shubha Muhurtham) -->
         <div class="pc-card fade-in" style="margin-bottom:1.5rem; background:#fff; border-radius:var(--radius-xl, 1rem); border:1px solid #c8e6c9; box-shadow:var(--shadow-sm); overflow:hidden;">
           <div class="pc-card-head" style="background:#f1fbf6; border-bottom:1px solid #c8e6c9; padding:0.875rem 1.25rem; display:flex; align-items:center; gap:0.5rem;">
             <span class="pc-card-icon" aria-hidden="true" style="font-size:1.25rem;">✨</span>
             <h2 style="font-family:var(--font-heading); font-size:1.2rem; color:#1b5e20; margin:0;">
-              <?php esc_html_e( 'Auspicious Timings (శుభ సమయాలు)', 'djv-theme' ); ?>
+              <?php esc_html_e( 'Auspicious Timings', 'djv-theme' ); ?>
             </h2>
           </div>
           <div class="pc-card-body" style="padding:1.25rem;">
@@ -407,7 +404,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">🌟</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Abhijit Muhurtham', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'అభిజిత్ ముహూర్తం · 8వ ముహూర్తం (విజయప్రదం)', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( '8th Muhurtham (Highly Auspicious)', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--good" id="val-abhijit"><?php
                   $ssr_abh = $ssr_data['timings']['abhijitMuhurtham'] ?? null;
@@ -420,7 +417,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">🪷</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Amrit Kalam', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'అమృత కాలం · శుభ ప్రదం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Auspicious & Favorable Time', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--good" id="val-amritkalam"><?php
                   $ssr_amr = $ssr_data['timings']['amritKalam'] ?? null;
@@ -433,7 +430,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">🌅</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Brahma Muhurtham', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'బ్రహ్మ ముహూర్తం · సూర్యోదయానికి పూర్వం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Pre-Dawn Sacred Muhurtham', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--good" id="val-brahmamuhurtham"><?php
                   $ssr_bm = $ssr_data['timings']['brahmaMuhurtham'] ?? null;
@@ -444,12 +441,12 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
           </div>
         </div>
 
-        <!-- 4. INAUSPICIOUS TIMINGS (Ashubha Muhurtham — అశుభ సమయాలు) -->
+        <!-- 4. INAUSPICIOUS TIMINGS (Ashubha Muhurtham) -->
         <div class="pc-card fade-in" style="margin-bottom:1.5rem; background:#fff; border-radius:var(--radius-xl, 1rem); border:1px solid #ffcdd2; box-shadow:var(--shadow-sm); overflow:hidden;">
           <div class="pc-card-head" style="background:#fff5f5; border-bottom:1px solid #ffcdd2; padding:0.875rem 1.25rem; display:flex; align-items:center; gap:0.5rem;">
             <span class="pc-card-icon" aria-hidden="true" style="font-size:1.25rem;">⚠️</span>
             <h2 style="font-family:var(--font-heading); font-size:1.2rem; color:#b71c1c; margin:0;">
-              <?php esc_html_e( 'Inauspicious Timings (అశుభ సమయాలు)', 'djv-theme' ); ?>
+              <?php esc_html_e( 'Inauspicious Timings', 'djv-theme' ); ?>
             </h2>
           </div>
           <div class="pc-card-body" style="padding:1.25rem;">
@@ -459,7 +456,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">🛑</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Rahu Kalam', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'రాహు కాలం · రాహువు అధిపతి', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Inauspicious Segment ruled by Rahu', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--warn" id="val-rahukalam"><?php
                   $ssr_rahu = $ssr_data['timings']['rahuKalam'] ?? null;
@@ -472,7 +469,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">⚠️</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Yamagandam', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'యమగండం · యముని అధిపత్యం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Inauspicious Segment ruled by Yama', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--warn" id="val-yamagandam"><?php
                   $ssr_yama = $ssr_data['timings']['yamagandam'] ?? null;
@@ -485,7 +482,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">⏳</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Gulika Kalam', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'గుళిక కాలం · శని పుత్ర గుళిక', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Segment ruled by Gulika (Son of Shani)', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--neutral" id="val-gulikakalam"><?php
                   $ssr_gul = $ssr_data['timings']['gulikaKalam'] ?? null;
@@ -498,7 +495,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">🚫</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Dur Muhurtam', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'దుర్ముహూర్తం · నిషిద్ధ సమయం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Inauspicious Time (Forbidden)', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--warn" id="val-durmuhurtham"><?php
                   $ssr_dur = $ssr_data['timings']['durMuhurtham'] ?? ( $ssr_data['durMuhurtham'] ?? null );
@@ -511,7 +508,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
                 <span class="timing-icon" aria-hidden="true">⛔</span>
                 <div class="timing-name">
                   <?php esc_html_e( 'Varjyam (Tyajyam)', 'djv-theme' ); ?>
-                  <small><?php esc_html_e( 'వర్జ్యం / త్యాజ్యం · త్యాజ్య కాలం', 'djv-theme' ); ?></small>
+                  <small><?php esc_html_e( 'Tyajya Kalam (Inauspicious / Avoidable)', 'djv-theme' ); ?></small>
                 </div>
                 <div class="timing-period timing-period--warn" id="val-varjyam"><?php
                   $ssr_varj = $ssr_data['timings']['varjyam'] ?? ( $ssr_data['varjyam'] ?? null );
@@ -534,11 +531,11 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
           <div class="sw-head"><span>☀️</span> <?php esc_html_e( 'Solar Day Details', 'djv-theme' ); ?></div>
           <div class="sw-body calendar-info">
             <div class="ci-row">
-              <span class="ci-label"><?php esc_html_e( 'Solar Noon (మధ్యాహ్నం)', 'djv-theme' ); ?></span>
+              <span class="ci-label"><?php esc_html_e( 'Solar Noon', 'djv-theme' ); ?></span>
               <span class="ci-value" id="val-solarnoon">—</span>
             </div>
             <div class="ci-row">
-              <span class="ci-label"><?php esc_html_e( 'Day Length (పగటి కాలం)', 'djv-theme' ); ?></span>
+              <span class="ci-label"><?php esc_html_e( 'Day Length', 'djv-theme' ); ?></span>
               <span class="ci-value" id="val-daylength">—</span>
             </div>
           </div>
@@ -553,8 +550,8 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
               <span class="ci-value" id="val-moonphase">—</span>
             </div>
             <div class="ci-row">
-              <span class="ci-label"><?php esc_html_e( 'Telugu Description', 'djv-theme' ); ?></span>
-              <span class="ci-value" id="val-moonphase-te" style="font-family:var(--font-telugu, sans-serif);">—</span>
+              <span class="ci-label" id="lbl-lunar-desc"><?php esc_html_e( 'Lunar Description', 'djv-theme' ); ?></span>
+              <span class="ci-value" id="val-moonphase-te">—</span>
             </div>
             <div class="ci-row">
               <span class="ci-label"><?php esc_html_e( 'Illumination %', 'djv-theme' ); ?></span>
@@ -568,16 +565,16 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
           <div class="sw-head"><span>📖</span> <?php esc_html_e( 'Calculation Convention', 'djv-theme' ); ?></div>
           <div class="sw-body" style="font-size:0.8125rem; line-height:1.6; color:var(--clr-text-secondary);">
             <p style="margin:0 0 0.5rem 0;">
-              <strong>Ayanamsa:</strong> Lahiri (Chitrapaksha) — Government of India Standard Calendar Reform Committee recommendation.
+              <strong><?php esc_html_e( 'Ayanamsa:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Lahiri (Chitrapaksha) — Government of India Standard Calendar Reform Committee recommendation.', 'djv-theme' ); ?>
             </p>
             <p style="margin:0 0 0.5rem 0;">
-              <strong>Coordinate System:</strong> Topocentric coordinates accounting for lunar horizontal parallax, semi-diameter, and atmospheric refraction.
+              <strong><?php esc_html_e( 'Coordinate System:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Topocentric coordinates accounting for lunar horizontal parallax, semi-diameter, and atmospheric refraction.', 'djv-theme' ); ?>
             </p>
             <p style="margin:0 0 0.5rem 0;">
-              <strong>Convention:</strong> Astronomical Udaya Tithi (Tithi at local sunrise) and civil date attribution.
+              <strong><?php esc_html_e( 'Convention:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Astronomical Udaya Tithi (Tithi at local sunrise) and civil date attribution.', 'djv-theme' ); ?>
             </p>
             <p style="margin:0;">
-              <strong>Timezone:</strong> Indian Standard Time (IST, UTC+05:30) calculated from exact observer latitude & longitude.
+              <strong><?php esc_html_e( 'Timezone:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Indian Standard Time (IST, UTC+05:30) calculated from exact observer latitude & longitude.', 'djv-theme' ); ?>
             </p>
           </div>
         </div>

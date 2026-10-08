@@ -76,9 +76,33 @@
     };
 
   // State
-  let currentDate = getTodayIST();
+  let currentDate = getInitialDate();
   let currentLocation = getActiveLocation();
   const cache = new Map();
+
+  function getInitialDate() {
+    try {
+      const p = new URLSearchParams(window.location.search).get('date');
+      if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) {
+        return p;
+      }
+    } catch (e) {}
+    return getTodayIST();
+  }
+
+  function syncDateToUrl(date) {
+    try {
+      if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+        const u = new URL(window.location.href);
+        if (date === getTodayIST()) {
+          u.searchParams.delete('date');
+        } else {
+          u.searchParams.set('date', date);
+        }
+        window.history.replaceState({}, '', u.toString());
+      }
+    } catch (e) {}
+  }
 
   function getTodayIST() {
     try {
@@ -122,8 +146,8 @@
     return normalizeLocation(fallbackLoc);
   }
 
-  function buildCacheKey(date, lat, lon, tz) {
-    return `${date}_${formatCoordinate(lat, 4)}_${formatCoordinate(lon, 4)}_${tz || 'Asia/Kolkata'}`;
+  function buildCacheKey(date, lat, lon, tz, lang) {
+    return `${date}_${formatCoordinate(lat, 4)}_${formatCoordinate(lon, 4)}_${tz || 'Asia/Kolkata'}_${lang || 'en'}`;
   }
 
   /**
@@ -157,18 +181,67 @@
     return '—';
   }
 
-  function formatMoonEvent(evt, type, tz = 'Asia/Kolkata') {
-    if (!evt) return type === 'moonrise' ? 'No Moonrise' : 'No Moonset';
+  function formatMoonEvent(evt, type, tz = 'Asia/Kolkata', lang = 'en') {
+    const noEventMsg = (lang === 'hi')
+      ? (type === 'moonrise' ? 'चंद्रोदय नहीं' : 'चंद्रास्त नहीं')
+      : (lang === 'te'
+        ? (type === 'moonrise' ? 'చంద్రోదయం లేదు' : 'చంద్రాస్తమయం లేదు')
+        : (type === 'moonrise' ? 'No Moonrise' : 'No Moonset'));
+
+    if (!evt) return noEventMsg;
     if (evt.status === 'no_event') {
-      return type === 'moonrise' ? 'No Moonrise' : 'No Moonset';
+      return noEventMsg;
     }
     if (evt.time) return evt.time;
     if (evt.timeStr) return evt.timeStr;
     if (evt.datetime) return formatTime(evt.datetime, tz);
     if (typeof evt === 'string' && evt !== '—') return evt;
-    return type === 'moonrise' ? 'No Moonrise' : 'No Moonset';
+    return noEventMsg;
   }
 
+  const MONTHS_HI = [
+    'जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून',
+    'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'
+  ];
+  const MONTHS_TE = [
+    'జనవరి', 'ఫిబ్రవరి', 'మార్చి', 'ఏప్రిల్', 'మే', 'జూన్',
+    'జూలై', 'ఆగస్టు', 'సెప్టెంబర్', 'అక్టోబర్', 'నవంబర్', 'డిసెంబర్'
+  ];
+
+  function formatLocalizedDate(isoDate, lang = 'en') {
+    if (!isoDate || typeof isoDate !== 'string') return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return isoDate;
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    const day = Number(parts[2]);
+    const d = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+
+    if (lang === 'hi') {
+      return `${day} ${MONTHS_HI[month - 1]} ${year}`;
+    }
+    if (lang === 'te') {
+      return `${day} ${MONTHS_TE[month - 1]} ${year}`;
+    }
+    return d.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
+  const RULER_NAMES = {
+    'Sun':     { en: 'Sun (Surya)',          te: 'రవి (సూర్యుడు)',        hi: 'सूर्य (रवि)' },
+    'Moon':    { en: 'Moon (Chandra)',        te: 'చంద్రుడు',             hi: 'चन्द्र' },
+    'Mars':    { en: 'Mars (Mangala)',        te: 'కుజుడు (అంగారకుడు)',   hi: 'मंगल (भौम)' },
+    'Mercury': { en: 'Mercury (Budha)',       te: 'బుధుడు',               hi: 'बुध' },
+    'Jupiter': { en: 'Jupiter (Brihaspati)',  te: 'గురు (బృహస్పతి)',      hi: 'बृहस्पति (गुरु)' },
+    'Venus':   { en: 'Venus (Shukra)',        te: 'శుక్రుడు',              hi: 'शुक्र' },
+    'Saturn':  { en: 'Saturn (Shani)',        te: 'శని భగవానుడు',         hi: 'शनि देव' },
+    'Rahu':    { en: 'Rahu',                  te: 'రాహువు',               hi: 'राहु' },
+    'Ketu':    { en: 'Ketu',                  te: 'కేతువు',                hi: 'केतु' }
+  };
   const RULER_TELUGU = {
     'Sun': 'రవి (సూర్యుడు)',
     'Moon': 'చంద్రుడు',
@@ -209,7 +282,11 @@
       throw new Error('Invalid location coordinates');
     }
 
-    const key = buildCacheKey(date, latitude, longitude, timezone);
+    const currentLang = (typeof window !== 'undefined' && window.DJV_LANGUAGE && window.DJV_LANGUAGE.current)
+      || (typeof localStorage !== 'undefined' && (localStorage.getItem('djv_language') || localStorage.getItem('djv_lang')))
+      || 'en';
+
+    const key = buildCacheKey(date, latitude, longitude, timezone, currentLang);
     if (cache.has(key)) {
       return cache.get(key);
     }
@@ -221,7 +298,7 @@
       longitude: longitude.toString(),
       timezone: timezone,
       region: 'telugu',
-      language: 'en',
+      language: currentLang,
       ayanamsa: 'lahiri'
     });
 
@@ -374,20 +451,20 @@
       const loc = normalizeLocation(location);
       const tz = loc.timezone || 'Asia/Kolkata';
 
-      const dObj = new Date(date + 'T12:00:00Z');
-      const formattedEn = dObj.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      });
+      const currentLang = (typeof window !== 'undefined' && window.DJV_LANGUAGE && window.DJV_LANGUAGE.current)
+        || (typeof localStorage !== 'undefined' && (localStorage.getItem('djv_language') || localStorage.getItem('djv_lang')))
+        || 'en';
+
+      const dateDisplay = formatLocalizedDate(date, currentLang);
 
       // ── Header & Hero Titles ──
-      const varaTe = data.vara ? (data.vara.nameTe || '') : '';
-      const tithiTe = data.tithi ? (data.tithi.nameTe || '') : '';
-      const nakTe = data.nakshatra ? ((data.nakshatra.nakshatra ? data.nakshatra.nakshatra.nameTe : data.nakshatra.nameTe) || '') : '';
+      const varaTitle = data.vara ? (currentLang === 'hi' ? (data.vara.nameHi || data.vara.name) : (currentLang === 'te' ? (data.vara.nameTe || data.vara.name) : (data.vara.en || data.vara.name))) : '';
+      const tithiTitle = data.tithi ? (currentLang === 'hi' ? (data.tithi.nameHi || data.tithi.name) : (currentLang === 'te' ? (data.tithi.nameTe || data.tithi.name) : data.tithi.name)) : '';
+      const nObj = data.nakshatra ? (data.nakshatra.nakshatra || data.nakshatra) : null;
+      const nakTitle = nObj ? (currentLang === 'hi' ? (nObj.nameHi || nObj.name) : (currentLang === 'te' ? (nObj.nameTe || nObj.name) : nObj.name)) : '';
 
-      setText('pc-date-heading', `${formattedEn} · ${varaTe ? varaTe + ', ' : ''}${tithiTe ? tithiTe + ', ' : ''}${nakTe}`);
+      const summaryParts = [varaTitle, tithiTitle, nakTitle].filter(Boolean).join(', ');
+      setText('pc-date-heading', `${dateDisplay}${summaryParts ? ' · ' + summaryParts : ''}`);
       setText('pc-location-heading', `📍 ${loc.name}, ${loc.state}`);
       setText('pc-coord-badge', `${formatCoordinate(loc.latitude, 4)}° N, ${formatCoordinate(loc.longitude, 4)}° E`);
       setText('pc-tz-badge', `Timezone: ${tz}`);
@@ -407,56 +484,179 @@
 
       const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : null);
       const msObj = data.moonset  || (data.lunar ? data.lunar.moonset : null);
-      setText('val-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
-      setText('val-moonset',  formatMoonEvent(msObj, 'moonset', tz));
+      setText('val-moonrise', formatMoonEvent(mrObj, 'moonrise', tz, currentLang));
+      setText('val-moonset',  formatMoonEvent(msObj, 'moonset', tz, currentLang));
 
       // ── 2. Pancha Angas (5 Limbs) ──
       // Vara
       if (data.vara) {
-        setText('val-vara-en', data.vara.en || data.vara.name);
-        setText('val-vara-te', data.vara.nameTe || '');
+        if (currentLang === 'hi') {
+          setText('val-vara-en', data.vara.nameHi || data.vara.name);
+          setText('val-vara-te', data.vara.en || data.vara.name);
+        } else if (currentLang === 'te') {
+          setText('val-vara-en', data.vara.nameTe || data.vara.name);
+          setText('val-vara-te', data.vara.en || data.vara.name);
+        } else {
+          setText('val-vara-en', data.vara.en || data.vara.name);
+          setText('val-vara-te', '');
+        }
+
         if (data.vara.ruler) {
-          const rulerTe = RULER_TELUGU[data.vara.ruler] || data.vara.ruler;
-          setText('val-vara-ruler', `Ruler: ${data.vara.ruler} (${rulerTe})`);
+          const rulerObj = RULER_NAMES[data.vara.ruler];
+          const localizedRuler = rulerObj ? (rulerObj[currentLang] || rulerObj.en) : data.vara.ruler;
+          if (currentLang === 'hi') {
+            setText('val-vara-ruler', `स्वामी: ${localizedRuler}`);
+          } else if (currentLang === 'te') {
+            setText('val-vara-ruler', `అధిపతి: ${localizedRuler}`);
+          } else {
+            setText('val-vara-ruler', `Ruler: ${localizedRuler}`);
+          }
         }
       }
 
       // Tithi
       if (data.tithi) {
-        const pakshaName = data.tithi.paksha ? `${data.tithi.paksha} Paksha` : '';
-        setText('val-tithi-name', `${data.tithi.name} (${pakshaName})`);
-        setText('val-tithi-te', data.tithi.nameTe || '');
-        const tEnd = data.tithi.spanStr || (data.tithi.endStr ? `Ends at ${data.tithi.endStr}` : (data.tithi.endTime ? `Ends at ${formatTime(data.tithi.endTime, tz)}` : ''));
+        let pakshaDisplay = '';
+        if (currentLang === 'hi') {
+          pakshaDisplay = data.tithi.pakshaHi || (data.tithi.paksha === 'Krishna' ? 'कृष्ण पक्ष' : 'शुक्ल पक्ष');
+          setText('val-tithi-name', `${data.tithi.nameHi || data.tithi.name} (${pakshaDisplay})`);
+          setText('val-tithi-te', `${data.tithi.name} (${data.tithi.paksha ? data.tithi.paksha + ' Paksha' : ''})`);
+          setText('val-summary-paksha-pill', pakshaDisplay);
+        } else if (currentLang === 'te') {
+          pakshaDisplay = data.tithi.pakshaTe || (data.tithi.paksha === 'Krishna' ? 'కృష్ణ పక్షం' : 'శుక్ల పక్షం');
+          setText('val-tithi-name', `${data.tithi.nameTe || data.tithi.name} (${pakshaDisplay})`);
+          setText('val-tithi-te', `${data.tithi.name} (${data.tithi.paksha ? data.tithi.paksha + ' Paksha' : ''})`);
+          setText('val-summary-paksha-pill', pakshaDisplay);
+        } else {
+          pakshaDisplay = data.tithi.paksha ? `${data.tithi.paksha} Paksha` : '';
+          setText('val-tithi-name', `${data.tithi.name} (${pakshaDisplay})`);
+          setText('val-tithi-te', '');
+          setText('val-summary-paksha-pill', pakshaDisplay || 'Panchangam');
+        }
+
+        const endTimeStr = data.tithi.endStr || (data.tithi.endTime ? formatTime(data.tithi.endTime, tz) : '');
+        let tEnd = '';
+        if (endTimeStr) {
+          if (currentLang === 'hi') {
+            tEnd = `समाप्त: ${endTimeStr}`;
+          } else if (currentLang === 'te') {
+            tEnd = `ముగింపు: ${endTimeStr}`;
+          } else {
+            tEnd = `Up to ${endTimeStr}`;
+          }
+        } else if (data.tithi.spanStr) {
+          tEnd = data.tithi.spanStr;
+        }
         setText('val-tithi-end', tEnd);
-        setText('val-summary-paksha-pill', pakshaName || 'Panchangam');
       }
 
       // Nakshatra
       if (data.nakshatra) {
         const nObj = data.nakshatra.nakshatra || data.nakshatra;
-        setText('val-nakshatra-name', nObj.name || '—');
-        setText('val-nakshatra-te', nObj.nameTe || '');
-        const padaStr = data.nakshatra.pada ? `${data.nakshatra.pada}${getOrdinal(data.nakshatra.pada)} Pada (${data.nakshatra.pada}వ పాదం)` : '';
-        const nEnd = data.nakshatra.spanStr || (data.nakshatra.endStr ? `Ends at ${data.nakshatra.endStr}` : (data.nakshatra.endTime ? `Ends at ${formatTime(data.nakshatra.endTime, tz)}` : ''));
+        if (currentLang === 'hi') {
+          setText('val-nakshatra-name', nObj.nameHi || nObj.name || '—');
+          setText('val-nakshatra-te', nObj.name || '');
+        } else if (currentLang === 'te') {
+          setText('val-nakshatra-name', nObj.nameTe || nObj.name || '—');
+          setText('val-nakshatra-te', nObj.name || '');
+        } else {
+          setText('val-nakshatra-name', nObj.name || '—');
+          setText('val-nakshatra-te', '');
+        }
+
+        let padaStr = '';
+        if (data.nakshatra.pada) {
+          if (currentLang === 'hi') {
+            padaStr = `${data.nakshatra.pada}वां चरण`;
+          } else if (currentLang === 'te') {
+            padaStr = `${data.nakshatra.pada}వ పాదం`;
+          } else {
+            padaStr = `${data.nakshatra.pada}${getOrdinal(data.nakshatra.pada)} Pada`;
+          }
+        }
+
+        const endTimeStr = data.nakshatra.endStr || (data.nakshatra.endTime ? formatTime(data.nakshatra.endTime, tz) : '');
+        let nEnd = '';
+        if (endTimeStr) {
+          if (currentLang === 'hi') {
+            nEnd = `समाप्त: ${endTimeStr}`;
+          } else if (currentLang === 'te') {
+            nEnd = `ముగింపు: ${endTimeStr}`;
+          } else {
+            nEnd = `Up to ${endTimeStr}`;
+          }
+        } else if (data.nakshatra.spanStr) {
+          nEnd = data.nakshatra.spanStr;
+        }
+
         setText('val-nakshatra-end', [padaStr, nEnd].filter(Boolean).join(' · '));
+
         if (nObj.ruler || nObj.deity) {
-          setText('val-nakshatra-meta', `Deity: ${nObj.deity || '—'} · Ruler: ${nObj.ruler || '—'}`);
+          if (currentLang === 'hi') {
+            setText('val-nakshatra-meta', `देवता: ${nObj.deityHi || nObj.deity || '—'} · स्वामी: ${nObj.rulerHi || nObj.ruler || '—'}`);
+          } else if (currentLang === 'te') {
+            setText('val-nakshatra-meta', `దేవత: ${nObj.deityTe || nObj.deity || '—'} · అధిపతి: ${nObj.rulerTe || nObj.ruler || '—'}`);
+          } else {
+            setText('val-nakshatra-meta', `Deity: ${nObj.deity || '—'} · Ruler: ${nObj.ruler || '—'}`);
+          }
         }
       }
 
       // Yoga
       if (data.yoga) {
-        setText('val-yoga-name', data.yoga.name || '—');
-        setText('val-yoga-te', data.yoga.nameTe || '');
-        const yEnd = data.yoga.spanStr || (data.yoga.endStr ? `Ends at ${data.yoga.endStr}` : '');
+        if (currentLang === 'hi') {
+          setText('val-yoga-name', data.yoga.nameHi || data.yoga.name || '—');
+          setText('val-yoga-te', data.yoga.name || '');
+        } else if (currentLang === 'te') {
+          setText('val-yoga-name', data.yoga.nameTe || data.yoga.name || '—');
+          setText('val-yoga-te', data.yoga.name || '');
+        } else {
+          setText('val-yoga-name', data.yoga.name || '—');
+          setText('val-yoga-te', '');
+        }
+
+        const endTimeStr = data.yoga.endStr || (data.yoga.endTime ? formatTime(data.yoga.endTime, tz) : '');
+        let yEnd = '';
+        if (endTimeStr) {
+          if (currentLang === 'hi') {
+            yEnd = `समाप्त: ${endTimeStr}`;
+          } else if (currentLang === 'te') {
+            yEnd = `ముగింపు: ${endTimeStr}`;
+          } else {
+            yEnd = `Up to ${endTimeStr}`;
+          }
+        } else if (data.yoga.spanStr) {
+          yEnd = data.yoga.spanStr;
+        }
         setText('val-yoga-end', yEnd);
       }
 
       // Karana
       if (data.karana) {
-        setText('val-karana-name', data.karana.name || '—');
-        setText('val-karana-te', data.karana.nameTe || '');
-        const kEnd = data.karana.spanStr || (data.karana.endStr ? `Ends at ${data.karana.endStr}` : '');
+        if (currentLang === 'hi') {
+          setText('val-karana-name', data.karana.nameHi || data.karana.name || '—');
+          setText('val-karana-te', data.karana.name || '');
+        } else if (currentLang === 'te') {
+          setText('val-karana-name', data.karana.nameTe || data.karana.name || '—');
+          setText('val-karana-te', data.karana.name || '');
+        } else {
+          setText('val-karana-name', data.karana.name || '—');
+          setText('val-karana-te', '');
+        }
+
+        const endTimeStr = data.karana.endStr || (data.karana.endTime ? formatTime(data.karana.endTime, tz) : '');
+        let kEnd = '';
+        if (endTimeStr) {
+          if (currentLang === 'hi') {
+            kEnd = `समाप्त: ${endTimeStr}`;
+          } else if (currentLang === 'te') {
+            kEnd = `ముగింపు: ${endTimeStr}`;
+          } else {
+            kEnd = `Up to ${endTimeStr}`;
+          }
+        } else if (data.karana.spanStr) {
+          kEnd = data.karana.spanStr;
+        }
         setText('val-karana-end', kEnd);
       }
 
@@ -486,9 +686,20 @@
 
       // ── 5. Lunar Phase & Illumination ──
       if (data.lunar) {
-        setText('val-moonphase', data.lunar.phase || '—');
-        setText('val-moonphase-te', data.lunar.phaseTe || '—');
-        setText('val-illumination', data.lunar.illumination ? `${data.lunar.illumination}` : '—');
+        if (currentLang === 'hi') {
+          setText('val-moonphase', data.lunar.phaseHi || data.lunar.phase || '—');
+          setText('val-moonphase-te', data.lunar.phase || '—');
+          setText('lbl-lunar-desc', 'विवरण');
+        } else if (currentLang === 'te') {
+          setText('val-moonphase', data.lunar.phaseTe || data.lunar.phase || '—');
+          setText('val-moonphase-te', data.lunar.phase || '—');
+          setText('lbl-lunar-desc', 'వివరణ');
+        } else {
+          setText('val-moonphase', data.lunar.phase || '—');
+          setText('val-moonphase-te', data.lunar.phase || '—');
+          setText('lbl-lunar-desc', 'Description');
+        }
+        setText('val-illumination', data.lunar.illuminationPercent ? `${data.lunar.illuminationPercent}%` : (data.lunar.illumination ? `${data.lunar.illumination}` : '—'));
       }
 
       // ── 6. Engine Metadata Box ──
@@ -498,17 +709,24 @@
       }
 
       // ── 7. Dynamic SEO Updates ──
-      document.title = `Today's Panchangam | ${location.name} | ${formattedEn} | Dharma Jyothi Vedika`;
+      if (currentLang === 'hi') {
+        document.title = `आज का पंचांग | ${loc.name} | ${dateDisplay} | धर्म ज्योति वेदिका`;
+      } else if (currentLang === 'te') {
+        document.title = `నేటి పంచాంగం | ${loc.name} | ${dateDisplay} | ధర్మ జ్యోతి వేదిక`;
+      } else {
+        document.title = `Today's Panchangam | ${loc.name} | ${dateDisplay} | Dharma Jyothi Vedika`;
+      }
+
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
-        metaDesc.setAttribute('content', `Today's complete Hindu Panchangam for ${formattedEn} in ${location.name}, ${location.state}. Tithi: ${data.tithi ? data.tithi.name : ''}, Nakshatra: ${data.nakshatra ? (data.nakshatra.nakshatra ? data.nakshatra.nakshatra.name : data.nakshatra.name) : ''}, Rahu Kalam: ${data.timings && data.timings.rahuKalam ? formatPeriod(data.timings.rahuKalam, tz) : ''}.`);
+        metaDesc.setAttribute('content', `Today's complete Hindu Panchangam for ${dateDisplay} in ${loc.name}, ${loc.state}. Tithi: ${data.tithi ? (data.tithi.nameHi || data.tithi.name) : ''}, Nakshatra: ${nObj ? (nObj.nameHi || nObj.name) : ''}.`);
       }
 
       // Also render Homepage Hero Quick Card if present on page
-      renderHeroCard(data, date, location);
+      renderHeroCard(data, date, loc, currentLang);
 
       // Also render Homepage Full Panchangam Grid if present on page
-      renderHomepageGrid(data, date, location);
+      renderHomepageGrid(data, date, loc, currentLang);
 
     } catch (e) {
       console.error('Error rendering panchangam view:', e);
@@ -524,43 +742,60 @@
   /**
    * Render Homepage Hero Quick Card if present.
    */
-  function renderHeroCard(data, date, location) {
+  function renderHeroCard(data, date, location, currentLang = 'en') {
     const content = document.getElementById('hero-pc-data');
     if (!content) return;
 
     try {
       const tz = location.timezone || 'Asia/Kolkata';
+      const dateDisplay = formatLocalizedDate(date, currentLang);
 
-      const dObj = new Date(date + 'T12:00:00Z');
-      const formattedEn = dObj.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      });
-
-      setText('hero-date-display', formattedEn);
+      setText('hero-date-display', dateDisplay);
       setText('hero-loc-name', location.name);
 
       if (data.tithi) {
-        setText('hero-tithi', data.tithi.name || '—');
-        setText('hero-tithi-end', data.tithi.spanStr || (data.tithi.endStr ? `Up to ${data.tithi.endStr}` : ''));
+        const tName = currentLang === 'hi' ? (data.tithi.nameHi || data.tithi.name) : (currentLang === 'te' ? (data.tithi.nameTe || data.tithi.name) : data.tithi.name);
+        setText('hero-tithi', tName || '—');
+        const endTimeStr = data.tithi.endStr || (data.tithi.endTime ? formatTime(data.tithi.endTime, tz) : '');
+        let tEnd = '';
+        if (endTimeStr) {
+          tEnd = currentLang === 'hi' ? `समाप्त: ${endTimeStr}` : (currentLang === 'te' ? `ముగింపు: ${endTimeStr}` : `Up to ${endTimeStr}`);
+        }
+        setText('hero-tithi-end', tEnd);
       }
 
       if (data.nakshatra) {
         const nObj = data.nakshatra.nakshatra || data.nakshatra;
-        setText('hero-nakshatra', nObj.name || '—');
-        setText('hero-nakshatra-end', data.nakshatra.spanStr || (data.nakshatra.endStr ? `Up to ${data.nakshatra.endStr}` : ''));
+        const nName = currentLang === 'hi' ? (nObj.nameHi || nObj.name) : (currentLang === 'te' ? (nObj.nameTe || nObj.name) : nObj.name);
+        setText('hero-nakshatra', nName || '—');
+        const endTimeStr = data.nakshatra.endStr || (data.nakshatra.endTime ? formatTime(data.nakshatra.endTime, tz) : '');
+        let nEnd = '';
+        if (endTimeStr) {
+          nEnd = currentLang === 'hi' ? `समाप्त: ${endTimeStr}` : (currentLang === 'te' ? `ముగింపు: ${endTimeStr}` : `Up to ${endTimeStr}`);
+        }
+        setText('hero-nakshatra-end', nEnd);
       }
 
       if (data.yoga) {
-        setText('hero-yoga', data.yoga.name || '—');
-        setText('hero-yoga-end', data.yoga.spanStr || (data.yoga.endStr ? `Up to ${data.yoga.endStr}` : ''));
+        const yName = currentLang === 'hi' ? (data.yoga.nameHi || data.yoga.name) : (currentLang === 'te' ? (data.yoga.nameTe || data.yoga.name) : data.yoga.name);
+        setText('hero-yoga', yName || '—');
+        const endTimeStr = data.yoga.endStr || (data.yoga.endTime ? formatTime(data.yoga.endTime, tz) : '');
+        let yEnd = '';
+        if (endTimeStr) {
+          yEnd = currentLang === 'hi' ? `समाप्त: ${endTimeStr}` : (currentLang === 'te' ? `ముగింపు: ${endTimeStr}` : `Up to ${endTimeStr}`);
+        }
+        setText('hero-yoga-end', yEnd);
       }
 
       if (data.karana) {
-        setText('hero-karana', data.karana.name || '—');
-        setText('hero-karana-end', data.karana.spanStr || (data.karana.endStr ? `Up to ${data.karana.endStr}` : ''));
+        const kName = currentLang === 'hi' ? (data.karana.nameHi || data.karana.name) : (currentLang === 'te' ? (data.karana.nameTe || data.karana.name) : data.karana.name);
+        setText('hero-karana', kName || '—');
+        const endTimeStr = data.karana.endStr || (data.karana.endTime ? formatTime(data.karana.endTime, tz) : '');
+        let kEnd = '';
+        if (endTimeStr) {
+          kEnd = currentLang === 'hi' ? `समाप्त: ${endTimeStr}` : (currentLang === 'te' ? `ముగింపు: ${endTimeStr}` : `Up to ${endTimeStr}`);
+        }
+        setText('hero-karana-end', kEnd);
       }
 
       if (data.solar) {
@@ -569,7 +804,7 @@
       }
 
       const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : (data.solar ? data.solar.moonrise : null));
-      setText('hero-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
+      setText('hero-moonrise', formatMoonEvent(mrObj, 'moonrise', tz, currentLang));
 
       if (data.timings && data.timings.rahuKalam) {
         setText('hero-rahu', formatPeriod(data.timings.rahuKalam, tz));
@@ -582,45 +817,48 @@
   /**
    * Render Homepage Full Panchangam Section Grid if present.
    */
-  function renderHomepageGrid(data, date, location) {
+  function renderHomepageGrid(data, date, location, currentLang = 'en') {
     const card = document.getElementById('full-panchangam-card');
     if (!card) return;
 
     try {
       const tz = location.timezone || 'Asia/Kolkata';
-
-      const dObj = new Date(date + 'T12:00:00Z');
-      const formattedEn = dObj.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      });
+      const dateDisplay = formatLocalizedDate(date, currentLang);
 
       // Headers & metadata
-      setText('full-pc-title', `Panchangam — ${date}`);
-      setText('full-pc-vara', formattedEn);
+      const titlePrefix = currentLang === 'hi' ? 'पंचांग' : (currentLang === 'te' ? 'పంచాంగం' : 'Panchangam');
+      setText('full-pc-title', `${titlePrefix} — ${dateDisplay}`);
+      setText('full-pc-vara', dateDisplay);
       setText('fp-header-location', `${location.name}, ${location.state}`);
 
       // Pancha Angas
       if (data.vara) {
-        setText('fp-vara', data.vara.name || '—');
+        const vName = currentLang === 'hi' ? (data.vara.nameHi || data.vara.name) : (currentLang === 'te' ? (data.vara.nameTe || data.vara.name) : (data.vara.en || data.vara.name));
+        setText('fp-vara', vName || '—');
       }
       if (data.tithi) {
-        setText('fp-tithi', data.tithi.name || '—');
-        setText('fp-paksha', data.tithi.paksha || '—');
+        const tName = currentLang === 'hi' ? (data.tithi.nameHi || data.tithi.name) : (currentLang === 'te' ? (data.tithi.nameTe || data.tithi.name) : data.tithi.name);
+        const pName = currentLang === 'hi' ? (data.tithi.pakshaHi || data.tithi.paksha) : (currentLang === 'te' ? (data.tithi.pakshaTe || data.tithi.paksha) : data.tithi.paksha);
+        setText('fp-tithi', tName || '—');
+        setText('fp-paksha', pName || '—');
       }
       if (data.nakshatra) {
         const nObj = data.nakshatra.nakshatra || data.nakshatra;
-        setText('fp-nakshatra', nObj.name || '—');
-        const padaText = data.nakshatra.pada ? `Pada ${data.nakshatra.pada}` : '';
+        const nName = currentLang === 'hi' ? (nObj.nameHi || nObj.name) : (currentLang === 'te' ? (nObj.nameTe || nObj.name) : nObj.name);
+        setText('fp-nakshatra', nName || '—');
+        let padaText = '';
+        if (data.nakshatra.pada) {
+          padaText = currentLang === 'hi' ? `${data.nakshatra.pada}वां चरण` : (currentLang === 'te' ? `${data.nakshatra.pada}వ పాదం` : `Pada ${data.nakshatra.pada}`);
+        }
         setText('fp-nakshatra-pada', padaText);
       }
       if (data.yoga) {
-        setText('fp-yoga', data.yoga.name || '—');
+        const yName = currentLang === 'hi' ? (data.yoga.nameHi || data.yoga.name) : (currentLang === 'te' ? (data.yoga.nameTe || data.yoga.name) : data.yoga.name);
+        setText('fp-yoga', yName || '—');
       }
       if (data.karana) {
-        setText('fp-karana', data.karana.name || '—');
+        const kName = currentLang === 'hi' ? (data.karana.nameHi || data.karana.name) : (currentLang === 'te' ? (data.karana.nameTe || data.karana.name) : data.karana.name);
+        setText('fp-karana', kName || '—');
       }
 
       // Solar & Lunar
@@ -629,7 +867,7 @@
         setText('fp-sunset',  data.solar.sunsetStr  || formatTime(data.solar.sunset, tz));
       }
       const mrObj = data.moonrise || (data.lunar ? data.lunar.moonrise : (data.solar ? data.solar.moonrise : null));
-      setText('fp-moonrise', formatMoonEvent(mrObj, 'moonrise', tz));
+      setText('fp-moonrise', formatMoonEvent(mrObj, 'moonrise', tz, currentLang));
 
       // Auspicious & Inauspicious Timings
       const timings = data.timings || {};
@@ -807,6 +1045,7 @@
         dp.value = currentDate;
         dp.addEventListener('change', function () {
           currentDate = this.value;
+          syncDateToUrl(currentDate);
           datePickers.forEach(p => { if (p) p.value = currentDate; });
           updateAllPanchangamViews();
         });
@@ -821,6 +1060,7 @@
       if (btn) {
         btn.addEventListener('click', function () {
           currentDate = shiftDate(currentDate, -1);
+          syncDateToUrl(currentDate);
           datePickers.forEach(p => { if (p) p.value = currentDate; });
           updateAllPanchangamViews();
         });
@@ -835,6 +1075,7 @@
       if (btn) {
         btn.addEventListener('click', function () {
           currentDate = shiftDate(currentDate, 1);
+          syncDateToUrl(currentDate);
           datePickers.forEach(p => { if (p) p.value = currentDate; });
           updateAllPanchangamViews();
         });
@@ -849,6 +1090,7 @@
       if (btn) {
         btn.addEventListener('click', function () {
           currentDate = getTodayIST();
+          syncDateToUrl(currentDate);
           datePickers.forEach(p => { if (p) p.value = currentDate; });
           updateAllPanchangamViews();
         });
@@ -866,6 +1108,7 @@
         } else if (preset === 'yesterday') {
           currentDate = shiftDate(getTodayIST(), -1);
         }
+        syncDateToUrl(currentDate);
         datePickers.forEach(p => { if (p) p.value = currentDate; });
         updateAllPanchangamViews();
       });
@@ -936,6 +1179,11 @@
       const loc = e.detail;
       if (!loc) return;
       currentLocation = normalizeLocation(loc);
+      updateAllPanchangamViews();
+    });
+
+    // Global language change event listener
+    window.addEventListener('djv:languageChanged', function (e) {
       updateAllPanchangamViews();
     });
 

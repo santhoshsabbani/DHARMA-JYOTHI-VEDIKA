@@ -21,9 +21,6 @@ get_header();
     <header class="archive-header" style="margin-bottom: 2.5rem;">
       <h1 class="archive-title" style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">
         <?php esc_html_e( 'Sacred Hindu Temples Directory', 'djv-theme' ); ?>
-        <span style="font-family: var(--font-telugu); font-size: 1.6rem; display: block; color: var(--clr-accent); margin-top: 0.25rem;">
-          పుణ్యక్షేత్రాలు &amp; దివ్యాలయాలు
-        </span>
       </h1>
       <p style="color: var(--clr-text-secondary); margin: 0; font-size: 1rem; max-width: 780px; line-height: 1.6;">
         <?php esc_html_e( "Comprehensive directory of India's holiest kshetras, Jyotirlingas, Shakti Peethas, and sacred Divya Desams with verified darshan timings, sthala purana, and pilgrimage travel guidance.", 'djv-theme' ); ?>

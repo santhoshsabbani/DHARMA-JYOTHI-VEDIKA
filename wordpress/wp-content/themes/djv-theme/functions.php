@@ -112,7 +112,7 @@ function djv_theme_enqueue_scripts(): void {
 	wp_enqueue_script(
 		'djv-theme-main',
 		DJV_THEME_URI . '/assets/js/theme-main.js',
-		[ 'djv-india-locations' ],
+		[ 'djv-india-locations', 'wp-i18n' ],
 		DJV_THEME_VERSION,
 		true
 	);
@@ -121,22 +121,24 @@ function djv_theme_enqueue_scripts(): void {
 	wp_enqueue_script(
 		'djv-panchangam-app',
 		DJV_THEME_URI . '/assets/js/theme-panchangam.js',
-		[ 'djv-india-locations', 'djv-theme-main' ],
+		[ 'djv-india-locations', 'djv-theme-main', 'wp-i18n' ],
 		DJV_THEME_VERSION,
 		true
 	);
 
 	// Localize configuration for the frontend REST API
 	wp_localize_script( 'djv-panchangam-app', 'djvConfig', [
-		'apiUrl'       => esc_url_raw( rest_url( 'djv/v1/' ) ),
-		'homeUrl'      => esc_url_raw( home_url( '/' ) ),
-		'themeUrl'     => esc_url_raw( DJV_THEME_URI ),
-		'nonce'        => wp_create_nonce( 'wp_rest' ),
-		'defaultLat'   => 17.3850,
-		'defaultLon'   => 78.4867,
-		'defaultTz'    => 'Asia/Kolkata',
-		'defaultCity'  => 'Hyderabad',
-		'defaultState' => 'Telangana',
+		'apiUrl'         => esc_url_raw( rest_url( 'djv/v1/' ) ),
+		'homeUrl'        => esc_url_raw( home_url( '/' ) ),
+		'themeUrl'       => esc_url_raw( DJV_THEME_URI ),
+		'nonce'          => wp_create_nonce( 'wp_rest' ),
+		'currentLang'    => function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en',
+		'supportedLangs' => function_exists( 'djv_get_supported_languages' ) ? djv_get_supported_languages() : [ 'en', 'te', 'hi' ],
+		'defaultLat'     => 17.3850,
+		'defaultLon'     => 78.4867,
+		'defaultTz'      => 'Asia/Kolkata',
+		'defaultCity'    => 'Hyderabad',
+		'defaultState'   => 'Telangana',
 	] );
 }
 add_action( 'wp_enqueue_scripts', 'djv_theme_enqueue_scripts' );
@@ -149,9 +151,11 @@ add_action( 'wp_enqueue_scripts', 'djv_theme_enqueue_scripts' );
  * @param float|null  $lat
  * @param float|null  $lon
  * @param string|null $tz
+ * @param string|null $region
+ * @param string|null $lang
  * @return array|null
  */
-function djv_get_ssr_panchangam( ?string $date = null, ?float $lat = null, ?float $lon = null, ?string $tz = null ): ?array {
+function djv_get_ssr_panchangam( ?string $date = null, ?float $lat = null, ?float $lon = null, ?string $tz = null, ?string $region = null, ?string $lang = null ): ?array {
 	if ( ! class_exists( 'DJV_Panchangam' ) ) {
 		return null;
 	}
@@ -159,6 +163,7 @@ function djv_get_ssr_panchangam( ?string $date = null, ?float $lat = null, ?floa
 	$tz   = $tz ?: 'Asia/Kolkata';
 	$lat  = $lat ?: 17.3850;
 	$lon  = $lon ?: 78.4867;
+	$lang = $lang ?: ( function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en' );
 
 	if ( ! $date ) {
 		try {
@@ -170,7 +175,7 @@ function djv_get_ssr_panchangam( ?string $date = null, ?float $lat = null, ?floa
 	}
 
 	$engine = new DJV_Panchangam();
-	$res    = $engine->get_panchangam( $date, $lat, $lon, $tz );
+	$res    = $engine->get_panchangam( $date, $lat, $lon, $tz, $region ?: 'telugu', $lang );
 
 	if ( is_wp_error( $res ) ) {
 		return null;
@@ -282,6 +287,11 @@ function djv_format_ssr_period_list( $periods, string $tz = 'Asia/Kolkata' ): st
 	}
 	return '—';
 }
+
+/**
+ * Load Global Trilingual Language Architecture (Section 2 & 6)
+ */
+require_once DJV_THEME_DIR . '/inc/language.php';
 
 /**
  * Load Dynamic SEO & Schema.org Definitions
@@ -407,3 +417,36 @@ function djv_theme_archive_posts_per_page( $query ): void {
 	}
 }
 add_action( 'pre_get_posts', 'djv_theme_archive_posts_per_page' );
+
+/**
+ * Prevent Canonical Date Redirect on DJV Custom Routes and Archives
+ * Prevents WordPress from treating ?year=2026 as an empty blog date archive and redirecting to home.
+ */
+function djv_prevent_canonical_year_redirect( $redirect_url, $requested_url ) {
+	if ( isset( $_GET['year'] ) ) {
+		$path = parse_url( $requested_url, PHP_URL_PATH ) ?: '';
+		if ( strpos( $path, 'festivals' ) !== false || strpos( $path, 'panchangam' ) !== false || strpos( $path, 'muhurtham' ) !== false ) {
+			return false;
+		}
+	}
+	return $redirect_url;
+}
+add_filter( 'redirect_canonical', 'djv_prevent_canonical_year_redirect', 10, 2 );
+
+/**
+ * Ensure ?year=2026 on /festivals/ queries djv_festival CPT rather than standard posts
+ */
+function djv_fix_year_query_on_archives( $query ): void {
+	if ( ! is_admin() && $query->is_main_query() && isset( $_GET['year'] ) ) {
+		$request_uri = $_SERVER['REQUEST_URI'] ?? '';
+		if ( strpos( $request_uri, '/festivals' ) !== false ) {
+			$query->set( 'post_type', 'djv_festival' );
+			$query->is_year = false;
+			$query->is_date = false;
+			$query->is_archive = true;
+			$query->is_post_type_archive = true;
+		}
+	}
+}
+add_action( 'pre_get_posts', 'djv_fix_year_query_on_archives', 1 );
+

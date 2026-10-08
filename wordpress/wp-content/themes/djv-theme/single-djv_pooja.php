@@ -17,6 +17,7 @@ $title_en        = get_post_meta( $post_id, '_djv_title_en', true ) ?: get_the_t
 $title_te        = get_post_meta( $post_id, '_djv_title_te', true );
 $title_hi        = get_post_meta( $post_id, '_djv_title_hi', true );
 
+$current_lang    = function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en';
 $intro_en        = get_post_meta( $post_id, '_djv_intro_en', true ) ?: apply_filters( 'the_content', get_the_content() );
 $intro_te        = get_post_meta( $post_id, '_djv_intro_te', true );
 $intro_hi        = get_post_meta( $post_id, '_djv_intro_hi', true );
@@ -85,9 +86,9 @@ $how_to_start = function_exists( 'djv_get_generic_how_to_start_puja' ) ? djv_get
             <!-- Language Switcher Bar -->
             <div class="djv-lang-bar" style="background: #FFF; border: 1.5px solid var(--clr-border, #E8DFD3); border-radius: 9999px; padding: 0.25rem 0.4rem; display: inline-flex; align-items: center; gap: 0.25rem; box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));">
               <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-text-muted, #7A6F68); padding: 0 0.4rem; text-transform: uppercase;">🌐 Script:</span>
-              <button type="button" class="djv-lang-btn active" data-lang="en" style="border:none;background:var(--clr-primary, #7A2419);color:#FFF;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;">English</button>
-              <button type="button" class="djv-lang-btn" data-lang="te" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:var(--font-telugu, sans-serif);">తెలుగు</button>
-              <button type="button" class="djv-lang-btn" data-lang="hi" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Noto Sans Devanagari', serif;">हिन्दी</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'en' ? 'active' : ''; ?>" data-lang="en" style="border:none;background:<?php echo $current_lang === 'en' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'en' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;">English</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'te' ? 'active' : ''; ?>" data-lang="te" style="border:none;background:<?php echo $current_lang === 'te' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'te' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:var(--font-telugu, sans-serif);">తెలుగు</button>
+              <button type="button" class="djv-lang-btn <?php echo $current_lang === 'hi' ? 'active' : ''; ?>" data-lang="hi" style="border:none;background:<?php echo $current_lang === 'hi' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'hi' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.35rem 0.75rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Noto Sans Devanagari', serif;">हिन्दी</button>
             </div>
           </div>
 
@@ -97,12 +98,6 @@ $how_to_start = function_exists( 'djv_get_generic_how_to_start_puja' ) ? djv_get
             <span class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif);"><?php echo esc_html( $title_te ?: $title_en ); ?></span>
             <span class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif;"><?php echo esc_html( $title_hi ?: $title_en ); ?></span>
           </h1>
-
-          <?php if ( $title_te ) : ?>
-            <div style="font-family: var(--font-telugu, sans-serif); font-size: 1.35rem; color: var(--clr-accent, #C89432); font-weight: 600;">
-              <?php echo esc_html( $title_te ); ?>
-            </div>
-          <?php endif; ?>
         </header>
 
         <!-- ── Universal 15-Step Overview & Traditional Disclaimer ── -->
