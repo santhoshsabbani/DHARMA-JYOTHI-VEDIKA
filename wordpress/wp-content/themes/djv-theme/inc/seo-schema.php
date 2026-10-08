@@ -49,6 +49,42 @@ function djv_get_seo_description(): string {
 		}
 	}
 
+	if ( is_singular( 'djv_festival' ) ) {
+		$post_id = get_the_ID();
+		$post    = get_post( $post_id );
+		$year    = intval( $_GET['year'] ?? ( $_GET['y'] ?? 2026 ) );
+		if ( $year < 1900 || $year > 2200 ) $year = 2026;
+		$lang    = sanitize_key( $_GET['lang'] ?? 'en' );
+
+		$custom_rm_desc = get_post_meta( $post_id, 'rank_math_description', true );
+		if ( ! empty( $custom_rm_desc ) ) {
+			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_desc );
+		}
+
+		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
+		$title_te = get_post_meta( $post_id, '_djv_title_te', true ) ?: get_post_meta( $post_id, '_djv_telugu_name', true );
+		$title_hi = get_post_meta( $post_id, '_djv_title_hi', true );
+
+		$date_str = '';
+		if ( class_exists( 'DJV_Festival_Master' ) ) {
+			$occs = DJV_Festival_Master::get_occurrences( $year, [ 'scope' => 'all_india' ] );
+			foreach ( $occs as $o ) {
+				if ( $o['slug'] === $post->post_name || ( ! empty( $o['id'] ) && $o['id'] === $post_id ) ) {
+					$date_str = $o['formatted_date'];
+					break;
+				}
+			}
+		}
+
+		if ( $lang === 'te' && $title_te ) {
+			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. ధర్మ జ్యోతి వేదిక.";
+		} elseif ( $lang === 'hi' && $title_hi ) {
+			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। धर्म ज्योति वेदिका पर अपनी लोकेशन अनुसार देखें।";
+		} else {
+			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
+		}
+	}
+
 	if ( is_singular() ) {
 		$post_id = get_the_ID();
 		if ( has_excerpt( $post_id ) ) {
@@ -91,10 +127,11 @@ function djv_get_seo_description(): string {
  * 3. Output Dynamic SEO Meta Tags, Open Graph, and Canonical into <head>.
  */
 function djv_render_seo_meta(): void {
-	// If a dedicated SEO plugin is active (Yoast, RankMath, All In One SEO), defer to it
-	if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'AIOSEO_VERSION' ) ) {
+	static $already_rendered = false;
+	if ( $already_rendered ) {
 		return;
 	}
+	$already_rendered = true;
 
 	$desc      = djv_get_seo_description();
 	$site_name = get_bloginfo( 'name' );
@@ -329,3 +366,87 @@ function djv_filter_mantra_document_title( string $title ): string {
 	return $title;
 }
 add_filter( 'pre_get_document_title', 'djv_filter_mantra_document_title', 20 );
+
+/**
+ * Dynamic SEO Document Title for Festivals (Adapts to selected year and language)
+ * Structure: [FESTIVAL] [YEAR] – Date, Puja Time & Muhurat | Dharma Jyothi Vedika
+ */
+function djv_filter_festival_document_title( string $title ): string {
+	if ( is_singular( 'djv_festival' ) ) {
+		$post_id = get_the_ID();
+		$post    = get_post( $post_id );
+		$year    = intval( $_GET['year'] ?? ( $_GET['y'] ?? 2026 ) );
+		if ( $year < 1900 || $year > 2200 ) $year = 2026;
+		$lang    = sanitize_key( $_GET['lang'] ?? 'en' );
+
+		// Custom postmeta override if explicitly set
+		$custom_rm_title = get_post_meta( $post_id, 'rank_math_title', true );
+		if ( ! empty( $custom_rm_title ) ) {
+			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_title );
+		}
+
+		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
+		$title_te = get_post_meta( $post_id, '_djv_title_te', true ) ?: get_post_meta( $post_id, '_djv_telugu_name', true );
+		$title_hi = get_post_meta( $post_id, '_djv_title_hi', true );
+
+		if ( $lang === 'te' && $title_te ) {
+			return "{$title_te} {$year} – పండుగ తేదీ, పూజా సమయం & ముహూర్తం | ధర్మ జ్యోతి వేదిక";
+		} elseif ( $lang === 'hi' && $title_hi ) {
+			return "{$title_hi} {$year} – तिथि, पूजा का शुभ मुहूर्त एवं विधि | धर्म ज्योति वेदिका";
+		} else {
+			return "{$title_en} {$year} – Date, Puja Time & Muhurat | Dharma Jyothi Vedika";
+		}
+	}
+	return $title;
+}
+add_filter( 'pre_get_document_title', 'djv_filter_festival_document_title', 20 );
+add_filter( 'rank_math/frontend/title', 'djv_filter_festival_document_title', 15 );
+
+add_filter( 'rank_math/frontend/description', function( $desc ) {
+	if ( is_singular( 'djv_festival' ) ) {
+		$post_id = get_the_ID();
+		$post    = get_post( $post_id );
+		$year    = intval( $_GET['year'] ?? ( $_GET['y'] ?? 2026 ) );
+		if ( $year < 1900 || $year > 2200 ) $year = 2026;
+		$lang    = sanitize_key( $_GET['lang'] ?? 'en' );
+
+		$custom_rm_desc = get_post_meta( $post_id, 'rank_math_description', true );
+		if ( ! empty( $custom_rm_desc ) ) {
+			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_desc );
+		}
+
+		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
+		$title_te = get_post_meta( $post_id, '_djv_title_te', true ) ?: get_post_meta( $post_id, '_djv_telugu_name', true );
+		$title_hi = get_post_meta( $post_id, '_djv_title_hi', true );
+
+		$date_str = '';
+		if ( class_exists( 'DJV_Festival_Master' ) ) {
+			$occs = DJV_Festival_Master::get_occurrences( $year, [ 'scope' => 'all_india' ] );
+			foreach ( $occs as $o ) {
+				if ( $o['slug'] === $post->post_name || ( ! empty( $o['id'] ) && $o['id'] === $post_id ) ) {
+					$date_str = $o['formatted_date'];
+					break;
+				}
+			}
+		}
+
+		if ( $lang === 'te' && $title_te ) {
+			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. ధర్మ జ్యోతి వేదిక.";
+		} elseif ( $lang === 'hi' && $title_hi ) {
+			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। धर्म ज्योति वेदिका पर अपनी लोकेशन अनुसार देखें।";
+		} else {
+			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
+		}
+	}
+	return $desc;
+}, 15 );
+
+add_filter( 'rank_math/canonical_url', function( $canonical ) {
+	if ( is_singular( 'djv_festival' ) ) {
+		$post = get_post();
+		if ( $post ) {
+			return home_url( '/festivals/' . $post->post_name . '/' );
+		}
+	}
+	return $canonical;
+}, 15 );

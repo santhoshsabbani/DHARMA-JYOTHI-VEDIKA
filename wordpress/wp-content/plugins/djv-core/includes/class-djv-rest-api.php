@@ -357,12 +357,15 @@ class DJV_REST_API {
 	 * GET /djv/v1/festivals/{slug}
 	 */
 	public static function get_festival_single( WP_REST_Request $req ): WP_REST_Response {
-		$slug = sanitize_key( $req->get_param( 'slug' ) );
-		$year = intval( $req->get_param( 'year' ) ?: date( 'Y' ) );
-		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		$raw_slug = sanitize_key( $req->get_param( 'slug' ) );
+		$year     = intval( $req->get_param( 'year' ) ?: ( $req->get_param( 'y' ) ?: 2026 ) );
+		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
 		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
 			$lang = 'en';
 		}
+
+		require_once __DIR__ . '/class-djv-festival-master.php';
+		$slug = DJV_Festival_Master::resolve_slug_alias( $raw_slug );
 
 		$post = get_page_by_path( $slug, OBJECT, 'djv_festival' );
 		if ( ! $post ) {
@@ -371,27 +374,29 @@ class DJV_REST_API {
 
 		$data = self::format_festival_post( $post );
 
-		// Add calculated occurrence for requested year
-		require_once __DIR__ . '/class-djv-festival-master.php';
+		// Add calculated occurrence for requested year and location
 		$occurrences = DJV_Festival_Master::get_occurrences( $year, [
-			'latitude'  => floatval( $req->get_param( 'latitude' ) ?: 17.3850 ),
-			'longitude' => floatval( $req->get_param( 'longitude' ) ?: 78.4867 ),
-			'timezone'  => sanitize_text_field( $req->get_param( 'timezone' ) ?: 'Asia/Kolkata' ),
-			'city'      => sanitize_text_field( $req->get_param( 'city' ) ?: 'Hyderabad' ),
+			'latitude'  => floatval( $req->get_param( 'latitude' ) ?: ( $req->get_param( 'lat' ) ?: 17.3850 ) ),
+			'longitude' => floatval( $req->get_param( 'longitude' ) ?: ( $req->get_param( 'lon' ) ?: 78.4867 ) ),
+			'timezone'  => sanitize_text_field( $req->get_param( 'timezone' ) ?: ( $req->get_param( 'tz' ) ?: 'Asia/Kolkata' ) ),
+			'city'      => sanitize_text_field( $req->get_param( 'city' ) ?: ( $req->get_param( 'location' ) ?: 'Hyderabad' ) ),
 			'state'     => sanitize_text_field( $req->get_param( 'state' ) ?: 'Telangana' ),
 			'scope'     => 'all_india', // When viewing single festival, calculate occurrence regardless of scope
 			'language'  => $lang,
 		] );
 
 		foreach ( $occurrences as $occ ) {
-			if ( $occ['slug'] === $slug ) {
+			if ( $occ['slug'] === $slug || $occ['slug'] === $raw_slug || ( ! empty( $occ['id'] ) && $occ['id'] === $post->ID ) ) {
 				$data['year_occurrence'] = $occ;
-				$data['date'] = $occ['date'];
-				$data['formatted_date'] = $occ['formatted_date'];
+				$data['date']            = $occ['date'];
+				$data['formatted_date']  = $occ['formatted_date'];
 				$data['short_formatted'] = $occ['short_formatted'] ?? $occ['formatted_date'];
-				$data['day_of_week'] = $occ['day_of_week'];
-				$data['scope'] = $occ['scope'] ?? 'pan_india';
-				$data['scope_label'] = $occ['scope_label'] ?? 'Pan-India';
+				$data['day_of_week']     = $occ['day_of_week'];
+				$data['scope']           = $occ['scope'] ?? 'pan_india';
+				$data['scope_label']     = $occ['scope_label'] ?? 'Pan-India';
+				if ( ! empty( $occ['puja_timings'] ) ) {
+					$data['puja_timings'] = $occ['puja_timings'];
+				}
 				break;
 			}
 		}

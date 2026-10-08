@@ -331,8 +331,54 @@ function djv_theme_custom_route_fallback(): void {
 		wp_safe_redirect( home_url( '/mantras/maha-mrityunjaya-mantra/' ), 301 );
 		exit;
 	}
+
+	// Robust single festival fallback for canonical and alias URLs
+	if ( preg_match( '#^festivals/([^/]+)/?$#', $request_uri, $matches ) ) {
+		$raw_slug = sanitize_title( $matches[1] );
+		if ( class_exists( 'DJV_Festival_Master' ) ) {
+			$resolved_slug = DJV_Festival_Master::resolve_slug_alias( $raw_slug );
+			$fest_post = get_page_by_path( $resolved_slug, OBJECT, 'djv_festival' );
+			if ( $fest_post ) {
+				global $wp_query, $post;
+				$wp_query->is_404            = false;
+				$wp_query->is_single         = true;
+				$wp_query->is_singular       = true;
+				$wp_query->post              = $fest_post;
+				$wp_query->posts             = [ $fest_post ];
+				$wp_query->post_count        = 1;
+				$wp_query->queried_object    = $fest_post;
+				$wp_query->queried_object_id = $fest_post->ID;
+				$post = $fest_post;
+				setup_postdata( $post );
+				status_header( 200 );
+
+				$template = locate_template( [ 'single-djv_festival.php', 'single-festival.php' ] );
+				if ( $template ) {
+					include $template;
+					exit;
+				}
+			}
+		}
+	}
 }
 add_action( 'template_redirect', 'djv_theme_custom_route_fallback', 5 );
+
+/**
+ * Canonical Festival Slug Request Resolver
+ * Ensures /festivals/vijayadashami/, /festivals/paush-purnima/, /festivals/banashankari-jatre-badami/, etc.
+ * natively resolve to canonical djv_festival CPT posts with HTTP 200 without duplicate posts or redirect loops.
+ */
+function djv_theme_festival_request_filter( array $query_vars ): array {
+	if ( ! empty( $query_vars['djv_festival'] ) && class_exists( 'DJV_Festival_Master' ) ) {
+		$raw_slug = $query_vars['djv_festival'];
+		$resolved = DJV_Festival_Master::resolve_slug_alias( $raw_slug );
+		if ( $resolved !== $raw_slug ) {
+			$query_vars['djv_festival'] = $resolved;
+		}
+	}
+	return $query_vars;
+}
+add_filter( 'request', 'djv_theme_festival_request_filter', 1 );
 
 /**
  * Global Pagination: Set archive queries to 18 posts per view.

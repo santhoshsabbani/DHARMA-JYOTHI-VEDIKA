@@ -750,8 +750,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateFormatted = f.formatted_date || f.date || '';
     const dayName = f.day_of_week || '';
     const dateBadge = f.date_badge || '';
-    const tithiRule = f.tithi_rule || '';
-    const link = f.link || `/festivals/${f.slug}/`;
+    const baseLink = f.link || `/festivals/${f.slug}/`;
+    const link = currentYear ? (baseLink.includes('?') ? `${baseLink}&year=${currentYear}` : `${baseLink}?year=${currentYear}`) : baseLink;
     const excerpt = f.excerpt || '';
     const category = f.category || (f.categories && f.categories.length ? f.categories[0] : '');
     const scopeVal = f.scope || 'pan_india';

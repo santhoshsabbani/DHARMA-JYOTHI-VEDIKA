@@ -33,6 +33,10 @@ if ( empty( $categories ) ) {
 }
 $cat_primary = ! empty( $categories[0] ) ? $categories[0] : '';
 
+// Year-aware permalink for single festival page
+$card_year = ! empty( $GLOBALS['current_page_year'] ) ? $GLOBALS['current_page_year'] : ( ! empty( $_GET['year'] ) ? intval( $_GET['year'] ) : 2026 );
+$card_url  = add_query_arg( 'year', $card_year, get_permalink() );
+
 // Localized Date & Badge
 $date_en = [ 'formatted' => '', 'day_of_week' => '', 'badge' => '' ];
 $date_te = [ 'formatted' => '', 'day_of_week' => '', 'badge' => '' ];
@@ -108,7 +112,7 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
 
   <!-- Multilingual Title (English default, never leak Telugu into English) -->
   <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;">
-    <a href="<?php the_permalink(); ?>" style="color:inherit;text-decoration:none;">
+    <a href="<?php echo esc_url( $card_url ); ?>" style="color:inherit;text-decoration:none;">
       <span class="djv-lang-field" data-lang="en"><?php echo esc_html( $title_en ); ?></span>
       <span class="djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu, sans-serif);"><?php echo esc_html( $title_te ?: $title_en ); ?></span>
       <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari', serif;"><?php echo esc_html( $title_hi ?: $title_en ); ?></span>
@@ -139,7 +143,7 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
   </p>
 
   <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid #F5EFEB;">
-    <a href="<?php the_permalink(); ?>" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;">
+    <a href="<?php echo esc_url( $card_url ); ?>" style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.875rem;font-weight:600;color:var(--clr-primary, #7A2419);text-decoration:none;">
       <span class="djv-lang-field" data-lang="en">Puja Vidhi &amp; Muhurat →</span>
       <span class="djv-lang-field" data-lang="te" style="display:none;">పూజా విధానం &amp; ముహూర్తం →</span>
       <span class="djv-lang-field" data-lang="hi" style="display:none;">पूजा विधि एवं मुहूर्त →</span>
