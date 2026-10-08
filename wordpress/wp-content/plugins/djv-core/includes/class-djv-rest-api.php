@@ -47,8 +47,10 @@ class DJV_REST_API {
 				'latitude'  => [ 'type' => 'number', 'default' => 17.3850 ],
 				'longitude' => [ 'type' => 'number', 'default' => 78.4867 ],
 				'timezone'  => [ 'type' => 'string', 'default' => 'Asia/Kolkata' ],
+				'city'      => [ 'type' => 'string', 'default' => 'Hyderabad' ],
+				'state'     => [ 'type' => 'string', 'default' => 'Telangana' ],
+				'scope'     => [ 'type' => 'string', 'default' => 'relevant' ],
 				'region'    => [ 'type' => 'string', 'default' => 'all' ],
-				'state'     => [ 'type' => 'string', 'default' => 'all' ],
 				'category'  => [ 'type' => 'string', 'default' => 'all' ],
 				'deity'     => [ 'type' => 'string', 'default' => 'all' ],
 				'language'  => [ 'type' => 'string', 'default' => 'en' ],
@@ -298,11 +300,16 @@ class DJV_REST_API {
 		$lat      = floatval( $req->get_param( 'latitude' ) ?: 17.3850 );
 		$lon      = floatval( $req->get_param( 'longitude' ) ?: 78.4867 );
 		$tz       = sanitize_text_field( $req->get_param( 'timezone' ) ?: 'Asia/Kolkata' );
+		$city     = sanitize_text_field( $req->get_param( 'city' ) ?: ( $req->get_param( 'location' ) ?: 'Hyderabad' ) );
+		$state    = sanitize_text_field( $req->get_param( 'state' ) ?: 'Telangana' );
+		$scope    = sanitize_key( $req->get_param( 'scope' ) ?: 'relevant' );
 		$region   = sanitize_text_field( $req->get_param( 'region' ) ?: 'all' );
-		$state    = sanitize_text_field( $req->get_param( 'state' ) ?: 'all' );
 		$category = sanitize_text_field( $req->get_param( 'category' ) ?: 'all' );
 		$deity    = sanitize_text_field( $req->get_param( 'deity' ) ?: 'all' );
 		$lang     = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 		$search   = sanitize_text_field( $req->get_param( 'search' ) ?: '' );
 
 		// Validate year range
@@ -315,8 +322,10 @@ class DJV_REST_API {
 			'latitude'  => $lat,
 			'longitude' => $lon,
 			'timezone'  => $tz,
-			'region'    => $region,
+			'city'      => $city,
 			'state'     => $state,
+			'scope'     => $scope,
+			'region'    => $region,
 			'category'  => $category,
 			'deity'     => $deity,
 			'month'     => $month,
@@ -327,8 +336,11 @@ class DJV_REST_API {
 		return self::respond( $occurrences, [
 			'year'      => $year,
 			'month'     => $month,
+			'language'  => $lang,
+			'scope'     => $scope,
 			'location'  => [
-				'city'      => 'Hyderabad',
+				'city'      => $city,
+				'state'     => $state,
 				'latitude'  => $lat,
 				'longitude' => $lon,
 				'timezone'  => $tz,
@@ -337,7 +349,7 @@ class DJV_REST_API {
 			'state'     => $state,
 			'category'  => $category,
 			'count'     => count( $occurrences ),
-			'engine'    => 'DJV Astronomical Panchangam Engine v1.0',
+			'engine'    => 'DJV Astronomical Panchangam Engine v2.1',
 		] );
 	}
 
@@ -347,6 +359,10 @@ class DJV_REST_API {
 	public static function get_festival_single( WP_REST_Request $req ): WP_REST_Response {
 		$slug = sanitize_key( $req->get_param( 'slug' ) );
 		$year = intval( $req->get_param( 'year' ) ?: date( 'Y' ) );
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 
 		$post = get_page_by_path( $slug, OBJECT, 'djv_festival' );
 		if ( ! $post ) {
@@ -361,6 +377,10 @@ class DJV_REST_API {
 			'latitude'  => floatval( $req->get_param( 'latitude' ) ?: 17.3850 ),
 			'longitude' => floatval( $req->get_param( 'longitude' ) ?: 78.4867 ),
 			'timezone'  => sanitize_text_field( $req->get_param( 'timezone' ) ?: 'Asia/Kolkata' ),
+			'city'      => sanitize_text_field( $req->get_param( 'city' ) ?: 'Hyderabad' ),
+			'state'     => sanitize_text_field( $req->get_param( 'state' ) ?: 'Telangana' ),
+			'scope'     => 'all_india', // When viewing single festival, calculate occurrence regardless of scope
+			'language'  => $lang,
 		] );
 
 		foreach ( $occurrences as $occ ) {
@@ -368,6 +388,10 @@ class DJV_REST_API {
 				$data['year_occurrence'] = $occ;
 				$data['date'] = $occ['date'];
 				$data['formatted_date'] = $occ['formatted_date'];
+				$data['short_formatted'] = $occ['short_formatted'] ?? $occ['formatted_date'];
+				$data['day_of_week'] = $occ['day_of_week'];
+				$data['scope'] = $occ['scope'] ?? 'pan_india';
+				$data['scope_label'] = $occ['scope_label'] ?? 'Pan-India';
 				break;
 			}
 		}

@@ -333,9 +333,9 @@ class DJV_Post_Types {
 		}
 
 		$festivals_version = intval( get_option( 'djv_festivals_db_version', 0 ) );
-		if ( $festivals_version < 5 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
+		if ( $festivals_version < 6 || isset( $_GET['djv_force_sync'] ) || ( isset( $_GET['djv_sync_festivals'] ) && current_user_can( 'manage_options' ) ) ) {
 			self::sync_festivals_data();
-			update_option( 'djv_festivals_db_version', 5 );
+			update_option( 'djv_festivals_db_version', 6 );
 		}
 
 		$pooja_version = intval( get_option( 'djv_pooja_db_version', 0 ) );

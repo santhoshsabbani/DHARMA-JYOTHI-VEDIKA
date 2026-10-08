@@ -22,7 +22,257 @@ if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 
 class DJV_Festival_Master {
 
-	const VERSION = '2.0.0';
+	const VERSION = '2.1.0';
+
+	/**
+	 * Localized Date Formatting for Hindu Calendars
+	 * Supports English, Telugu (తెలుగు), Hindi (हिन्दी).
+	 */
+	public static function format_localized_date( string $iso_date, string $lang = 'en' ): array {
+		$time = strtotime( $iso_date );
+		if ( ! $time ) {
+			return [
+				'formatted'       => $iso_date,
+				'short_formatted' => $iso_date,
+				'day_of_week'     => '',
+				'month_name'      => '',
+				'badge'           => '',
+			];
+		}
+		$year      = date( 'Y', $time );
+		$month_num = (int) date( 'n', $time );
+		$day_num   = (int) date( 'j', $time );
+		$wday_num  = (int) date( 'w', $time );
+
+		$en_months = [ '', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+		$te_months = [ '', 'జనవరి', 'ఫిబ్రవరి', 'మార్చి', 'ఏప్రిల్', 'మే', 'జూన్', 'జూలై', 'ఆగస్టు', 'సెప్టెంబర్', 'అక్టోబర్', 'నవంబర్', 'డిసెంబర్' ];
+		$hi_months = [ '', 'जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर' ];
+
+		$en_days = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
+		$te_days = [ 'ఆదివారం', 'సోమవారం', 'మంగళవారం', 'బుధవారం', 'గురువారం', 'శుక్రవారం', 'శనివారం' ];
+		$hi_days = [ 'रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार' ];
+
+		switch ( $lang ) {
+			case 'te':
+				$day_name   = $te_days[ $wday_num ];
+				$month_name = $te_months[ $month_num ];
+				$formatted  = "{$day_name}, {$month_name} {$day_num}, {$year}";
+				$short_fmt  = "{$month_name} {$day_num}, {$year}";
+				$badge      = mb_strtoupper( mb_substr( $month_name, 0, 3 ) ) . " {$day_num}";
+				break;
+			case 'hi':
+				$day_name   = $hi_days[ $wday_num ];
+				$month_name = $hi_months[ $month_num ];
+				$formatted  = "{$day_name}, {$day_num} {$month_name} {$year}";
+				$short_fmt  = "{$day_num} {$month_name} {$year}";
+				$badge      = mb_strtoupper( mb_substr( $month_name, 0, 3 ) ) . " {$day_num}";
+				break;
+			default:
+				$day_name   = $en_days[ $wday_num ];
+				$month_name = $en_months[ $month_num ];
+				$formatted  = "{$day_name}, {$month_name} {$day_num}, {$year}";
+				$short_fmt  = "{$month_name} {$day_num}, {$year}";
+				$badge      = strtoupper( substr( $month_name, 0, 3 ) ) . " {$day_num}";
+				break;
+		}
+
+		return [
+			'formatted'       => $formatted,
+			'short_formatted' => $short_fmt,
+			'day_of_week'     => $day_name,
+			'month_name'      => $month_name,
+			'badge'           => $badge,
+		];
+	}
+
+	/**
+	 * Localized Category Names for Category Pills and Badges
+	 */
+	public static function get_localized_category( string $cat, string $lang = 'en' ): string {
+		$map = [
+			'All Festivals'       => [ 'en' => 'All Festivals',       'te' => 'అన్ని పండుగలు',       'hi' => 'सभी त्योहार' ],
+			'Major Festivals'     => [ 'en' => 'Major Festivals',     'te' => 'ప్రధాన పండుగలు',     'hi' => 'प्रमुख त्योहार' ],
+			'Regional'            => [ 'en' => 'Telugu / Regional',   'te' => 'తెలుగు / ప్రాంతీయ',   'hi' => 'तेलुगु / क्षेत्रीय' ],
+			'Telugu / Regional'   => [ 'en' => 'Telugu / Regional',   'te' => 'తెలుగు / ప్రాంతీయ',   'hi' => 'तेलुगु / क्षेत्रीय' ],
+			'Shiva'               => [ 'en' => 'Shiva',               'te' => 'శివ',                'hi' => 'शिव' ],
+			'Vishnu'              => [ 'en' => 'Vishnu',              'te' => 'విష్ణు',              'hi' => 'विष्णु' ],
+			'Krishna'             => [ 'en' => 'Krishna',             'te' => 'కృష్ణ',              'hi' => 'कृष्ण' ],
+			'Ganesha'             => [ 'en' => 'Ganesha',             'te' => 'గణేశ',              'hi' => 'गणेश' ],
+			'Hanuman'             => [ 'en' => 'Hanuman',             'te' => 'హనుమాన్',            'hi' => 'हनुमान' ],
+			'Devi / Durga'        => [ 'en' => 'Devi / Durga',        'te' => 'దేవి / దుర్గ',        'hi' => 'देवी / दुर्गा' ],
+			'Devi'                => [ 'en' => 'Devi / Durga',        'te' => 'దేవి / దుర్గ',        'hi' => 'देवी / दुर्गा' ],
+			'Lakshmi'             => [ 'en' => 'Lakshmi',             'te' => 'లక్ష్మీ',             'hi' => 'लक्ष्मी' ],
+			'Saraswati'           => [ 'en' => 'Saraswati',           'te' => 'సరస్వతి',            'hi' => 'सरस्वती' ],
+			'Sankranti'           => [ 'en' => 'Sankranti',           'te' => 'సంక్రాంతి',          'hi' => 'संक्रांति' ],
+			'Fasting & Ekadashi'  => [ 'en' => 'Fasting & Ekadashi',  'te' => 'ఏకాదశి / ఉపవాసం',    'hi' => 'व्रत एवं एकादशी' ],
+			'Fasting'             => [ 'en' => 'Fasting & Ekadashi',  'te' => 'ఏకాదశి / ఉపవాసం',    'hi' => 'व्रत एवं एकादशी' ],
+			'Purnima'             => [ 'en' => 'Purnima',             'te' => 'పౌర్ణమి',            'hi' => 'पूर्णिमा' ],
+		];
+
+		if ( isset( $map[ $cat ][ $lang ] ) ) {
+			return $map[ $cat ][ $lang ];
+		}
+		return $cat;
+	}
+
+	/**
+	 * Localized Scope / Regional Badge Label
+	 */
+	public static function get_localized_scope_label( string $scope, string $state, string $lang = 'en' ): string {
+		if ( $scope === 'pan_india' || $state === 'Pan-India' ) {
+			switch ( $lang ) {
+				case 'te': return '🇮🇳 భారతదేశ వ్యాప్తంగా';
+				case 'hi': return '🇮🇳 अखिल भारतीय';
+				default:   return '🇮🇳 Pan-India';
+			}
+		}
+
+		$state_map = [
+			'Telangana'        => [ 'en' => 'Telangana',        'te' => 'తెలంగాణ',        'hi' => 'तेलंगाना' ],
+			'Andhra Pradesh'   => [ 'en' => 'Andhra Pradesh',   'te' => 'ఆంధ్రప్రదేశ్',    'hi' => 'आंध्र प्रदेश' ],
+			'Karnataka'        => [ 'en' => 'Karnataka',        'te' => 'కర్ణాటక',        'hi' => 'कर्नाटक' ],
+			'Tamil Nadu'       => [ 'en' => 'Tamil Nadu',       'te' => 'తమిళనాడు',       'hi' => 'तमिलनाडु' ],
+			'Maharashtra'      => [ 'en' => 'Maharashtra',      'te' => 'మహారాష్ట్ర',      'hi' => 'महाराष्ट्र' ],
+			'Kerala'           => [ 'en' => 'Kerala',           'te' => 'కేరళ',           'hi' => 'केरल' ],
+			'Gujarat'          => [ 'en' => 'Gujarat',          'te' => 'గుజరాత్',        'hi' => 'गुजरात' ],
+			'West Bengal'      => [ 'en' => 'West Bengal',      'te' => 'పశ్చిమ బెంగాల్',  'hi' => 'पश्चिम बंगाल' ],
+			'Odisha'           => [ 'en' => 'Odisha',           'te' => 'ఒడిశా',          'hi' => 'ओडिशा' ],
+			'Rajasthan'        => [ 'en' => 'Rajasthan',        'te' => 'రాజస్థాన్',      'hi' => 'राजस्थान' ],
+			'Uttar Pradesh'    => [ 'en' => 'Uttar Pradesh',    'te' => 'ఉత్తరప్రదేశ్',    'hi' => 'उत्तर प्रदेश' ],
+			'Bihar'            => [ 'en' => 'Bihar',            'te' => 'బీహార్',         'hi' => 'बिहार' ],
+			'Madhya Pradesh'   => [ 'en' => 'Madhya Pradesh',   'te' => 'మధ్యప్రదేశ్',    'hi' => 'मध्य प्रदेश' ],
+			'Assam'            => [ 'en' => 'Assam',            'te' => 'అసోం',           'hi' => 'असम' ],
+			'Punjab'           => [ 'en' => 'Punjab',           'te' => 'పంజాబ్',         'hi' => 'पंजाब' ],
+			'Haryana'          => [ 'en' => 'Haryana',          'te' => 'హర్యానా',        'hi' => 'हरियाणा' ],
+			'Delhi'            => [ 'en' => 'Delhi',            'te' => 'ఢిల్లీ',          'hi' => 'दिल्ली' ],
+			'Himachal Pradesh' => [ 'en' => 'Himachal Pradesh', 'te' => 'హిమాచల్ ప్రదేశ్', 'hi' => 'हिमाचल प्रदेश' ],
+			'Uttarakhand'      => [ 'en' => 'Uttarakhand',      'te' => 'ఉత్తరాఖండ్',     'hi' => 'उत्तराखंड' ],
+			'Jammu & Kashmir'  => [ 'en' => 'Jammu & Kashmir',  'te' => 'జమ్మూ కాశ్మీర్',   'hi' => 'जम्मू और कश्मीर' ],
+			'Goa'              => [ 'en' => 'Goa',              'te' => 'గోవా',           'hi' => 'गोवा' ],
+		];
+
+		if ( isset( $state_map[ $state ][ $lang ] ) ) {
+			return $state_map[ $state ][ $lang ];
+		}
+		return $state;
+	}
+
+	/**
+	 * Parse festival state, scope, and applicable states
+	 */
+	public static function parse_festival_scope( array $fest ): array {
+		$raw_state = $fest['state'] ?? 'Pan-India';
+		$raw_scope = $fest['scope'] ?? '';
+
+		$states = [];
+		if ( $raw_state === 'Pan-India' ) {
+			$scope = 'pan_india';
+		} else {
+			$parts  = array_map( 'trim', explode( '/', $raw_state ) );
+			$states = $parts;
+			$scope  = ! empty( $raw_scope ) ? $raw_scope : 'state';
+			$slug   = $fest['slug'] ?? '';
+			if ( strpos( $slug, 'mela' ) !== false || strpos( $slug, 'jatre' ) !== false || strpos( $slug, 'jathara' ) !== false || strpos( $slug, 'pooram' ) !== false || strpos( $slug, 'karaga' ) !== false || strpos( $slug, 'dasara' ) !== false ) {
+				$scope = 'local';
+			} elseif ( strpos( $slug, 'darshan' ) !== false || strpos( $slug, 'thiruvizha' ) !== false || strpos( $slug, 'kalyanam' ) !== false || strpos( $slug, 'aradhana' ) !== false || strpos( $slug, 'uthsavam' ) !== false ) {
+				$scope = 'temple';
+			}
+		}
+
+		return [
+			'scope'  => $scope,
+			'state'  => $raw_state,
+			'states' => $states,
+			'region' => $fest['region'] ?? $raw_state,
+		];
+	}
+
+	/**
+	 * Check if festival matches user location and requested scope filter
+	 */
+	public static function matches_location_scope( array $fest_info, string $scope_filter, string $user_state ): bool {
+		$scope      = $fest_info['scope'];
+		$states     = $fest_info['states'];
+		$fest_state = $fest_info['state'];
+
+		if ( $scope_filter === 'all_india' ) {
+			return true;
+		}
+
+		if ( $scope_filter === 'pan_india' ) {
+			return $scope === 'pan_india';
+		}
+
+		$matches_state = false;
+		if ( ! empty( $user_state ) ) {
+			if ( strcasecmp( $fest_state, $user_state ) === 0 ) {
+				$matches_state = true;
+			} else {
+				foreach ( $states as $st ) {
+					if ( strcasecmp( $st, $user_state ) === 0 || stripos( $st, $user_state ) !== false ) {
+						$matches_state = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if ( $scope_filter === 'my_state' ) {
+			return $matches_state;
+		}
+
+		// 'relevant' (default): Pan-India + user's state/region
+		if ( $scope === 'pan_india' ) {
+			return true;
+		}
+
+		return $matches_state;
+	}
+
+	/**
+	 * Resolves localized text with strict English fallback (never leaks Telugu to English or Hindi)
+	 */
+	public static function resolve_text( array $fest, string $field_prefix, string $lang ): string {
+		$requested_key = "{$field_prefix}_{$lang}";
+		if ( ! empty( $fest[ $requested_key ] ) ) {
+			return trim( $fest[ $requested_key ] );
+		}
+
+		// English fallback
+		$en_key = "{$field_prefix}_en";
+		if ( ! empty( $fest[ $en_key ] ) ) {
+			return trim( $fest[ $en_key ] );
+		}
+
+		if ( ! empty( $fest['title'] ) && $field_prefix === 'title' ) {
+			return trim( $fest['title'] );
+		}
+		if ( ! empty( $fest['excerpt'] ) && ( $field_prefix === 'short_description' || $field_prefix === 'excerpt' ) ) {
+			return trim( $fest['excerpt'] );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolves short description / excerpt localized
+	 */
+	public static function resolve_description( array $fest, string $lang ): string {
+		if ( $lang === 'te' ) {
+			if ( ! empty( $fest['content_te'] ) ) {
+				return wp_trim_words( $fest['content_te'], 25 );
+			}
+			return $fest['excerpt'] ?? '';
+		}
+		if ( $lang === 'hi' ) {
+			if ( ! empty( $fest['content_hi'] ) ) {
+				return wp_trim_words( $fest['content_hi'], 25 );
+			}
+			return $fest['excerpt'] ?? '';
+		}
+		// English default
+		return $fest['excerpt'] ?? ( $fest['content_en'] ?? '' );
+	}
 
 	/**
 	 * Gregorian date to Julian Day Number (Meeus Ch. 7)
@@ -277,27 +527,33 @@ class DJV_Festival_Master {
 		$lat      = floatval( $args['latitude'] ?? 17.3850 );
 		$lon      = floatval( $args['longitude'] ?? 78.4867 );
 		$tz       = sanitize_text_field( $args['timezone'] ?? 'Asia/Kolkata' );
+		$city     = sanitize_text_field( $args['city'] ?? 'Hyderabad' );
+		$state    = sanitize_text_field( $args['state'] ?? 'Telangana' );
+		$scope    = sanitize_key( $args['scope'] ?? 'relevant' );
 		$region   = sanitize_text_field( $args['region'] ?? 'all' );
-		$state    = sanitize_text_field( $args['state'] ?? 'all' );
 		$category = sanitize_text_field( $args['category'] ?? 'all' );
 		$deity    = sanitize_text_field( $args['deity'] ?? 'all' );
 		$month    = intval( $args['month'] ?? 0 );
 		$lang     = sanitize_key( $args['language'] ?? 'en' );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
 		$search   = sanitize_text_field( $args['search'] ?? '' );
 
-		// Transient Cache Key (incorporates year, lat, lon, timezone, region, state, category, deity, month, language, and engine version)
+		// Transient Cache Key (incorporates year, lang, scope, city, state, lat, lon, tz, category, deity, month, and engine version)
 		$cache_raw = sprintf(
-			'djv_focc_%d_%.4f_%.4f_%s_%s_%s_%s_%s_%d_%s_%s',
+			'djv_focc_%d_%s_%s_%s_%s_%.4f_%.4f_%s_%s_%s_%d_%s',
 			$year,
+			$lang,
+			$scope,
+			sanitize_key( $city ),
+			sanitize_key( $state ),
 			$lat,
 			$lon,
 			sanitize_key( $tz ),
-			sanitize_key( $region ),
-			sanitize_key( $state ),
 			sanitize_key( $category ),
 			sanitize_key( $deity ),
 			$month,
-			$lang,
 			self::VERSION
 		);
 		$cache_key = 'djv_focc_' . md5( $cache_raw );
@@ -334,26 +590,19 @@ class DJV_Festival_Master {
 		$occurrences = [];
 
 		foreach ( $catalog as $slug => $fest ) {
+			$fest_info = self::parse_festival_scope( $fest );
+
+			// Location Scope filter
+			if ( ! self::matches_location_scope( $fest_info, $scope, $state ) ) {
+				continue;
+			}
+
 			// Category filter
 			if ( $category !== 'all' && $category !== '' ) {
 				$cats = array_map( 'strtolower', $fest['categories'] ?? [] );
 				$match_cat = in_array( strtolower( $category ), $cats, true ) ||
 				             in_array( sanitize_title( $category ), array_map( 'sanitize_title', $fest['categories'] ?? [] ), true );
 				if ( ! $match_cat ) continue;
-			}
-
-			// State filter
-			if ( $state !== 'all' && $state !== '' ) {
-				if ( stripos( $fest['state'] ?? '', $state ) === false && strcasecmp( $fest['state'] ?? '', 'Pan-India' ) !== 0 ) {
-					continue;
-				}
-			}
-
-			// Region filter
-			if ( $region !== 'all' && $region !== '' ) {
-				if ( stripos( $fest['region'] ?? '', $region ) === false && strcasecmp( $fest['region'] ?? '', 'Pan-India' ) !== 0 ) {
-					continue;
-				}
 			}
 
 			// Deity filter
@@ -661,12 +910,14 @@ class DJV_Festival_Master {
 				if ( $f_month !== $month ) continue;
 			}
 
-			// Search query filter
+			// Search query filter: Trilingual search matching name or description
 			if ( ! empty( $search ) ) {
 				$q = strtolower( $search );
-				$match_search = strpos( strtolower( $fest['title_en'] ), $q ) !== false ||
+				$match_search = strpos( strtolower( $fest['title_en'] ?? '' ), $q ) !== false ||
 				                strpos( strtolower( $fest['title_te'] ?? '' ), $q ) !== false ||
 				                strpos( strtolower( $fest['title_hi'] ?? '' ), $q ) !== false ||
+				                strpos( strtolower( $fest['content_te'] ?? '' ), $q ) !== false ||
+				                strpos( strtolower( $fest['content_hi'] ?? '' ), $q ) !== false ||
 				                strpos( strtolower( $fest['excerpt'] ?? '' ), $q ) !== false;
 				if ( ! $match_search ) continue;
 			}
@@ -675,37 +926,50 @@ class DJV_Festival_Master {
 			$permalink = $post_id ? get_permalink( $post_id ) : home_url( "/festivals/{$slug}/" );
 			$thumb     = $post_id ? get_the_post_thumbnail_url( $post_id, 'medium' ) : null;
 
-			$formatted_date = date( 'F j, Y', strtotime( $found_date ) );
-			$day_name       = date( 'l', strtotime( $found_date ) );
+			// Format localized date (Weekday, Month, Badge) based on requested language
+			$loc_date       = self::format_localized_date( $found_date, $lang );
+			$formatted_date = $loc_date['formatted'];
+			$day_name       = $loc_date['day_of_week'];
+			$month_name     = $loc_date['month_name'];
+			$date_badge     = $loc_date['badge'];
 
-			// Localized title & description based on requested language
-			$display_title = $fest['title_en'];
-			$display_desc  = $fest['excerpt'];
-			if ( $lang === 'te' && ! empty( $fest['title_te'] ) ) {
-				$display_title = $fest['title_te'];
-				$display_desc  = $fest['content_te'] ?: $fest['excerpt'];
-			} elseif ( $lang === 'hi' && ! empty( $fest['title_hi'] ) ) {
-				$display_title = $fest['title_hi'];
-				$display_desc  = $fest['content_hi'] ?: $fest['excerpt'];
-			}
+			// Localized title & description strictly resolved (never leaks Telugu to English or Hindi)
+			$display_title = self::resolve_text( $fest, 'title', $lang );
+			$display_desc  = self::resolve_description( $fest, $lang );
+
+			// Localized scope & category
+			$scope_val      = $fest_info['scope'];
+			$state_val      = $fest_info['state'];
+			$scope_label    = self::get_localized_scope_label( $scope_val, $state_val, $lang );
+			$loc_categories = array_map( function( $c ) use ( $lang ) {
+				return DJV_Festival_Master::get_localized_category( $c, $lang );
+			}, $fest['categories'] ?? [] );
+			$primary_category = ! empty( $fest['categories'][0] ) ? self::get_localized_category( $fest['categories'][0], $lang ) : '';
 
 			$occurrences[] = [
 				'id'                => $post_id,
 				'slug'              => $slug,
 				'title'             => $display_title,
-				'title_en'          => $fest['title_en'],
+				'title_en'          => $fest['title_en'] ?? '',
 				'title_te'          => $fest['title_te'] ?? '',
 				'title_hi'          => $fest['title_hi'] ?? '',
 				'date'              => $found_date,
 				'formatted_date'    => $formatted_date,
+				'short_formatted'   => $loc_date['short_formatted'],
 				'day_of_week'       => $day_name,
-				'month'             => $fest['month'] ?? date( 'F', strtotime( $found_date ) ),
+				'month'             => $month_name,
+				'date_badge'        => $date_badge,
 				'tithi_rule'        => $fest['tithi_rule'] ?? ( $fest['rule_params']['masa'] ?? '' ),
 				'rule_type'         => $rule_type,
 				'categories'        => $fest['categories'] ?? [],
+				'categories_loc'    => $loc_categories,
+				'category'          => $primary_category,
 				'deity'             => $fest['deity'] ?? '',
 				'deity_slug'        => $fest['deity_slug'] ?? '',
-				'state'             => $fest['state'] ?? 'Pan-India',
+				'scope'             => $scope_val,
+				'state'             => $state_val,
+				'states'            => $fest_info['states'],
+				'scope_label'       => $scope_label,
 				'region'            => $fest['region'] ?? 'Pan-India',
 				'is_major'          => ! empty( $fest['is_major'] ) || in_array( 'Major Festivals', $fest['categories'] ?? [], true ),
 				'is_telugu'         => ! empty( $fest['is_telugu'] ) || in_array( 'Regional', $fest['categories'] ?? [], true ),
@@ -792,6 +1056,21 @@ class DJV_Festival_Master {
 			update_post_meta( $post_id, '_djv_description_te', $fest['content_te'] );
 			update_post_meta( $post_id, '_djv_description_hi', $fest['content_hi'] );
 
+			// Scope & States
+			$scope_info = self::parse_festival_scope( $fest );
+			update_post_meta( $post_id, '_djv_scope', $scope_info['scope'] );
+			update_post_meta( $post_id, '_djv_state', $scope_info['state'] );
+			update_post_meta( $post_id, '_djv_states', $scope_info['states'] );
+			update_post_meta( $post_id, '_djv_region', $scope_info['region'] );
+
+			// Trilingual SEO
+			if ( ! empty( $fest['seo_title_en'] ) ) update_post_meta( $post_id, '_djv_seo_title_en', $fest['seo_title_en'] );
+			if ( ! empty( $fest['seo_title_te'] ) ) update_post_meta( $post_id, '_djv_seo_title_te', $fest['seo_title_te'] );
+			if ( ! empty( $fest['seo_title_hi'] ) ) update_post_meta( $post_id, '_djv_seo_title_hi', $fest['seo_title_hi'] );
+			if ( ! empty( $fest['seo_desc_en'] ) )  update_post_meta( $post_id, '_djv_seo_desc_en', $fest['seo_desc_en'] );
+			if ( ! empty( $fest['seo_desc_te'] ) )  update_post_meta( $post_id, '_djv_seo_desc_te', $fest['seo_desc_te'] );
+			if ( ! empty( $fest['seo_desc_hi'] ) )  update_post_meta( $post_id, '_djv_seo_desc_hi', $fest['seo_desc_hi'] );
+
 			// Rule Metadata
 			update_post_meta( $post_id, '_djv_rule_type', $fest['rule_type'] );
 			update_post_meta( $post_id, '_djv_rule_params', $fest['rule_params'] );
@@ -799,8 +1078,6 @@ class DJV_Festival_Master {
 			update_post_meta( $post_id, '_djv_validation_status', $fest['validation_status'] ?? 'verified' );
 			update_post_meta( $post_id, '_djv_last_validated', $fest['last_validated'] ?? '2026-10-07' );
 			update_post_meta( $post_id, '_djv_validation_notes', $fest['validation_notes'] ?? '' );
-			update_post_meta( $post_id, '_djv_state', $fest['state'] ?? 'Pan-India' );
-			update_post_meta( $post_id, '_djv_region', $fest['region'] ?? 'Pan-India' );
 
 			// Observance details
 			if ( ! empty( $fest['puja_timings'] ) ) update_post_meta( $post_id, '_djv_puja_timings', $fest['puja_timings'] );

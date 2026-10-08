@@ -111,8 +111,13 @@ if ( class_exists( 'DJV_Panchangam' ) ) {
           </h1>
 
           <?php if ( $title_te ) : ?>
-            <div style="font-family: var(--font-telugu, sans-serif); font-size: 1.4rem; color: var(--clr-accent, #C89432); font-weight: 600; margin-bottom: 0.85rem;">
+            <div class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif); font-size: 1.4rem; color: var(--clr-accent, #C89432); font-weight: 600; margin-bottom: 0.85rem;">
               <?php echo esc_html( $title_te ); ?>
+            </div>
+          <?php endif; ?>
+          <?php if ( $title_hi ) : ?>
+            <div class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif; font-size: 1.4rem; color: var(--clr-accent, #C89432); font-weight: 600; margin-bottom: 0.85rem;">
+              <?php echo esc_html( $title_hi ); ?>
             </div>
           <?php endif; ?>
 
@@ -417,11 +422,24 @@ if ( class_exists( 'DJV_Panchangam' ) ) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const langKey = 'djv_lang';
-  let currentLang = localStorage.getItem(langKey) || 'en';
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlLang = urlParams.get('lang');
+  let currentLang = (urlLang && ['en', 'te', 'hi'].includes(urlLang)) ? urlLang : (localStorage.getItem(langKey) || 'en');
+  if (!['en', 'te', 'hi'].includes(currentLang)) {
+    currentLang = 'en';
+  }
 
   function applyLanguage(lang) {
     currentLang = lang;
     localStorage.setItem(langKey, lang);
+
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', lang);
+      window.history.replaceState({}, '', url);
+    } catch(e) {}
+
+    document.documentElement.setAttribute('lang', lang);
 
     document.querySelectorAll('.djv-lang-btn').forEach(btn => {
       if (btn.getAttribute('data-lang') === lang) {

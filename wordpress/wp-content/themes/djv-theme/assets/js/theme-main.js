@@ -514,6 +514,65 @@
       });
     }
 
+    // ── Global Trilingual Switcher Controller ──────────────────
+    const globalLangKey = 'djv_lang';
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    const paramLang = currentUrlParams.get('lang');
+    let activeGlobalLang = (paramLang && ['en', 'te', 'hi'].includes(paramLang))
+      ? paramLang
+      : (localStorage.getItem(globalLangKey) || 'en');
+
+    if (!['en', 'te', 'hi'].includes(activeGlobalLang)) {
+      activeGlobalLang = 'en';
+    }
+
+    function syncGlobalLanguage(lang) {
+      activeGlobalLang = lang;
+      localStorage.setItem(globalLangKey, lang);
+      document.documentElement.setAttribute('lang', lang);
+
+      // Update Header Lang buttons
+      document.querySelectorAll('.hdr-lang-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang') === lang) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--clr-primary, #7A2419)';
+          btn.style.color = '#FFF';
+        } else {
+          btn.classList.remove('active');
+          btn.style.background = 'transparent';
+          btn.style.color = 'var(--clr-text, #2A1F1D)';
+        }
+      });
+
+      // Toggle page lang fields
+      document.querySelectorAll('.djv-lang-field').forEach(el => {
+        if (el.getAttribute('data-lang') === lang) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      window.dispatchEvent(new CustomEvent('djv:languageChanged', { detail: { lang: lang } }));
+    }
+
+    document.querySelectorAll('.hdr-lang-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const l = this.getAttribute('data-lang');
+        if (l && l !== activeGlobalLang) {
+          try {
+            const u = new URL(window.location.href);
+            u.searchParams.set('lang', l);
+            window.history.replaceState({}, '', u);
+          } catch(err) {}
+          syncGlobalLanguage(l);
+        }
+      });
+    });
+
+    syncGlobalLanguage(activeGlobalLang);
+
     // ESC key closes modals
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
