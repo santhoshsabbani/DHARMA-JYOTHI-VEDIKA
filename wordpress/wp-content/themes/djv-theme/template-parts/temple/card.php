@@ -27,8 +27,9 @@ $timings   = get_post_meta( $post_id, '_djv_timings', true );
 $lat       = get_post_meta( $post_id, '_djv_lat', true );
 $lon       = get_post_meta( $post_id, '_djv_lon', true );
 $deity     = get_post_meta( $post_id, '_djv_deity', true ) ?: implode( ', ', wp_get_post_terms( $post_id, 'djv_deity', [ 'fields' => 'names' ] ) );
-$category  = get_post_meta( $post_id, '_djv_category', true ) ?: implode( ', ', wp_get_post_terms( $post_id, 'djv_temple_category', [ 'fields' => 'names' ] ) );
-$status    = get_post_meta( $post_id, '_djv_verification_status', true ) ?: 'Verified';
+$category   = get_post_meta( $post_id, '_djv_category', true ) ?: implode( ', ', wp_get_post_terms( $post_id, 'djv_temple_category', [ 'fields' => 'names' ] ) );
+$raw_status = get_post_meta( $post_id, '_djv_verification_status', true );
+$is_verified = ( strtolower( trim( (string) $raw_status ) ) === 'verified' );
 
 $loc_string = $city ?: ( $district ?: $state );
 if ( $loc_string && $state && $loc_string !== $state ) {
@@ -62,7 +63,7 @@ if ( $loc_string && $state && $loc_string !== $state ) {
     <?php endif; ?>
 
     <!-- Verification / Source Badge -->
-    <?php if ( $status === 'Verified' ) : ?>
+    <?php if ( $is_verified ) : ?>
       <span title="<?php esc_attr_e( 'Verified Official Record', 'djv-theme' ); ?>" style="position: absolute; top: 0.75rem; right: 0.75rem; background: rgba(22, 101, 52, 0.9); color: #FFF; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.25rem;">
         ✓ <?php esc_html_e( 'Verified', 'djv-theme' ); ?>
       </span>
@@ -111,7 +112,12 @@ if ( $loc_string && $state && $loc_string !== $state ) {
 
     <!-- Excerpt / About -->
     <p style="font-size: 0.875rem; color: var(--clr-text-secondary, #475569); line-height: 1.55; margin: 0 0 1.25rem 0; flex: 1;">
-      <?php echo esc_html( wp_trim_words( get_the_excerpt(), 18 ) ); ?>
+      <?php
+        $card_excerpt = get_the_excerpt();
+        $card_excerpt = preg_replace( '/\*{1,3}/', '', $card_excerpt );
+        $card_excerpt = preg_replace( '/^#+\s*/m', '', $card_excerpt );
+        echo esc_html( wp_trim_words( $card_excerpt, 18 ) );
+      ?>
     </p>
 
     <!-- Bottom Action Button -->

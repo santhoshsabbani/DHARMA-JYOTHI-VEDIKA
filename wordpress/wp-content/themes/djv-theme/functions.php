@@ -299,6 +299,11 @@ require_once DJV_THEME_DIR . '/inc/language.php';
 require_once DJV_THEME_DIR . '/inc/seo-schema.php';
 
 /**
+ * Load Temple Content Formatting & Markdown Helpers
+ */
+require_once DJV_THEME_DIR . '/inc/temple-content.php';
+
+/**
  * Bulletproof routing fallback for Panchangam, Today, and Articles pages.
  * Ensures /panchangam/, /panchangam/today/, and /articles/ load their dedicated templates
  * even on fresh servers or environments where pages have not yet been manually created.
