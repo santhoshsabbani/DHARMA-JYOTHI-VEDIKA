@@ -364,6 +364,13 @@ class DJV_REST_API {
 			$lang = 'en';
 		}
 
+		$city     = sanitize_text_field( $req->get_param( 'city' ) ?: ( $req->get_param( 'location' ) ?: 'Hyderabad' ) );
+		$state    = sanitize_text_field( $req->get_param( 'state' ) ?: 'Telangana' );
+		$lat      = floatval( $req->get_param( 'latitude' ) ?: ( $req->get_param( 'lat' ) ?: 17.3850 ) );
+		$lon      = floatval( $req->get_param( 'longitude' ) ?: ( $req->get_param( 'lon' ) ?: 78.4867 ) );
+		$tz       = sanitize_text_field( $req->get_param( 'timezone' ) ?: ( $req->get_param( 'tz' ) ?: 'Asia/Kolkata' ) );
+		$region   = sanitize_text_field( $req->get_param( 'region' ) ?: 'all' );
+
 		require_once __DIR__ . '/class-djv-festival-master.php';
 		$slug = DJV_Festival_Master::resolve_slug_alias( $raw_slug );
 
@@ -372,15 +379,37 @@ class DJV_REST_API {
 			return self::respond_error( 'Festival not found', 404, 'not_found' );
 		}
 
+		// Single festival cache key incorporating all parameters per Section 21
+		$cache_key = 'djv_fsing_' . md5( sprintf(
+			'%d|%s|%d|%s|%s|%s|%.4f|%.4f|%s|%s|%s|%s',
+			$post->ID,
+			$slug,
+			$year,
+			$lang,
+			sanitize_key( $city ),
+			sanitize_key( $state ),
+			$lat,
+			$lon,
+			sanitize_key( $tz ),
+			sanitize_key( $region ),
+			DJV_Festival_Master::VERSION,
+			'r2.1'
+		) );
+
+		$cached = get_transient( $cache_key );
+		if ( false !== $cached && is_array( $cached ) ) {
+			return self::respond( $cached );
+		}
+
 		$data = self::format_festival_post( $post );
 
 		// Add calculated occurrence for requested year and location
 		$occurrences = DJV_Festival_Master::get_occurrences( $year, [
-			'latitude'  => floatval( $req->get_param( 'latitude' ) ?: ( $req->get_param( 'lat' ) ?: 17.3850 ) ),
-			'longitude' => floatval( $req->get_param( 'longitude' ) ?: ( $req->get_param( 'lon' ) ?: 78.4867 ) ),
-			'timezone'  => sanitize_text_field( $req->get_param( 'timezone' ) ?: ( $req->get_param( 'tz' ) ?: 'Asia/Kolkata' ) ),
-			'city'      => sanitize_text_field( $req->get_param( 'city' ) ?: ( $req->get_param( 'location' ) ?: 'Hyderabad' ) ),
-			'state'     => sanitize_text_field( $req->get_param( 'state' ) ?: 'Telangana' ),
+			'latitude'  => $lat,
+			'longitude' => $lon,
+			'timezone'  => $tz,
+			'city'      => $city,
+			'state'     => $state,
 			'scope'     => 'all_india', // When viewing single festival, calculate occurrence regardless of scope
 			'language'  => $lang,
 		] );
@@ -400,6 +429,8 @@ class DJV_REST_API {
 				break;
 			}
 		}
+
+		set_transient( $cache_key, $data, 7 * DAY_IN_SECONDS );
 
 		return self::respond( $data );
 	}

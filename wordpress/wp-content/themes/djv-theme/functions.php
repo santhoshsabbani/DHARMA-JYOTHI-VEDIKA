@@ -381,6 +381,22 @@ function djv_theme_festival_request_filter( array $query_vars ): array {
 add_filter( 'request', 'djv_theme_festival_request_filter', 1 );
 
 /**
+ * Single Festival Template Hierarchy Filter
+ * Ensures WordPress resolves single-festival.php as the canonical single template for djv_festival CPT.
+ */
+function djv_theme_festival_single_template( string $template ): string {
+	global $post;
+	if ( $post && $post->post_type === 'djv_festival' ) {
+		$festival_tpl = locate_template( [ 'single-festival.php', 'single-djv_festival.php' ] );
+		if ( $festival_tpl ) {
+			return $festival_tpl;
+		}
+	}
+	return $template;
+}
+add_filter( 'single_template', 'djv_theme_festival_single_template' );
+
+/**
  * Global Pagination: Set archive queries to 18 posts per view.
  */
 function djv_theme_archive_posts_per_page( $query ): void {

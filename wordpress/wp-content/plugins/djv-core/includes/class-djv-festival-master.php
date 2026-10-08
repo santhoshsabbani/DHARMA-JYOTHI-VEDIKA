@@ -1335,4 +1335,16 @@ class DJV_Festival_Master {
 		</div>
 		<?php
 	}
+
+	/**
+	 * Flush all occurrence and single festival transient caches.
+	 * Can be invoked programmatically or upon catalog update.
+	 */
+	public static function flush_all_festival_caches(): void {
+		global $wpdb;
+		if ( $wpdb && isset( $wpdb->options ) ) {
+			$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_djv_focc_%' OR option_name LIKE '_transient_timeout_djv_focc_%' OR option_name LIKE '_transient_djv_fsing_%' OR option_name LIKE '_transient_timeout_djv_fsing_%'" );
+		}
+	}
 }
+
