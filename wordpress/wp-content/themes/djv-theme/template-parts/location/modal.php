@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 <div class="pc-modal-backdrop" id="location-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="loc-modal-title">
   <div class="pc-modal-dialog">
     <div class="pc-modal-header">
-      <h3 class="pc-modal-title" id="loc-modal-title">📍 <?php esc_html_e( 'Select Location (Pan-India)', 'djv-theme' ); ?></h3>
+      <h3 class="pc-modal-title" id="loc-modal-title">📍 <?php esc_html_e( 'Select Location', 'djv-theme' ); ?></h3>
       <button type="button" class="pc-close-btn" id="loc-modal-close-btn" aria-label="<?php esc_attr_e( 'Close modal', 'djv-theme' ); ?>">✕</button>
     </div>
     

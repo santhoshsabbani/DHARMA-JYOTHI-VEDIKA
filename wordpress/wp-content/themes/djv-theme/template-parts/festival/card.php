@@ -98,12 +98,12 @@ $filter_class_str = esc_attr( implode( ' ', array_unique( $all_filter_classes ) 
       </div>
     <?php endif; ?>
 
-    <!-- Scope / Region Badge -->
-    <span class="festival-scope-pill" style="font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;background:<?php echo $scope === 'pan_india' ? '#EFF6FF' : '#FFF7ED'; ?>;color:<?php echo $scope === 'pan_india' ? '#1D4ED8' : '#C2410C'; ?>;border:1px solid <?php echo $scope === 'pan_india' ? '#BFDBFE' : '#FED7AA'; ?>;">
-      <span class="djv-lang-field" data-lang="en"><?php echo esc_html( $scope_label_en ); ?></span>
-      <span class="djv-lang-field" data-lang="te" style="display:none;"><?php echo esc_html( $scope_label_te ); ?></span>
-      <span class="djv-lang-field" data-lang="hi" style="display:none;"><?php echo esc_html( $scope_label_hi ); ?></span>
-    </span>
+    <!-- Regional / State Badge (Only for regional festivals, never show Pan-India) -->
+    <?php if ( $scope !== 'pan_india' && ! empty( $state ) && $state !== 'Pan-India' ) : ?>
+      <span class="festival-scope-pill" style="font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;">
+        📍 <?php echo esc_html( $state ); ?>
+      </span>
+    <?php endif; ?>
   </div>
 
   <!-- Multilingual Title (English default, never leak Telugu into English) -->

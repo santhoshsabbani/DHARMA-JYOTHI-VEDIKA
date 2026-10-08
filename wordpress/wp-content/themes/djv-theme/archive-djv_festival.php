@@ -159,7 +159,7 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
     <!-- ── Filter & Search Controls ── -->
     <div class="festival-controls" style="margin-bottom: 2rem;">
 
-      <!-- ── Location Context & Festival Scope Bar (Pan-India Location-Aware Architecture) ── -->
+      <!-- ── Location Context Bar ── -->
       <div class="djv-location-scope-bar" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem; background: #FFF; border: 1.5px solid var(--clr-border, #E8DFD3); border-radius: 1rem; padding: 0.85rem 1.25rem; box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.06));">
         
         <!-- Current Location Indicator & Modal Trigger -->
@@ -176,33 +176,9 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
             </div>
           </div>
           <button type="button" id="djv-change-loc-btn" style="border: 1px solid var(--clr-border, #E8DFD3); background: var(--clr-bg, #FDFBF7); color: var(--clr-primary, #7A2419); padding: 0.3rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-left: 0.5rem; transition: all 0.2s;">
-            <span class="djv-lang-field" data-lang="en">Change ▼</span>
-            <span class="djv-lang-field" data-lang="te" style="display:none;">మార్చండి ▼</span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none;">बदलें ▼</span>
-          </button>
-        </div>
-
-        <!-- Scope Filter Tabs: [ All Relevant ] [ Pan-India ] [ My State ] [ All India ] -->
-        <div class="djv-scope-tabs" id="djv-scope-tabs" style="display: inline-flex; align-items: center; gap: 0.35rem; background: var(--clr-bg, #FDFBF7); padding: 0.25rem; border-radius: 9999px; border: 1px solid var(--clr-border, #E8DFD3);">
-          <button type="button" class="djv-scope-tab active" data-scope="relevant" style="border:none;background:var(--clr-primary, #7A2419);color:#FFF;padding:0.35rem 0.85rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-            <span class="djv-lang-field" data-lang="en">All Relevant</span>
-            <span class="djv-lang-field" data-lang="te" style="display:none;">సంబంధిత అన్ని</span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none;">सभी प्रासंगिक</span>
-          </button>
-          <button type="button" class="djv-scope-tab" data-scope="pan_india" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.85rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-            <span class="djv-lang-field" data-lang="en">Pan-India</span>
-            <span class="djv-lang-field" data-lang="te" style="display:none;">భారతదేశం అంతటా</span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none;">अखिल भारतीय</span>
-          </button>
-          <button type="button" class="djv-scope-tab" data-scope="my_state" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.85rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-            <span class="djv-lang-field" data-lang="en"><span id="djv-scope-my-state-label">My State (Telangana)</span></span>
-            <span class="djv-lang-field" data-lang="te" style="display:none;"><span id="djv-scope-my-state-label-te">మా రాష్ట్రం (తెలంగాణ)</span></span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none;"><span id="djv-scope-my-state-label-hi">मेरा राज्य (तेलंगाना)</span></span>
-          </button>
-          <button type="button" class="djv-scope-tab" data-scope="all_india" style="border:none;background:transparent;color:var(--clr-text, #2A1F1D);padding:0.35rem 0.85rem;border-radius:9999px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-            <span class="djv-lang-field" data-lang="en">All India</span>
-            <span class="djv-lang-field" data-lang="te" style="display:none;">అఖిల భారతీయ</span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none;">संपूर्ण भारत</span>
+            <span class="djv-lang-field" data-lang="en">Change Location ▼</span>
+            <span class="djv-lang-field" data-lang="te" style="display:none;">ప్రాంతం మార్చండి ▼</span>
+            <span class="djv-lang-field" data-lang="hi" style="display:none;">स्थान बदलें ▼</span>
           </button>
         </div>
       </div>
@@ -392,14 +368,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (locDisplay) {
       locDisplay.textContent = `${currentLocation.name}${currentLocation.state ? ', ' + currentLocation.state : ''}`;
     }
-
-    const stateName = currentLocation.state || 'Telangana';
-    const myStateLabelEn = document.getElementById('djv-scope-my-state-label');
-    const myStateLabelTe = document.getElementById('djv-scope-my-state-label-te');
-    const myStateLabelHi = document.getElementById('djv-scope-my-state-label-hi');
-    if (myStateLabelEn) myStateLabelEn.textContent = `My State (${stateName})`;
-    if (myStateLabelTe) myStateLabelTe.textContent = `మా రాష్ట్రం (${stateName})`;
-    if (myStateLabelHi) myStateLabelHi.textContent = `मेरा राज्य (${stateName})`;
   }
 
   // Bind Location Change trigger button
@@ -559,22 +527,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ── Scope Tabs ──
-  document.querySelectorAll('.djv-scope-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
-      document.querySelectorAll('.djv-scope-tab').forEach(t => {
-        t.classList.remove('active');
-        t.style.background = 'transparent';
-        t.style.color = 'var(--clr-text, #2A1F1D)';
-      });
-      this.classList.add('active');
-      this.style.background = 'var(--clr-primary, #7A2419)';
-      this.style.color = '#FFF';
-
-      currentScope = this.getAttribute('data-scope') || 'relevant';
-      refetchFestivals();
-    });
-  });
 
   // ── Category Pills ──
   pills.forEach(pill => {
@@ -639,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // ── Dynamic Card Renderer (Multilingual & Pan-India) ──
+  // ── Dynamic Card Renderer (Multilingual) ──
   function renderFestivalCard(f) {
     const title = f.title || f.title_en || '';
     const titleEn = f.title_en || '';
@@ -653,8 +605,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const excerpt = f.excerpt || '';
     const category = f.category || (f.categories && f.categories.length ? f.categories[0] : '');
     const scopeVal = f.scope || 'pan_india';
-    const stateVal = f.state || 'Pan-India';
-    const scopeLabel = f.scope_label || (scopeVal === 'pan_india' ? '🇮🇳 Pan-India' : `📍 ${stateVal}`);
+    const stateVal = f.state || '';
+    const isRegional = scopeVal !== 'pan_india' && stateVal && stateVal !== 'Pan-India';
 
     // Filter classes
     const classes = ['festival-card', 'djv-filter-item'];
@@ -698,10 +650,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           `}
 
-          <!-- Scope / Region Badge -->
-          <span class="festival-scope-pill" style="font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;background:${scopeVal === 'pan_india' ? '#EFF6FF' : '#FFF7ED'};color:${scopeVal === 'pan_india' ? '#1D4ED8' : '#C2410C'};border:1px solid ${scopeVal === 'pan_india' ? '#BFDBFE' : '#FED7AA'};">
-            ${escapeHtml(scopeLabel)}
-          </span>
+          ${isRegional ? `
+            <span class="festival-scope-pill" style="font-size:0.72rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px;background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;">
+              📍 ${escapeHtml(stateVal)}
+            </span>
+          ` : ''}
         </div>
 
         <h3 class="festival-card-title" style="font-family:var(--font-heading, serif);font-size:1.25rem;color:var(--clr-primary, #7A2419);margin:0 0 0.45rem 0;line-height:1.35;">
@@ -761,8 +714,8 @@ document.addEventListener('DOMContentLoaded', function() {
           grid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: #FFF; border-radius: 1rem; border: 1px solid var(--clr-border, #E8DFD3);">
               <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🪔</div>
-              <h3>No festivals found for the selected location and scope</h3>
-              <p style="color: var(--clr-text-muted, #7A6F68);">Try selecting "All India" or a different year.</p>
+              <h3>No festivals found</h3>
+              <p style="color: var(--clr-text-muted, #7A6F68);">Try selecting a different year or category.</p>
             </div>
           `;
         } else {

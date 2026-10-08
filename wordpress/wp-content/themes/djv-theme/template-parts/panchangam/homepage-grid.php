@@ -30,7 +30,7 @@ $today_str = date( 'l, F j, Y' );
             <div class="panchanga-card-date" id="full-pc-vara"><?php echo esc_html( $today_str ); ?></div>
           </div>
           <div class="panchanga-actions">
-            <a href="<?php echo esc_url( home_url( '/panchangam/' ) ); ?>" class="panchanga-action-btn" id="panchangam-date-btn">📅 <?php esc_html_e( 'Pan-India Dashboard', 'djv-theme' ); ?></a>
+            <a href="<?php echo esc_url( home_url( '/panchangam/' ) ); ?>" class="panchanga-action-btn" id="panchangam-date-btn">📅 <?php esc_html_e( 'Panchangam Dashboard', 'djv-theme' ); ?></a>
           </div>
         </div>
 
@@ -208,7 +208,7 @@ $today_str = date( 'l, F j, Y' );
 
     <div style="text-align:center; margin-top: 2rem;">
       <a href="<?php echo esc_url( home_url( '/panchangam/' ) ); ?>" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.875rem 2rem;background:var(--clr-primary);color:white;border-radius:9999px;font-weight:700;text-decoration:none;transition:all 0.25s;box-shadow:var(--shadow-md);">
-        <?php esc_html_e( 'Open Pan-India Panchangam Dashboard', 'djv-theme' ); ?> →
+        <?php esc_html_e( 'Open Panchangam Dashboard', 'djv-theme' ); ?> →
       </a>
     </div>
   </div>
