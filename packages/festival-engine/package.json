@@ -1,0 +1,21 @@
+{
+  "name": "djv-festival-engine",
+  "version": "1.0.0",
+  "description": "Rule-based Hindu festival calculation engine for Dharma Jyothi Vedika",
+  "main": "src/festivals.js",
+  "scripts": {
+    "test": "node tests/festivals.test.js"
+  },
+  "keywords": [
+    "hindu",
+    "festivals",
+    "panchangam",
+    "tithi",
+    "muhurtham",
+    "telugu",
+    "vedic"
+  ],
+  "author": "Dharma Jyothi Vedika",
+  "license": "UNLICENSED",
+  "private": true
+}
