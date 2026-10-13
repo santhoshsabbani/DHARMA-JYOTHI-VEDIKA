@@ -133,10 +133,16 @@ function djv_render_seo_meta(): void {
 	}
 	$already_rendered = true;
 
+	// When Rank Math SEO is active, let Rank Math serve as the sole authority
+	// for metadata, canonical URLs, OpenGraph, and Twitter Cards to eliminate duplicates.
+	if ( class_exists( 'RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) {
+		return;
+	}
+
 	$desc      = djv_get_seo_description();
 	$site_name = get_bloginfo( 'name' );
 	$title     = wp_get_document_title();
-	$url       = is_singular() ? get_permalink() : home_url( add_query_arg( [], $GLOBALS['wp']->request ) );
+	$url       = is_singular() ? get_permalink() : user_trailingslashit( home_url( add_query_arg( [], $GLOBALS['wp']->request ?? '' ) ) );
 	$image     = '';
 
 	if ( is_singular() && has_post_thumbnail() ) {
@@ -146,7 +152,7 @@ function djv_render_seo_meta(): void {
 		$image = DJV_THEME_URI . '/assets/images/og-default.jpg';
 	}
 	?>
-  <!-- DJV Dynamic SEO -->
+  <!-- DJV Dynamic SEO (Fallback when Rank Math is inactive) -->
   <meta name="description" content="<?php echo esc_attr( $desc ); ?>" />
   <link rel="canonical" href="<?php echo esc_url( $url ); ?>" />
 
@@ -174,21 +180,23 @@ function djv_render_schema_jsonld(): void {
 	$home_url  = home_url( '/' );
 	$site_name = get_bloginfo( 'name' );
 
-	// 1. WebSite Schema with SearchAction
-	$website_schema = [
-		'@context'        => 'https://schema.org',
-		'@type'           => 'WebSite',
-		'name'            => $site_name,
-		'url'             => $home_url,
-		'potentialAction' => [
-			'@type'       => 'SearchAction',
-			'target'      => $home_url . '?s={search_term_string}',
-			'query-input' => 'required name=search_term_string',
-		],
-	];
+	// 1. WebSite Schema with SearchAction (Skip if Rank Math provides unified WebSite graph)
+	if ( ! class_exists( 'RankMath' ) && ! defined( 'RANK_MATH_VERSION' ) ) {
+		$website_schema = [
+			'@context'        => 'https://schema.org',
+			'@type'           => 'WebSite',
+			'name'            => $site_name,
+			'url'             => $home_url,
+			'potentialAction' => [
+				'@type'       => 'SearchAction',
+				'target'      => $home_url . '?s={search_term_string}',
+				'query-input' => 'required name=search_term_string',
+			],
+		];
 
-	echo "\n<!-- DJV Structured Data: WebSite -->\n";
-	echo '<script type="application/ld+json">' . wp_json_encode( $website_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "</script>\n";
+		echo "\n<!-- DJV Structured Data: WebSite -->\n";
+		echo '<script type="application/ld+json">' . wp_json_encode( $website_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "</script>\n";
+	}
 
 	// 2. BreadcrumbList Schema
 	if ( ! is_front_page() ) {
@@ -288,8 +296,8 @@ function djv_render_schema_jsonld(): void {
 		echo '<script type="application/ld+json">' . wp_json_encode( $article_schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "</script>\n";
 	}
 
-	// 4. Festival Schema (Event)
-	if ( is_singular( 'djv_festival' ) ) {
+	// 4. Festival Schema (Event) - single-festival.php renders authoritative rich Event + FAQPage schema
+	if ( is_singular( 'djv_festival' ) && ! file_exists( get_template_directory() . '/single-festival.php' ) ) {
 		$post_id   = get_the_ID();
 		$date_meta = get_post_meta( $post_id, '_djv_festival_date', true ) ?: get_post_meta( $post_id, '_djv_date', true );
 		if ( $date_meta ) {
@@ -438,15 +446,59 @@ add_filter( 'rank_math/frontend/description', function( $desc ) {
 			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
 		}
 	}
-	return $desc;
+	return $desc ?: djv_get_seo_description();
+}, 15 );
+
+add_filter( 'rank_math/opengraph/facebook/description', function( $desc ) {
+	return ! empty( $desc ) ? $desc : djv_get_seo_description();
+}, 15 );
+
+add_filter( 'rank_math/opengraph/twitter/description', function( $desc ) {
+	return ! empty( $desc ) ? $desc : djv_get_seo_description();
 }, 15 );
 
 add_filter( 'rank_math/canonical_url', function( $canonical ) {
 	if ( is_singular( 'djv_festival' ) ) {
 		$post = get_post();
 		if ( $post ) {
-			return home_url( '/festivals/' . $post->post_name . '/' );
+			$canonical = home_url( '/festivals/' . $post->post_name . '/' );
 		}
+	}
+	$lang = sanitize_key( $_GET['lang'] ?? '' );
+	if ( in_array( $lang, [ 'te', 'hi', 'en' ], true ) && $lang !== 'en' ) {
+		$canonical = add_query_arg( 'lang', $lang, $canonical );
 	}
 	return $canonical;
 }, 15 );
+
+/**
+ * 6. Multilingual Alternate Annotations (hreflang)
+ */
+function djv_render_hreflang_tags(): void {
+	if ( is_front_page() || is_home() ) {
+		$clean_url = home_url( '/' );
+	} elseif ( is_singular() ) {
+		$clean_url = get_permalink();
+	} else {
+		$clean_url = home_url( add_query_arg( [], $GLOBALS['wp']->request ?? '' ) );
+		$clean_url = user_trailingslashit( $clean_url );
+	}
+
+	if ( empty( $clean_url ) ) {
+		return;
+	}
+
+	$clean_url = remove_query_arg( 'lang', $clean_url );
+
+	$url_en = $clean_url;
+	$url_te = add_query_arg( 'lang', 'te', $clean_url );
+	$url_hi = add_query_arg( 'lang', 'hi', $clean_url );
+
+	echo "\n<!-- DJV Multilingual SEO: Alternate Hreflang Annotations -->\n";
+	echo '<link rel="alternate" hreflang="en" href="' . esc_url( $url_en ) . '" />' . "\n";
+	echo '<link rel="alternate" hreflang="te" href="' . esc_url( $url_te ) . '" />' . "\n";
+	echo '<link rel="alternate" hreflang="hi" href="' . esc_url( $url_hi ) . '" />' . "\n";
+	echo '<link rel="alternate" hreflang="x-default" href="' . esc_url( $clean_url ) . '" />' . "\n";
+}
+add_action( 'wp_head', 'djv_render_hreflang_tags', 2 );
+

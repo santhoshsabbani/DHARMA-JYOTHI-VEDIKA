@@ -110,11 +110,13 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
           <span class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif;">वैदिक पंचांग एवं प्रमुख पर्व</span>
         </div>
 
-        <!-- Dynamic Trilingual Heading (Requirement 11) -->
-        <h1 style="font-family: var(--font-heading, serif); font-size: 2.5rem; color: var(--clr-primary, #7A2419); margin: 0 0 0.5rem 0; line-height: 1.2;">
-          <span class="djv-lang-field" data-lang="en"><span class="djv-heading-year-val"><?php echo esc_html( $current_page_year ); ?></span> Hindu Festivals</span>
-          <span class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif);"><span class="djv-heading-year-val"><?php echo esc_html( $current_page_year ); ?></span> సంవత్సర హిందూ పండుగలు</span>
-          <span class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif;"><span class="djv-heading-year-val"><?php echo esc_html( $current_page_year ); ?></span> के हिंदू त्योहार</span>
+        <!-- Dynamic Heading (Clean SSR for AEO/GEO) -->
+        <?php
+        $active_archive_lang = function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : ( sanitize_key( $_GET['lang'] ?? 'en' ) );
+        $h1_archive_title = ( $active_archive_lang === 'te' ) ? ( $current_page_year . ' సంవత్సర హిందూ పండుగలు' ) : ( ( $active_archive_lang === 'hi' ) ? ( $current_page_year . ' के हिंदू त्योहार' ) : ( $current_page_year . ' Hindu Festivals' ) );
+        ?>
+        <h1 id="djv-festivals-hub-title" data-title-en="<?php echo esc_attr( $current_page_year . ' Hindu Festivals' ); ?>" data-title-te="<?php echo esc_attr( $current_page_year . ' సంవత్సర హిందూ పండుగలు' ); ?>" data-title-hi="<?php echo esc_attr( $current_page_year . ' کے हिंदू त्योहार' ); ?>" style="font-family: var(--font-heading, serif); font-size: 2.5rem; color: var(--clr-primary, #7A2419); margin: 0 0 0.5rem 0; line-height: 1.2;">
+          <?php echo esc_html( $h1_archive_title ); ?>
         </h1>
 
         <p style="color: var(--clr-text-secondary, #55433C); font-size: 1.05rem; line-height: 1.6; max-width: 760px; margin: 0;">

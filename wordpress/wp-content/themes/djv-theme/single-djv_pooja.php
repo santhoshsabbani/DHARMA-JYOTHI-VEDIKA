@@ -92,11 +92,12 @@ $how_to_start = function_exists( 'djv_get_generic_how_to_start_puja' ) ? djv_get
             </div>
           </div>
 
-          <!-- Trilingual Titles -->
-          <h1 style="font-family: var(--font-heading, serif); font-size: 2.6rem; color: var(--clr-primary, #7A2419); line-height: 1.25; margin: 0 0 0.5rem 0;">
-            <span class="djv-lang-field" data-lang="en"><?php echo esc_html( $title_en ); ?></span>
-            <span class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif);"><?php echo esc_html( $title_te ?: $title_en ); ?></span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif;"><?php echo esc_html( $title_hi ?: $title_en ); ?></span>
+          <!-- Trilingual Titles (Clean SSR for AEO/GEO) -->
+          <?php
+          $h1_pooja_title = ( $current_lang === 'te' && $title_te ) ? $title_te : ( ( $current_lang === 'hi' && $title_hi ) ? $title_hi : $title_en );
+          ?>
+          <h1 id="djv-pooja-main-title" data-title-en="<?php echo esc_attr( $title_en ); ?>" data-title-te="<?php echo esc_attr( $title_te ?: $title_en ); ?>" data-title-hi="<?php echo esc_attr( $title_hi ?: $title_en ); ?>" style="font-family: var(--font-heading, serif); font-size: 2.6rem; color: var(--clr-primary, #7A2419); line-height: 1.25; margin: 0 0 0.5rem 0;">
+            <?php echo esc_html( $h1_pooja_title ); ?>
           </h1>
         </header>
 

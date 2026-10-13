@@ -142,8 +142,6 @@ $canonical_url = home_url( '/festivals/' . $slug . '/' );
 ?>
 
 <!-- DJV_SINGLE_FESTIVAL_TEMPLATE_LOADED: single-festival.php -->
-<!-- Canonical URL -->
-<link rel="canonical" href="<?php echo esc_url( $canonical_url ); ?>" />
 
 <div class="single-festival-wrapper" style="padding: 1.75rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container" style="max-width: 1060px;">
@@ -240,11 +238,12 @@ $canonical_url = home_url( '/festivals/' . $slug . '/' );
             </div>
           </div>
 
-          <!-- Canonical H1 with Dynamic Year Adaptation -->
-          <h1 style="font-family: var(--font-heading, serif); font-size: 2.75rem; color: var(--clr-primary, #7A2419); line-height: 1.2; margin: 0 0 0.5rem 0;">
-            <span class="djv-lang-field" data-lang="en"><?php echo esc_html( $title_en ); ?> <?php echo esc_html( $current_year ); ?></span>
-            <span class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif);"><?php echo esc_html( $title_te ?: $title_en ); ?> <?php echo esc_html( $current_year ); ?></span>
-            <span class="djv-lang-field" data-lang="hi" style="display:none; font-family: 'Noto Sans Devanagari', serif;"><?php echo esc_html( $title_hi ?: $title_en ); ?> <?php echo esc_html( $current_year ); ?></span>
+          <!-- Canonical H1 with Dynamic Year Adaptation (Clean SSR title for AEO/GEO) -->
+          <?php
+          $h1_festival_title = ( $current_lang === 'te' && $title_te ) ? ( $title_te . ' ' . $current_year ) : ( ( $current_lang === 'hi' && $title_hi ) ? ( $title_hi . ' ' . $current_year ) : ( $title_en . ' ' . $current_year ) );
+          ?>
+          <h1 id="djv-festival-main-title" data-title-en="<?php echo esc_attr( $title_en . ' ' . $current_year ); ?>" data-title-te="<?php echo esc_attr( ( $title_te ?: $title_en ) . ' ' . $current_year ); ?>" data-title-hi="<?php echo esc_attr( ( $title_hi ?: $title_en ) . ' ' . $current_year ); ?>" style="font-family: var(--font-heading, serif); font-size: 2.75rem; color: var(--clr-primary, #7A2419); line-height: 1.2; margin: 0 0 0.5rem 0;">
+            <?php echo esc_html( $h1_festival_title ); ?>
           </h1>
 
           <?php if ( $title_te ) : ?>
