@@ -35,14 +35,49 @@ if ( empty( $states ) || is_wp_error( $states ) ) {
 
 $paged = max( 1, get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' ) );
 
+$search_q     = sanitize_text_field( wp_unslash( $_GET['q'] ?? ( $_GET['s'] ?? '' ) ) );
+$filter_state = sanitize_title( wp_unslash( $_GET['state'] ?? '' ) );
+$filter_deity = sanitize_title( wp_unslash( $_GET['deity'] ?? '' ) );
+$filter_cat   = sanitize_title( wp_unslash( $_GET['category'] ?? '' ) );
+
 $temple_args = [
 	'post_type'      => 'djv_temple',
-	'posts_per_page' => 20,
+	'posts_per_page' => 24,
 	'paged'          => $paged,
 	'post_status'    => 'publish',
 	'orderby'        => 'title',
 	'order'          => 'ASC',
 ];
+
+if ( ! empty( $search_q ) ) {
+	$temple_args['s'] = $search_q;
+}
+
+$tax_query = [];
+if ( ! empty( $filter_state ) ) {
+	$tax_query[] = [
+		'relation' => 'OR',
+		[ 'taxonomy' => 'djv_state', 'field' => 'slug', 'terms' => $filter_state ],
+		[ 'taxonomy' => 'djv_region', 'field' => 'slug', 'terms' => $filter_state ],
+	];
+}
+if ( ! empty( $filter_deity ) ) {
+	$tax_query[] = [
+		'taxonomy' => 'djv_deity',
+		'field'    => 'slug',
+		'terms'    => $filter_deity,
+	];
+}
+if ( ! empty( $filter_cat ) ) {
+	$tax_query[] = [
+		'taxonomy' => 'djv_temple_category',
+		'field'    => 'slug',
+		'terms'    => $filter_cat,
+	];
+}
+if ( ! empty( $tax_query ) ) {
+	$temple_args['tax_query'] = array_merge( [ 'relation' => 'AND' ], $tax_query );
+}
 
 $temple_query = new WP_Query( $temple_args );
 ?>
@@ -98,13 +133,13 @@ $temple_query = new WP_Query( $temple_args );
   <div class="container">
 
     <!-- Search & Filter Controls -->
-    <div class="temple-filters-bar" style="background: #FFF; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--clr-border, #E2E8F0); box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.05)); margin-bottom: 2.5rem;">
+    <form method="get" action="<?php echo esc_url( home_url( '/temples/' ) ); ?>" id="temple-filters-form" class="temple-filters-bar" style="background: #FFF; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--clr-border, #E2E8F0); box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.05)); margin-bottom: 2.5rem;">
       <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 1rem; align-items: center;">
 
         <!-- Search Input -->
         <div style="position: relative;">
           <span aria-hidden="true" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--clr-text-muted, #94A3B8);">🔍</span>
-          <input type="search" id="temple-search"
+          <input type="search" id="temple-search" name="q" value="<?php echo esc_attr( $search_q ); ?>"
                  placeholder="<?php esc_attr_e( 'Search temples by name, state, or deity...', 'djv-theme' ); ?>"
                  aria-label="<?php esc_attr_e( 'Search temples', 'djv-theme' ); ?>"
                  autocomplete="off"
@@ -113,11 +148,11 @@ $temple_query = new WP_Query( $temple_args );
 
         <!-- Filter by State -->
         <div>
-          <select id="filter-state" aria-label="<?php esc_attr_e( 'Filter by State', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
+          <select id="filter-state" name="state" aria-label="<?php esc_attr_e( 'Filter by State', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
             <option value=""><?php esc_html_e( 'All States', 'djv-theme' ); ?></option>
             <?php if ( ! empty( $states ) && ! is_wp_error( $states ) ) : ?>
               <?php foreach ( $states as $st ) : ?>
-                <option value="<?php echo esc_attr( $st->slug ); ?>" data-url="<?php echo esc_url( get_term_link( $st, 'djv_state' ) ); ?>">
+                <option value="<?php echo esc_attr( $st->slug ); ?>" <?php selected( $filter_state, $st->slug ); ?>>
                   📍 <?php echo esc_html( $st->name ); ?> (<?php echo (int) $st->count; ?>)
                 </option>
               <?php endforeach; ?>
@@ -127,11 +162,13 @@ $temple_query = new WP_Query( $temple_args );
 
         <!-- Filter by Deity -->
         <div>
-          <select id="filter-deity" aria-label="<?php esc_attr_e( 'Filter by Deity', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
+          <select id="filter-deity" name="deity" aria-label="<?php esc_attr_e( 'Filter by Deity', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
             <option value=""><?php esc_html_e( 'All Deities', 'djv-theme' ); ?></option>
             <?php if ( ! empty( $deities ) && ! is_wp_error( $deities ) ) : ?>
               <?php foreach ( $deities as $d ) : ?>
-                <option value="<?php echo esc_attr( strtolower( $d->name ) ); ?>"><?php echo esc_html( $d->name ); ?></option>
+                <option value="<?php echo esc_attr( $d->slug ); ?>" <?php selected( $filter_deity, $d->slug ); ?>>
+                  🕉 <?php echo esc_html( $d->name ); ?>
+                </option>
               <?php endforeach; ?>
             <?php endif; ?>
           </select>
@@ -139,21 +176,26 @@ $temple_query = new WP_Query( $temple_args );
 
         <!-- Filter by Category -->
         <div>
-          <select id="filter-category" aria-label="<?php esc_attr_e( 'Filter by Category', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
+          <select id="filter-category" name="category" aria-label="<?php esc_attr_e( 'Filter by Category', 'djv-theme' ); ?>" style="width: 100%; padding: 0.75rem 0.85rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); font-family: inherit; font-size: 0.9rem; background: #FFF; outline: none;">
             <option value=""><?php esc_html_e( 'All Categories', 'djv-theme' ); ?></option>
             <?php if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) : ?>
               <?php foreach ( $categories as $c ) : ?>
-                <option value="<?php echo esc_attr( strtolower( $c->name ) ); ?>"><?php echo esc_html( $c->name ); ?></option>
+                <option value="<?php echo esc_attr( $c->slug ); ?>" <?php selected( $filter_cat, $c->slug ); ?>>
+                  🛕 <?php echo esc_html( $c->name ); ?>
+                </option>
               <?php endforeach; ?>
             <?php endif; ?>
           </select>
         </div>
 
-        <!-- Reset Button -->
-        <div>
-          <button type="button" id="btn-reset-filters" style="padding: 0.75rem 1.15rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); background: #F8FAFC; color: #475569; font-weight: 600; cursor: pointer; white-space: nowrap;">
-            ↺ <?php esc_html_e( 'Reset', 'djv-theme' ); ?>
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="submit" id="btn-submit-filters" style="padding: 0.75rem 1.15rem; border-radius: 0.5rem; border: none; background: var(--clr-primary, #7A2419); color: #FFF; font-weight: 600; cursor: pointer; white-space: nowrap;">
+            🔍 <?php esc_html_e( 'Filter', 'djv-theme' ); ?>
           </button>
+          <a href="<?php echo esc_url( home_url( '/temples/' ) ); ?>" id="btn-reset-filters" style="padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid var(--clr-border, #CBD5E1); background: #F8FAFC; color: #475569; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; white-space: nowrap;">
+            ↺ <?php esc_html_e( 'Reset', 'djv-theme' ); ?>
+          </a>
         </div>
 
       </div>
@@ -163,7 +205,7 @@ $temple_query = new WP_Query( $temple_args );
         <span id="results-count-text"><?php echo sprintf( esc_html__( 'Showing %d sacred temples across India', 'djv-theme' ), $temple_query->found_posts ); ?></span>
         <span id="active-sort-text" style="font-weight: 600; color: #0284C7;"></span>
       </div>
-    </div>
+    </form>
 
     <!-- Temples Grid -->
     <div class="temples-grid" id="temples-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.75rem;">
@@ -175,7 +217,10 @@ $temple_query = new WP_Query( $temple_args );
         <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; background: #FFF; border-radius: 1rem; border: 1px solid var(--clr-border, #E2E8F0);">
           <div style="font-size: 3rem; margin-bottom: 0.75rem;">🛕</div>
           <h3 style="color: var(--clr-primary, #7A2419); margin: 0 0 0.5rem 0;"><?php esc_html_e( 'No temples found', 'djv-theme' ); ?></h3>
-          <p style="color: var(--clr-text-muted, #64748B); margin: 0;"><?php esc_html_e( 'Please check back shortly or explore another state.', 'djv-theme' ); ?></p>
+          <p style="color: var(--clr-text-muted, #64748B); margin: 0 0 1rem 0;"><?php esc_html_e( 'No temples match your current search or filters.', 'djv-theme' ); ?></p>
+          <a href="<?php echo esc_url( home_url( '/temples/' ) ); ?>" style="display: inline-block; padding: 0.5rem 1.25rem; background: var(--clr-primary, #7A2419); color: #FFF; border-radius: 9999px; text-decoration: none; font-weight: 600;">
+            ↺ <?php esc_html_e( 'View All Temples', 'djv-theme' ); ?>
+          </a>
         </div>
       <?php endif; ?>
     </div>
@@ -185,21 +230,30 @@ $temple_query = new WP_Query( $temple_args );
       <div style="font-size: 3rem; margin-bottom: 0.75rem;">🔍</div>
       <h3 style="color: var(--clr-primary, #7A2419); margin: 0 0 0.5rem 0;"><?php esc_html_e( 'No temples found matching your criteria.', 'djv-theme' ); ?></h3>
       <p style="color: var(--clr-text-muted, #64748B); margin: 0 0 1.25rem 0;"><?php esc_html_e( 'Try clearing the search text or changing the filters.', 'djv-theme' ); ?></p>
-      <button type="button" id="btn-no-match-reset" style="padding: 0.5rem 1.25rem; background: var(--clr-primary, #7A2419); color: #FFF; border: none; border-radius: 9999px; font-weight: 600; cursor: pointer;">
+      <a href="<?php echo esc_url( home_url( '/temples/' ) ); ?>" style="display: inline-block; padding: 0.5rem 1.25rem; background: var(--clr-primary, #7A2419); color: #FFF; border: none; border-radius: 9999px; font-weight: 600; text-decoration: none;">
         ↺ <?php esc_html_e( 'Reset Filters', 'djv-theme' ); ?>
-      </button>
+      </a>
     </div>
 
     <!-- Pagination -->
     <?php if ( $temple_query->max_num_pages > 1 ) : ?>
       <div class="pagination-wrapper" style="margin-top: 3.5rem; text-align: center;">
         <?php
-        echo paginate_links([
+        $pagination_args = [
           'total'     => $temple_query->max_num_pages,
           'current'   => $paged,
           'prev_text' => '← ' . __( 'Previous', 'djv-theme' ),
           'next_text' => __( 'Next', 'djv-theme' ) . ' →',
-        ]);
+        ];
+        if ( ! empty( $search_q ) || ! empty( $filter_state ) || ! empty( $filter_deity ) || ! empty( $filter_cat ) ) {
+          $pagination_args['add_args'] = array_filter([
+            'q'        => $search_q,
+            'state'    => $filter_state,
+            'deity'    => $filter_deity,
+            'category' => $filter_cat,
+          ]);
+        }
+        echo paginate_links( $pagination_args );
         ?>
       </div>
     <?php endif; ?>
@@ -366,22 +420,27 @@ $temple_query = new WP_Query( $temple_args );
   }
 
   // Attach Filter Listeners
+  const form = document.getElementById('temple-filters-form');
   if (searchInput) searchInput.addEventListener('input', filterCards);
   if (stateSelect) {
     stateSelect.addEventListener('change', function() {
-      const selectedOption = stateSelect.options[stateSelect.selectedIndex];
-      const targetUrl = selectedOption ? selectedOption.getAttribute('data-url') : '';
-      if (targetUrl) {
-        window.location.href = targetUrl;
-        return;
-      }
-      filterCards();
+      if (form) form.submit();
+      else filterCards();
     });
   }
-  if (deitySelect) deitySelect.addEventListener('change', filterCards);
-  if (catSelect) catSelect.addEventListener('change', filterCards);
+  if (deitySelect) {
+    deitySelect.addEventListener('change', function() {
+      if (form) form.submit();
+      else filterCards();
+    });
+  }
+  if (catSelect) {
+    catSelect.addEventListener('change', function() {
+      if (form) form.submit();
+      else filterCards();
+    });
+  }
   if (resetBtn) resetBtn.addEventListener('click', resetAllFilters);
-  if (noMatchResetBtn) noMatchResetBtn.addEventListener('click', resetAllFilters);
 
   // Near Me Button Handler with Browser Geolocation Permission
   if (nearMeBtn) {
