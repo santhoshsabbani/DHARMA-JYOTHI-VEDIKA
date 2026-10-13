@@ -387,13 +387,6 @@ function djv_filter_festival_document_title( string $title ): string {
 		if ( $year < 1900 || $year > 2200 ) $year = 2026;
 		$lang    = sanitize_key( $_GET['lang'] ?? 'en' );
 
-		// Custom postmeta override if explicitly set
-		$custom_rm_title = get_post_meta( $post_id, 'rank_math_title', true );
-		if ( ! empty( $custom_rm_title ) ) {
-			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_title );
-		}
-
-		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
 		$title_te = get_post_meta( $post_id, '_djv_title_te', true ) ?: get_post_meta( $post_id, '_djv_telugu_name', true );
 		$title_hi = get_post_meta( $post_id, '_djv_title_hi', true );
 
@@ -401,9 +394,16 @@ function djv_filter_festival_document_title( string $title ): string {
 			return "{$title_te} {$year} – పండుగ తేదీ, పూజా సమయం & ముహూర్తం | ధర్మ జ్యోతి వేదిక";
 		} elseif ( $lang === 'hi' && $title_hi ) {
 			return "{$title_hi} {$year} – तिथि, पूजा का शुभ मुहूर्त एवं विधि | धर्म ज्योति वेदिका";
-		} else {
-			return "{$title_en} {$year} – Date, Puja Time & Muhurat | Dharma Jyothi Vedika";
 		}
+
+		// Custom postmeta override if explicitly set (English / Primary Rank Math title)
+		$custom_rm_title = get_post_meta( $post_id, 'rank_math_title', true );
+		if ( ! empty( $custom_rm_title ) ) {
+			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_title );
+		}
+
+		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
+		return "{$title_en} {$year} – Date, Puja Time & Muhurat | Dharma Jyothi Vedika";
 	}
 	return $title;
 }
@@ -417,11 +417,6 @@ add_filter( 'rank_math/frontend/description', function( $desc ) {
 		$year    = intval( $_GET['year'] ?? ( $_GET['y'] ?? 2026 ) );
 		if ( $year < 1900 || $year > 2200 ) $year = 2026;
 		$lang    = sanitize_key( $_GET['lang'] ?? 'en' );
-
-		$custom_rm_desc = get_post_meta( $post_id, 'rank_math_description', true );
-		if ( ! empty( $custom_rm_desc ) ) {
-			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_desc );
-		}
 
 		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
 		$title_te = get_post_meta( $post_id, '_djv_title_te', true ) ?: get_post_meta( $post_id, '_djv_telugu_name', true );
@@ -442,9 +437,14 @@ add_filter( 'rank_math/frontend/description', function( $desc ) {
 			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. ధర్మ జ్యోతి వేదిక.";
 		} elseif ( $lang === 'hi' && $title_hi ) {
 			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। धर्म ज्योति वेदिका पर अपनी लोकेशन अनुसार देखें।";
-		} else {
-			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
 		}
+
+		$custom_rm_desc = get_post_meta( $post_id, 'rank_math_description', true );
+		if ( ! empty( $custom_rm_desc ) ) {
+			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_desc );
+		}
+
+		return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
 	}
 	return $desc ?: djv_get_seo_description();
 }, 15 );

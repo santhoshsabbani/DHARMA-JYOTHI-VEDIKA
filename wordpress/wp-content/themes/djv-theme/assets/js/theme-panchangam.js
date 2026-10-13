@@ -709,18 +709,8 @@
       }
 
       // ── 7. Dynamic SEO Updates ──
-      if (currentLang === 'hi') {
-        document.title = `आज का पंचांग | ${loc.name} | ${dateDisplay} | धर्म ज्योति वेदिका`;
-      } else if (currentLang === 'te') {
-        document.title = `నేటి పంచాంగం | ${loc.name} | ${dateDisplay} | ధర్మ జ్యోతి వేదిక`;
-      } else {
-        document.title = `Today's Panchangam | ${loc.name} | ${dateDisplay} | Dharma Jyothi Vedika`;
-      }
-
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) {
-        metaDesc.setAttribute('content', `Today's complete Hindu Panchangam for ${dateDisplay} in ${loc.name}, ${loc.state}. Tithi: ${data.tithi ? (data.tithi.nameHi || data.tithi.name) : ''}, Nakshatra: ${nObj ? (nObj.nameHi || nObj.name) : ''}.`);
-      }
+      // Retain Rank Math SEO metadata. Do not overwrite document.title or meta description
+      // client-side so festival, temple, article, and dedicated pages keep their own titles.
 
       // Also render Homepage Hero Quick Card if present on page
       renderHeroCard(data, date, loc, currentLang);
@@ -901,6 +891,16 @@
    * Main reload function: called on init, date change, or location change.
    */
   async function updateAllPanchangamViews() {
+    // Only execute if a Panchangam UI container exists on this page
+    const hasPanchangamContainer = document.getElementById('pc-content-container') ||
+                                   document.getElementById('pc-loading-state') ||
+                                   document.getElementById('hero-pc-data') ||
+                                   document.getElementById('hero-pc-loading') ||
+                                   document.getElementById('full-pc-data');
+    if (!hasPanchangamContainer) {
+      return;
+    }
+
     setViewsToLoading();
     try {
       currentLocation = normalizeLocation(currentLocation);
