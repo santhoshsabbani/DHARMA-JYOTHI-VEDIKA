@@ -22,11 +22,50 @@ const { calculatePanchangam } = require('./core');
 // Parse CLI arguments
 const args = process.argv.slice(2);
 
-if (args.length < 4) {
-  process.stdout.write(JSON.stringify({
-    error: 'Usage: node runner.js <YYYY-MM-DD> <latitude> <longitude> <timezone>'
-  }));
-  process.exit(1);
+// Check for --range mode
+if (args[0] === '--range') {
+  if (args.length < 6) {
+    process.stdout.write(JSON.stringify({
+      error: 'Usage: node runner.js --range <start YYYY-MM-DD> <end YYYY-MM-DD> <latitude> <longitude> <timezone>'
+    }));
+    process.exit(1);
+  }
+  const [, startDateStr, endDateStr, latStr, lonStr, timezone] = args;
+  const lat = parseFloat(latStr);
+  const lon = parseFloat(lonStr);
+  if (isNaN(lat) || isNaN(lon)) {
+    process.stdout.write(JSON.stringify({ error: 'Invalid coordinates' }));
+    process.exit(1);
+  }
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: timezone });
+  } catch (e) {
+    process.stdout.write(JSON.stringify({ error: 'Invalid timezone' }));
+    process.exit(1);
+  }
+
+  const results = {};
+  const curr = new Date(startDateStr + 'T00:00:00Z');
+  const end = new Date(endDateStr + 'T00:00:00Z');
+
+  // Limit max range to 120 days for safety
+  let count = 0;
+  while (curr <= end && count < 120) {
+    const y = curr.getUTCFullYear();
+    const m = curr.getUTCMonth() + 1;
+    const d = curr.getUTCDate();
+    const dStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    try {
+      results[dStr] = calculatePanchangam({ year: y, month: m, day: d, lat, lon, timezone });
+    } catch (err) {
+      results[dStr] = { error: err.message };
+    }
+    curr.setUTCDate(curr.getUTCDate() + 1);
+    count++;
+  }
+
+  process.stdout.write(JSON.stringify({ status: 'success', days: results }));
+  process.exit(0);
 }
 
 const [dateStr, latStr, lonStr, timezone] = args;

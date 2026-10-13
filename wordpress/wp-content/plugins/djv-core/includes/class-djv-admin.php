@@ -67,6 +67,7 @@ class DJV_Admin {
         );
 
         add_submenu_page( self::MENU_SLUG, __( 'Dashboard', 'djv-core' ),       __( 'Dashboard', 'djv-core' ),       'manage_options', self::MENU_SLUG,           [ $this, 'render_dashboard' ] );
+        add_submenu_page( self::MENU_SLUG, __( 'Muhurtham Directory', 'djv-core' ), __( 'Muhurtham Directory', 'djv-core' ), 'manage_options', 'djv-muhurtham',     [ $this, 'render_muhurtham_manager' ] );
         add_submenu_page( self::MENU_SLUG, __( 'Cache Manager', 'djv-core' ),   __( 'Cache Manager', 'djv-core' ),   'manage_options', 'djv-cache',               [ $this, 'render_cache_manager' ] );
         add_submenu_page( self::MENU_SLUG, __( 'Engine Validator', 'djv-core' ),__( 'Engine Validator', 'djv-core' ),'manage_options', 'djv-validator',           [ $this, 'render_validator' ] );
         add_submenu_page( self::MENU_SLUG, __( 'API Test Tool', 'djv-core' ),   __( 'API Test Tool', 'djv-core' ),   'manage_options', 'djv-api-test',            [ $this, 'render_api_test' ] );
@@ -672,6 +673,124 @@ class DJV_Admin {
         $links[] = '<a href="' . admin_url('admin.php?page=djv-dashboard') . '">' . __('Dashboard','djv-core') . '</a>';
         $links[] = '<a href="' . admin_url('admin.php?page=djv-settings') . '">' . __('Settings','djv-core') . '</a>';
         return $links;
+    }
+
+    /**
+     * Render Muhurtham Directory management page.
+     */
+    public function render_muhurtham_manager() {
+        if ( ! current_user_can( 'manage_options' ) ) wp_die( __( 'Access denied.', 'djv-core' ) );
+
+        require_once DJV_PLUGIN_DIR . 'includes/data-muhurtham-events.php';
+        $all_events = DJV_Muhurtham_Events::get_all();
+        $categories = DJV_Muhurtham_Events::get_categories();
+        $custom_opts = get_option( 'djv_muhurtham_events_custom', [] );
+        $saved_notice = false;
+
+        // Handle safe metadata updates (publication status toggle)
+        if ( ! empty( $_POST['djv_save_muhurtham_admin'] ) && check_admin_referer( 'djv_muhurtham_admin_action', 'djv_muhurtham_nonce' ) ) {
+            $updated_custom = is_array( $custom_opts ) ? $custom_opts : [];
+            if ( isset( $_POST['event_status'] ) && is_array( $_POST['event_status'] ) ) {
+                foreach ( $_POST['event_status'] as $slug => $status ) {
+                    $clean_slug = sanitize_key( $slug );
+                    $clean_status = sanitize_key( $status );
+                    if ( isset( $all_events[ $clean_slug ] ) ) {
+                        $updated_custom[ $clean_slug ]['published'] = ( $clean_status === 'draft' ) ? false : true;
+                    }
+                }
+            }
+            update_option( 'djv_muhurtham_events_custom', $updated_custom );
+            $custom_opts = $updated_custom;
+            $saved_notice = true;
+        }
+        ?>
+        <div class="wrap djv-admin">
+            <div class="djv-admin-header">
+                <div class="djv-logo">
+                    <span class="djv-logo-icon">✨</span>
+                    <div>
+                        <h1><?php _e( 'Muhurtham Master Directory & Event Manager', 'djv-core' ); ?></h1>
+                        <p><?php printf( __( 'Configured Vedic Event Schemas (%d Total Events across 7 Categories)', 'djv-core' ), count( $all_events ) ); ?></p>
+                    </div>
+                </div>
+                <div class="djv-version-badge">Rule v1.2.0 • Engine v1.3.0</div>
+            </div>
+
+            <?php if ( $saved_notice ) : ?>
+                <div class="notice notice-success is-dismissible" style="margin-bottom:1.5rem;">
+                    <p><strong>✓ <?php _e( 'Muhurtham event publication statuses and configuration successfully updated.', 'djv-core' ); ?></strong></p>
+                </div>
+            <?php endif; ?>
+
+            <div class="djv-section">
+                <h2><?php _e( 'Vedic Ceremony Registry Overview', 'djv-core' ); ?></h2>
+                <p style="color:#666; font-size:0.9rem; margin-bottom:1.25rem;">
+                    <?php _e( 'All 58 Muhurtham ceremonies are registered with strict classical Jyotish rule-sets, unique schema forms, and verified astronomical ephemeris carving. Administrators can audit event schemas and configure frontend publication status.', 'djv-core' ); ?>
+                </p>
+
+                <form method="post" action="">
+                    <?php wp_nonce_field( 'djv_muhurtham_admin_action', 'djv_muhurtham_nonce' ); ?>
+                    <input type="hidden" name="djv_save_muhurtham_admin" value="1">
+
+                    <table class="wp-list-table widefat fixed striped" style="margin-top:1rem; border-radius:6px; overflow:hidden;">
+                        <thead>
+                            <tr>
+                                <th style="width: 45px; text-align:center;">Icon</th>
+                                <th style="width: 230px;">Ceremony / Event</th>
+                                <th style="width: 170px;">Category</th>
+                                <th style="width: 140px;">Form Schema</th>
+                                <th style="width: 130px;">Mode</th>
+                                <th style="width: 100px;">Rule Ver</th>
+                                <th style="width: 110px;">Status</th>
+                                <th style="width: 80px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ( $all_events as $slug => $ev ) :
+                                $is_pub = ! isset( $custom_opts[ $slug ]['published'] ) || $custom_opts[ $slug ]['published'] !== false;
+                                $cat_info = $categories[ $ev['category'] ] ?? null;
+                                $cat_label = $cat_info ? $cat_info['title']['en'] : $ev['category'];
+                                $page_url = home_url( "/muhurtham/{$slug}/" );
+                            ?>
+                                <tr>
+                                    <td style="font-size: 1.4rem; text-align: center; vertical-align: middle;"><?php echo esc_html( $ev['icon'] ?? '✨' ); ?></td>
+                                    <td>
+                                        <strong><?php echo esc_html( $ev['title']['en'] ); ?></strong><br>
+                                        <span style="font-size:0.8rem; color:#888;"><?php echo esc_html( $ev['title']['te'] ?? '' ); ?> • <code><?php echo esc_html( $slug ); ?></code></span>
+                                    </td>
+                                    <td>
+                                        <span style="background:#F4EDE4; color:#7A2419; padding:0.2rem 0.5rem; border-radius:4px; font-size:0.75rem; font-weight:600;">
+                                            <?php echo esc_html( $cat_label ); ?>
+                                        </span>
+                                    </td>
+                                    <td><code><?php echo esc_html( $ev['form_schema'] ?? 'general_karya' ); ?></code></td>
+                                    <td>
+                                        <span style="font-size:0.8rem; font-weight:600; color:<?php echo ( $ev['form_schema'] === 'marriage' ? '#2E7D5B' : '#555' ); ?>;">
+                                            <?php echo ( $ev['form_schema'] === 'marriage' ? 'Personalized + Basic' : 'Basic Panchanga' ); ?>
+                                        </span>
+                                    </td>
+                                    <td><span style="font-size:0.8rem; color:#666;">v1.2.0</span></td>
+                                    <td>
+                                        <select name="event_status[<?php echo esc_attr( $slug ); ?>]" style="font-size:0.8rem; padding:2px 6px;">
+                                            <option value="publish" <?php selected( $is_pub, true ); ?>>Published</option>
+                                            <option value="draft" <?php selected( $is_pub, false ); ?>>Draft</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="<?php echo esc_url( $page_url ); ?>" target="_blank" class="button button-small" title="Preview live canonical page">View ↗</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 1.5rem;">
+                        <input type="submit" class="button button-primary" value="<?php esc_attr_e( 'Save Publication Statuses', 'djv-core' ); ?>">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <?php
     }
 
     private function admin_inline_css() {

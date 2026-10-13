@@ -44,6 +44,8 @@ require_once DJV_PLUGIN_DIR . 'includes/class-djv-festival-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-poojas.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-temple-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-temple-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-muhurtham-events.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-service.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
 function djv_load(): void {
@@ -65,6 +67,7 @@ add_action( 'init', 'djv_init_textdomain', 5 );
 
 add_action( 'init', [ 'DJV_Post_Types', 'register' ] );
 add_action( 'init', [ 'DJV_Temple_Master', 'maybe_auto_sync' ], 20 );
+add_action( 'init', [ 'DJV_Muhurtham_Service', 'ensure_seed_posts' ], 25 );
 
 // Disable WordPress Admin Bar on the Frontend for all users (including Administrators)
 add_filter( 'show_admin_bar', function( $show ) {

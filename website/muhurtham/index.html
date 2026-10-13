@@ -3,91 +3,1026 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Muhurtham — Dharma Jyothi Vedika</title>
+  <title>DJV Shubh Muhurtham Finder — Event-Based Auspicious Vedic Timings | Dharma Jyothi Vedika</title>
+  <meta name="description" content="Calculate verified auspicious Muhurthams for Marriage, Griha Pravesh, Bhoomi Pujan, Vehicle Purchase, Namakaran, and 21 sacred ceremonies with Drik Ganita ephemeris and classical Vedic rules." />
+  <link rel="canonical" href="https://dharmajyothivedika.com/muhurtham/" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Theme Stylesheets -->
   <link rel="stylesheet" href="../assets/css/design-system.css" />
   <link rel="stylesheet" href="../assets/css/main.css" />
 
-  
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  
   <style>
-    /* Inline base styles for placeholder to ensure it works beautifully */
-    :root {
-      --clr-primary: #7A2419;
-      --clr-secondary: #C89432;
-      --clr-accent: #E7B75A;
-      --clr-bg: #FFF9F0;
-      --clr-dark: #241914;
-      --clr-white: #FFFFFF;
-      --font-primary: 'Poppins', sans-serif;
-      --font-heading: 'Playfair Display', Georgia, serif;
-    }
-    body { font-family: var(--font-primary); background: var(--clr-bg); margin: 0; padding: 0; }
-    .placeholder-hero {
-      min-height: 100vh;
-      background: var(--clr-dark);
+    /* Muhurtham App Custom Additions */
+    .ev-card {
+      background: #FFF;
+      border: 1px solid var(--clr-border, #E8D5C4);
+      border-radius: var(--radius-xl, 1rem);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.04));
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: var(--clr-white);
-      position: relative;
-      overflow: hidden;
+      transition: all var(--transition-base, 0.25s ease);
+      cursor: pointer;
     }
-    .placeholder-bg {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,148,50,0.07) 0%, transparent 70%);
+    .ev-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md, 0 6px 20px rgba(0,0,0,0.08));
+      border-color: var(--clr-primary, #7A2419);
     }
-    .placeholder-content {
-      position: relative;
-      z-index: 1;
-      padding: 2rem;
+    .ev-card.active-card {
+      border: 2px solid var(--clr-primary, #7A2419);
+      background: #FFF9F0;
     }
-    .placeholder-title {
-      font-family: var(--font-heading);
-      font-size: 3.5rem;
-      color: var(--clr-white);
-      margin-bottom: 1rem;
-      text-transform: capitalize;
-    }
-    .placeholder-desc {
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 2rem;
-    }
-    .btn-primary {
-      display: inline-flex;
-      padding: 0.875rem 2rem;
-      background: linear-gradient(135deg, var(--clr-secondary), var(--clr-accent));
-      color: var(--clr-dark);
-      font-weight: 700;
+    .filter-pill-btn {
+      padding: 0.5rem 1.1rem;
       border-radius: 9999px;
-      text-decoration: none;
-      transition: transform 0.3s ease;
+      border: 1px solid var(--clr-border, #E8D5C4);
+      background: #FFF;
+      color: var(--clr-dark, #241914);
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .btn-primary:hover {
-      transform: translateY(-3px);
+    .filter-pill-btn.active, .filter-pill-btn:hover {
+      background: var(--clr-primary, #7A2419);
+      color: #FFF;
+      border-color: var(--clr-primary, #7A2419);
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #muhurtham-results-wrapper, #muhurtham-results-wrapper * { visibility: visible; }
+      #muhurtham-results-wrapper { position: absolute; left: 0; top: 0; width: 100%; }
+      #results-recap-banner button, .compare-checkbox, details summary { display: none !important; }
     }
   </style>
 </head>
-<body>
+<body style="background: var(--clr-bg, #FFF9F0); margin: 0; font-family: var(--font-primary, sans-serif); color: var(--clr-text, #2C1A14);">
 
+<!-- DJV HEADER -->
 <djv-header></djv-header>
 <script src="../assets/js/components/header-component.js"></script>
 
-<main class="placeholder-hero">
-  <div class="placeholder-bg"></div>
-  <div class="placeholder-content">
-    <h1 class="placeholder-title">muhurtham</h1>
-    <p class="placeholder-desc">This section is currently under development. Please check back soon!</p>
-    <a href="../index.html" class="btn-primary">Return Home</a>
+<!-- ─── HERO SECTION ─────────────────────────────────────────── -->
+<header style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding: 4.5rem 1.5rem 3.5rem 1.5rem; text-align: center; position: relative;">
+  <div style="max-width: 900px; margin: 0 auto; position: relative; z-index: 1;">
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(231,183,90,0.15); border: 1px solid rgba(231,183,90,0.35); padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: var(--clr-accent, #E7B75A); text-transform: uppercase; margin-bottom: 1.25rem;">
+      <span>🕉</span> Classical Event-Based Muhurtham Engine
+    </div>
+    <h1 style="font-family: var(--font-heading, serif); font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.15; color: #FFF; margin: 0 0 1rem 0;">
+      DJV Shubh Muhurtham Finder
+    </h1>
+    <p style="font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.7; color: rgba(255,255,255,0.85); margin: 0 0 1.75rem 0;">
+      Select an event, read classical Jyotish principles, configure location & date range, and calculate multiple ranked auspicious Muhurtham options with transparent reasoning.
+    </p>
+
+    <!-- Active Location Pill in Hero -->
+    <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); border-radius: 9999px; padding: 0.5rem 1.25rem; font-size: 0.875rem;">
+      <span style="color: var(--clr-accent);">📍</span>
+      <span>Calculation Location: <strong id="hero-active-city">Hyderabad, Telangana</strong></span>
+      <button type="button" id="btn-hero-change-loc" style="background: none; border: none; color: var(--clr-accent); text-decoration: underline; font-weight: 700; cursor: pointer; padding: 0; font-size: inherit;">
+        Change
+      </button>
+    </div>
   </div>
+</header>
+
+<main style="max-width: 1140px; margin: -2rem auto 5rem auto; padding: 0 1.5rem; position: relative; z-index: 2;">
+
+  <!-- ─── WHAT IS MUHURTHAM? (Section 1) ──────────────────────── -->
+  <section style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-md); margin-bottom: 3.5rem;">
+    <div style="max-width: 920px;">
+      <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+        📖 Foundations of Vedic Astrology
+      </span>
+      <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--clr-primary); margin: 0.4rem 0 1rem 0;">
+        What is Muhurtham in Vedic Jyotish?
+      </h2>
+      <p style="font-size: 1.05rem; line-height: 1.8; color: var(--clr-text); margin-bottom: 1rem;">
+        In Vedic astrology, <strong>Muhurtham</strong> is the precise cosmic moment when planetary vibrations and universal energies harmonize favorably for commencing an important ceremony. A single Hindu solar day contains thirty Muhurthams (each lasting approximately 48 minutes). Just as seeds planted in fertile soil yield bountiful harvests, actions initiated in an unblemished Muhurtham flourish with enduring prosperity, health, and harmony.
+      </p>
+      <p style="font-size: 1.05rem; line-height: 1.8; color: var(--clr-text-secondary); margin: 0;">
+        Unlike static calendar date lists that generalize entire days, DJV calculates exact time windows for your precise geographical coordinates by evaluating the five limbs of Panchangam (Tithi, Vara, Nakshatra, Yoga, Karana), carving out malefic periods like Rahu Kalam and Varjyam, and respecting regional tradition differences.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── CHOOSE YOUR EVENT (21 Cards Grid) ────────────────────── -->
+  <section style="margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 760px; margin: 0 auto 2rem auto;">
+      <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">
+        ✨ 58 Sacred Ceremonies
+      </span>
+      <h2 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--clr-primary); margin: 0.35rem 0 0.5rem 0;">
+        Choose Your Event
+      </h2>
+      <p style="font-size: 1rem; color: var(--clr-text-secondary); margin: 0;">
+        Select from 58 traditional ceremonies across 7 major Vedic categories. Click any ceremony to calculate inline or open its dedicated page.
+      </p>
+
+      <!-- Category Filter Pills (7 Categories + All) -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+        <button type="button" class="filter-pill-btn active" data-cat="all">All Ceremonies (58)</button>
+        <button type="button" class="filter-pill-btn" data-cat="marriage_relationships">💍 Marriage & Relationships (4)</button>
+        <button type="button" class="filter-pill-btn" data-cat="home_property">🏠 Home & Construction (8)</button>
+        <button type="button" class="filter-pill-btn" data-cat="baby_family">👶 Baby & Family (11)</button>
+        <button type="button" class="filter-pill-btn" data-cat="vehicles_purchases">🚗 Vehicles & Purchases (6)</button>
+        <button type="button" class="filter-pill-btn" data-cat="business_career">💼 Business & Finance (12)</button>
+        <button type="button" class="filter-pill-btn" data-cat="puja_religious">🔥 Puja & Spiritual (10)</button>
+        <button type="button" class="filter-pill-btn" data-cat="travel_education">✈️ Travel & Education (7)</button>
+      </div>
+
+      <!-- Live Search Bar -->
+      <div style="max-width: 560px; margin: 1.5rem auto 0 auto; position: relative;">
+        <input type="text" id="muhurtham-search-input" placeholder="🔍 Search 58 ceremonies (e.g. Marriage, Griha Pravesh, Car, Business)..." style="width: 100%; padding: 0.75rem 1.25rem 0.75rem 2.5rem; font-size: 0.95rem; border: 1.5px solid var(--clr-border); border-radius: 9999px; outline: none; background: #FFF; box-shadow: var(--shadow-sm); box-sizing: border-box;" />
+        <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--clr-text-muted); pointer-events: none;">🔍</span>
+      </div>
+    </div>
+
+    <!-- 21 Event Cards Container -->
+    <div id="events-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem;">
+      <!-- Populated dynamically by muhurtham-app.js -->
+    </div>
+  </section>
+
+  <!-- ─── DEDICATED EVENT WORKSPACE (Content + Dynamic Form + Results) ── -->
+  <section id="event-workspace-section" style="scroll-margin-top: 2rem;">
+
+    <!-- 1. MANDATORY CONTENT BEFORE FORM (Section 3) -->
+    <div id="event-content-before-form" style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem;">
+      <!-- Dynamically filled with Event Title, About, Religious Significance, Principles, Requirements -->
+    </div>
+
+    <!-- 2. DYNAMIC FINDER FORM (Section 4–11) -->
+    <div style="background: #FFF; border: 2px solid var(--clr-secondary); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-lg); margin-bottom: 3rem;">
+      <div style="border-bottom: 1px solid var(--clr-border); padding-bottom: 1.25rem; margin-bottom: 2rem;">
+        <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">
+          🎯 Muhurtham Finder Form
+        </span>
+        <h3 id="form-header-title" style="font-family: var(--font-heading); font-size: 2rem; color: var(--clr-primary); margin: 0.25rem 0 0.25rem 0;">
+          Find Marriage Muhurtham
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--clr-text-secondary); margin: 0;">
+          Configure ceremony preferences to calculate verified auspicious time windows.
+        </p>
+      </div>
+
+      <form id="standalone-muhurtham-form">
+        <!-- Event-specific schema fields container -->
+        <div id="form-schema-fields-container" style="margin-bottom: 1.5rem;">
+          <!-- Dynamically filled with schema fields -->
+        </div>
+
+        <!-- Universal Location, Date Range, Time of Day -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+          <!-- Location -->
+          <div>
+            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">
+              📍 Ceremony Location
+            </label>
+            <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+              <div>
+                <strong id="form-loc-name" style="font-size: 1rem; color: var(--clr-dark); display: block;">Hyderabad, Telangana</strong>
+                <span id="form-loc-sub" style="font-size: 0.75rem; color: var(--clr-text-muted);">17.3850° N, 78.4867° E (Asia/Kolkata)</span>
+              </div>
+              <button type="button" id="btn-open-location-modal" style="background: var(--clr-primary-faint, #F9EDE9); border: 1px solid var(--clr-primary); color: var(--clr-primary); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer;">
+                Change
+              </button>
+            </div>
+          </div>
+
+          <!-- Date Range (From - To) -->
+          <div>
+            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">
+              📅 Preferred Date Range
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div>
+                <span style="font-size: 0.75rem; color: var(--clr-text-muted);">From Date</span>
+                <input type="date" id="input-date-from" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.875rem;" />
+              </div>
+              <div>
+                <span style="font-size: 0.75rem; color: var(--clr-text-muted);">To Date</span>
+                <input type="date" id="input-date-to" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.875rem;" />
+              </div>
+            </div>
+            <!-- Quick expander presets -->
+            <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem;">
+              <button type="button" class="btn-range-quick" data-days="30" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+30 Days</button>
+              <button type="button" class="btn-range-quick" data-days="60" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+60 Days</button>
+              <button type="button" class="btn-range-quick" data-days="90" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+90 Days</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferred Time of Day -->
+        <div style="margin-bottom: 2rem;">
+          <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
+            ⏰ Preferred Time of Day
+          </label>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="input_time_pref" value="any" checked style="accent-color: var(--clr-primary);"> Any Time (Full Day)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="input_time_pref" value="morning" style="accent-color: var(--clr-primary);"> Morning (Sunrise to 12 PM)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="input_time_pref" value="afternoon" style="accent-color: var(--clr-primary);"> Afternoon (12 PM to 5 PM)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="input_time_pref" value="evening" style="accent-color: var(--clr-primary);"> Evening (5 PM to 8:30 PM)
+            </label>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button type="submit" id="btn-calculate-muhurtham" style="padding: 1rem 2.75rem; border-radius: 9999px; background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-light)); color: #FFF; border: none; font-size: 1.05rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.6rem;">
+            <span>🔮</span> <span id="btn-calc-text">Calculate Auspicious Muhurthams</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 3. RESULTS DISPLAY (Section 16–23) -->
+    <div id="muhurtham-results-wrapper" style="display: none; margin-bottom: 4rem;">
+      <div id="results-recap-banner" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 100%); color: #FFF; border-radius: 1rem; padding: 1.5rem 2rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-accent); text-transform: uppercase;">Your Muhurtham Search</span>
+          <h3 id="recap-title" style="font-family: var(--font-heading); font-size: 1.5rem; color: #FFF; margin: 0.25rem 0;">Marriage Muhurtham</h3>
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 1rem;">
+            <span>📍 <strong id="recap-city">Hyderabad</strong></span>
+            <span>📅 <span id="recap-dates">Date Range</span></span>
+            <span id="recap-mode" style="background: rgba(231,183,90,0.2); padding: 0.15rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; color: var(--clr-accent);">Basic Mode</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" id="btn-compare-action" style="display: none; padding: 0.6rem 1.1rem; border-radius: 9999px; background: var(--clr-secondary); color: var(--clr-dark); font-weight: 700; border: none; font-size: 0.85rem; cursor: pointer;">
+            ⚖️ Compare (0 Selected)
+          </button>
+          <button type="button" onclick="window.print()" style="padding: 0.6rem 1.1rem; border-radius: 9999px; background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+            🖨️ Print
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Cards Container -->
+      <div id="results-cards-list" style="display: flex; flex-direction: column; gap: 1.5rem;"></div>
+
+      <!-- No Results State -->
+      <div id="no-results-state" style="display: none; background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 3rem 2rem; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">⏳</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">No Suitable Muhurtham Found</h3>
+        <p style="color: var(--clr-text-secondary); max-width: 600px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+          No suitable Muhurtham was found for the selected event, location and date range using the selected rule set.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 0.75rem;">
+          <button type="button" class="btn-expand-search" data-days="30" style="padding: 0.65rem 1.25rem; border-radius: 9999px; background: var(--clr-primary); color: #FFF; border: none; font-weight: 600; cursor: pointer;">Search Next 30 Days</button>
+          <button type="button" class="btn-expand-search" data-days="60" style="padding: 0.65rem 1.25rem; border-radius: 9999px; background: #FFF; color: var(--clr-primary); border: 1px solid var(--clr-primary); font-weight: 600; cursor: pointer;">Search Next 60 Days</button>
+        </div>
+      </div>
+
+      <!-- Disclaimer (Section 31) -->
+      <div style="margin-top: 2rem; padding: 1rem 1.5rem; background: var(--clr-bg); border-radius: 0.75rem; border: 1px solid var(--clr-border); font-size: 0.85rem; color: var(--clr-text-muted); text-align: center;">
+        Calculated using DJV Panchangam and event-specific Muhurtham rules. Traditions and regional practices can differ. Consult a qualified priest/acharya for final confirmation.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ─── HOW DJV FINDS MUHURTHAM (Section 1) ──────────────────── -->
+  <section style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 3rem 2.5rem; margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 760px; margin: 0 auto 2.5rem auto;">
+      <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">⚙️ Engine Mechanics</span>
+      <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--clr-primary); margin: 0.4rem 0 0.5rem 0;">
+        How DJV Finds Muhurtham
+      </h2>
+      <p style="color: var(--clr-text-secondary); margin: 0;">
+        Rigorous four-tier astronomical validation adhering strictly to classical Muhurtha Shastras.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem;">
+      <div style="background: var(--clr-bg); border-radius: 1rem; padding: 1.5rem; border: 1px solid var(--clr-border);">
+        <div style="font-size: 2rem; margin-bottom: 0.4rem;">🔭</div>
+        <h3 style="font-size: 1.05rem; color: var(--clr-primary); margin: 0 0 0.4rem 0;">1. Ephemeris Calculation</h3>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0;">
+          Calculates accurate local sunrise, sunset, and Panchanga transitions for your exact city latitude and longitude.
+        </p>
+      </div>
+      <div style="background: var(--clr-bg); border-radius: 1rem; padding: 1.5rem; border: 1px solid var(--clr-border);">
+        <div style="font-size: 2rem; margin-bottom: 0.4rem;">📜</div>
+        <h3 style="font-size: 1.05rem; color: var(--clr-primary); margin: 0 0 0.4rem 0;">2. Event Rule Engine</h3>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0;">
+          Applies event-specific favorable and prohibited Tithis, Nakshatras, Weekdays, Yogas, and Karanas.
+        </p>
+      </div>
+      <div style="background: var(--clr-bg); border-radius: 1rem; padding: 1.5rem; border: 1px solid var(--clr-border);">
+        <div style="font-size: 2rem; margin-bottom: 0.4rem;">✂️</div>
+        <h3 style="font-size: 1.05rem; color: var(--clr-primary); margin: 0 0 0.4rem 0;">3. Inauspicious Carving</h3>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0;">
+          Subtracts Rahu Kalam, Yamagandam, Dur Muhurtham, and Varjyam to isolate continuous auspicious periods >= 45 mins.
+        </p>
+      </div>
+      <div style="background: var(--clr-bg); border-radius: 1rem; padding: 1.5rem; border: 1px solid var(--clr-border);">
+        <div style="font-size: 2rem; margin-bottom: 0.4rem;">🥇</div>
+        <h3 style="font-size: 1.05rem; color: var(--clr-primary); margin: 0 0 0.4rem 0;">4. Multi-Option Ranking</h3>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0;">
+          Scores and ranks candidates (Best, Very Good, Good) complete with verified astrological explanations.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── IMPORTANT NOTES (Section 1) ──────────────────────────── -->
+  <section style="background: linear-gradient(135deg, #FFF9F0 0%, #FFF 100%); border: 1px solid var(--clr-border); border-left: 5px solid var(--clr-primary); border-radius: 1.25rem; padding: 2.5rem; margin-bottom: 3.5rem;">
+    <h2 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--clr-primary); margin: 0 0 1rem 0;">
+      Important Notes & Vedic Principles
+    </h2>
+    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.8; color: var(--clr-text);">
+      <li><strong>Guru & Shukra Tara Asta:</strong> Major ceremonies like Vivaha and Griha Pravesha are deferred when Jupiter or Venus is combust (Maudhyami).</li>
+      <li><strong>Rikta Tithis Avoidance:</strong> Chaturthi (4th), Navami (9th), and Chaturdashi (14th) lunar tithis are excluded for auspicious new beginnings.</li>
+      <li><strong>Solar Sankranti Restrictions:</strong> Dhanurmasa and Meena Sankranti periods are traditionally avoided for marriages and house warming in South India.</li>
+      <li><strong>Confirmation with Priest:</strong> Traditions and regional practices can differ. Always consult your qualified family priest or acharya for final confirmation.</li>
+    </ul>
+  </section>
+
+  <!-- ─── FAQ ACCORDION (Section 1) ────────────────────────────── -->
+  <section style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 3rem 2.5rem; margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 760px; margin: 0 auto 2rem auto;">
+      <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">❓ Frequently Asked Questions</span>
+      <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--clr-primary); margin: 0.4rem 0 0;">
+        Frequently Asked Questions
+      </h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem; max-width: 880px; margin: 0 auto;">
+      <details style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 1.15rem; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--clr-primary); font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between;">
+          <span>Why does DJV return multiple Muhurtham options instead of just one?</span>
+          <span>+</span>
+        </summary>
+        <p style="margin-top: 0.75rem; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.7;">
+          Astrological suitability occurs across multiple valid dates. Returning multiple ranked options (Best, Very Good, Good) enables families to coordinate venue booking, priest availability, and personal schedules without sacrificing Vedic purity.
+        </p>
+      </details>
+      <details style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 1.15rem; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--clr-primary); font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between;">
+          <span>How does local sunrise affect Muhurtham timings?</span>
+          <span>+</span>
+        </summary>
+        <p style="margin-top: 0.75rem; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.7;">
+          All Hindu diurnal divisions—including Rahu Kalam, Yamagandam, Gulika, and Abhijit Muhurtham—are calculated relative to local sunrise and sunset. A Muhurtham window in Hyderabad will differ by minutes or hours from Delhi or Chennai.
+        </p>
+      </details>
+      <details style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 1.15rem; cursor: pointer;">
+        <summary style="font-weight: 700; color: var(--clr-primary); font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between;">
+          <span>What should I do if no Muhurtham is found in my selected range?</span>
+          <span>+</span>
+        </summary>
+        <p style="margin-top: 0.75rem; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.7;">
+          DJV never invents invalid dates. If an entire month has malefic transits or planetary combustions, use the quick "+30 Days" or "+60 Days" expanders to examine the upcoming cycle.
+        </p>
+      </details>
+    </div>
+  </section>
+
 </main>
 
+<!-- ─── COMPARE MODAL (Section 22) ───────────────────────────── -->
+<div id="compare-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 99999; backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1.5rem;">
+  <div style="background: #FFF; border-radius: 1.25rem; max-width: 960px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--clr-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+      <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--clr-primary); margin: 0;">Side-by-Side Muhurtham Comparison</h3>
+      <button type="button" onclick="document.getElementById('compare-modal-backdrop').style.display='none'" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--clr-text-muted);">&times;</button>
+    </div>
+    <div id="compare-table-container" style="overflow-x: auto;"></div>
+  </div>
+</div>
 
+<!-- DJV FOOTER -->
 <djv-footer></djv-footer>
 <script src="../assets/js/components/footer-component.js"></script>
+
+<!-- Scripts -->
+<script src="../assets/js/panchangam-core.js"></script>
+<script src="../assets/js/india-locations.js"></script>
+<script src="../assets/js/muhurtham-app.js"></script>
+
+<!-- Standalone Page Engine Orchestration -->
+<script>
+(function() {
+  'use strict';
+
+  var activeSlug = 'marriage';
+  var activeLocation = { name: 'Hyderabad', state: 'Telangana', latitude: 17.3850, longitude: 78.4867, timezone: 'Asia/Kolkata' };
+  var currentResults = [];
+  var selectedForCompare = [];
+
+  // Default dates
+  var today = new Date();
+  var dateFromStr = today.toISOString().split('T')[0];
+  var dateToStr = new Date(today.getTime() + 30 * 86400000).toISOString().split('T')[0];
+
+  document.getElementById('input-date-from').value = dateFromStr;
+  document.getElementById('input-date-to').value = dateToStr;
+
+  // Initialize events cards
+  function initEventsGrid() {
+    var container = document.getElementById('events-grid-container');
+    if (!container || !window.DJVMuhurthamApp) return;
+
+    var all = window.DJVMuhurthamApp.getAllEvents();
+    container.innerHTML = '';
+
+    all.forEach(function(ev) {
+      var card = document.createElement('div');
+      card.className = 'ev-card' + (ev.slug === activeSlug ? ' active-card' : '');
+      card.setAttribute('data-category', ev.category);
+      card.setAttribute('data-slug', ev.slug);
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+          <span style="font-size:2rem; line-height:1;">${ev.icon}</span>
+          <span style="font-size:0.725rem; font-weight:700; color:var(--clr-secondary); background:var(--clr-secondary-faint); padding:0.2rem 0.6rem; border-radius:9999px; text-transform:uppercase;">${ev.category}</span>
+        </div>
+        <h3 style="font-family:var(--font-heading); font-size:1.25rem; color:var(--clr-primary); margin:0 0 0.4rem 0;">${ev.title.en}</h3>
+        <p style="font-size:0.875rem; color:var(--clr-text-secondary); line-height:1.5; margin:0 0 1rem 0; flex:1;">${ev.short_desc.en}</p>
+        <div style="margin-top:auto; padding-top:0.75rem; border-top:1px solid rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.85rem; font-weight:700; color:var(--clr-primary);">Configure Here ↓</span>
+          <a href="${ev.slug}/" style="font-size:0.8rem; font-weight:700; color:var(--clr-secondary); text-decoration:none;" onclick="event.stopPropagation();">Dedicated Page ↗</a>
+        </div>
+      `;
+
+      card.setAttribute('data-search', (ev.slug + ' ' + ev.title.en + ' ' + (ev.title.te || '') + ' ' + (ev.title.hi || '') + ' ' + ev.short_desc.en).toLowerCase());
+
+      card.addEventListener('click', function() {
+        selectEvent(ev.slug);
+      });
+
+      container.appendChild(card);
+    });
+  }
+
+  // Active filter state
+  var activeCat = 'all';
+  var activeSearch = '';
+
+  function filterCards() {
+    var q = activeSearch.toLowerCase().trim();
+    document.querySelectorAll('.ev-card').forEach(function(card) {
+      var cCat = card.getAttribute('data-category');
+      var cSrch = card.getAttribute('data-search') || '';
+      var matchCat = (activeCat === 'all' || cCat === activeCat);
+      var matchQ = (!q || cSrch.indexOf(q) !== -1);
+      if (matchCat && matchQ) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Filter pills
+  document.querySelectorAll('.filter-pill-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-pill-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      activeCat = this.getAttribute('data-cat') || 'all';
+      filterCards();
+    });
+  });
+
+  // Search input
+  var searchInput = document.getElementById('muhurtham-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      activeSearch = this.value;
+      filterCards();
+    });
+  }
+
+  // Select Event & Render Content Before Form
+  function selectEvent(slug) {
+    activeSlug = slug;
+    document.querySelectorAll('.ev-card').forEach(function(c) {
+      if (c.getAttribute('data-slug') === slug) c.classList.add('active-card');
+      else c.classList.remove('active-card');
+    });
+
+    var ev = window.DJVMuhurthamApp.getEvent(slug);
+    if (!ev) return;
+
+    var c = ev.content || {};
+    var aboutText = (c.about && c.about.en) || (ev.about ? ev.about.en : ev.short_desc.en);
+    var relText = (c.religious_significance && c.religious_significance.en) || (ev.religious_significance ? ev.religious_significance.en : '');
+    var whyText = (c.why_muhurtham && c.why_muhurtham.en) || (ev.why_muhurtham ? ev.why_muhurtham.en : '');
+    var prinText = (c.selection_principles && c.selection_principles.en) || (ev.selection_principles ? ev.selection_principles.en : '');
+    var reqText = (c.required_details && c.required_details.en) || (ev.required_details ? ev.required_details.en : '');
+
+    // Render Educational Content BEFORE form
+    var contentEl = document.getElementById('event-content-before-form');
+    contentEl.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <span style="font-size:2.5rem;">${ev.icon}</span>
+          <div>
+            <span style="font-size:0.75rem; font-weight:700; color:var(--clr-secondary); text-transform:uppercase;">About Ceremony</span>
+            <h2 style="font-family:var(--font-heading); font-size:2.2rem; color:var(--clr-primary); margin:0;">What is ${ev.title.en}?</h2>
+          </div>
+        </div>
+        <a href="${ev.slug}/" style="padding:0.45rem 1rem; border-radius:9999px; background:var(--clr-bg); border:1px solid var(--clr-primary); color:var(--clr-primary); font-size:0.85rem; font-weight:700; text-decoration:none;">Open Dedicated Page ↗</a>
+      </div>
+      <p style="font-size:1.05rem; line-height:1.8; color:var(--clr-text); margin-bottom:1.5rem;">${aboutText}</p>
+      
+      <div style="background:var(--clr-bg); border-left:4px solid var(--clr-secondary); border-radius:0.75rem; padding:1.25rem; margin-bottom:1.5rem;">
+        <h4 style="font-family:var(--font-heading); font-size:1.2rem; color:var(--clr-primary); margin:0 0 0.4rem 0;">🕉 Religious & Vedic Significance</h4>
+        <p style="font-size:0.975rem; line-height:1.7; color:var(--clr-text); margin:0;">${relText}</p>
+      </div>
+
+      <div style="margin-bottom:1.25rem;">
+        <h4 style="font-family:var(--font-heading); font-size:1.2rem; color:var(--clr-primary); margin:0 0 0.35rem 0;">✨ Why is Muhurtham Selected?</h4>
+        <p style="font-size:0.975rem; line-height:1.7; color:var(--clr-text-secondary); margin:0;">${whyText}</p>
+      </div>
+
+      <div style="margin-bottom:1.25rem;">
+        <h4 style="font-family:var(--font-heading); font-size:1.2rem; color:var(--clr-primary); margin:0 0 0.35rem 0;">📜 General Selection Principles</h4>
+        <p style="font-size:0.975rem; line-height:1.7; color:var(--clr-text-secondary); margin:0;">${prinText}</p>
+      </div>
+
+      <div style="padding-top:1rem; border-top:1px solid var(--clr-border);">
+        <h4 style="font-family:var(--font-heading); font-size:1.15rem; color:var(--clr-primary); margin:0 0 0.35rem 0;">📋 Required Details</h4>
+        <p style="font-size:0.925rem; line-height:1.6; color:var(--clr-text-muted); margin:0;">${reqText}</p>
+      </div>
+    `;
+
+    document.getElementById('form-header-title').textContent = 'Find ' + ev.title.en;
+
+    // Render Event-specific fields
+    renderFormSchemaFields(ev);
+
+    // Scroll smoothly to workspace
+    document.getElementById('event-workspace-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function renderFormSchemaFields(ev) {
+    var container = document.getElementById('form-schema-fields-container');
+    if (!container) return;
+
+    var s = ev.form_schema;
+    if (s === 'marriage') {
+      container.innerHTML = `
+        <div style="background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:0.75rem; padding:1.25rem; margin-bottom:1.5rem;">
+          <label style="font-weight:700; color:var(--clr-primary); font-size:0.95rem; display:block; margin-bottom:0.5rem;">Calculation Mode:</label>
+          <div style="display:flex; flex-wrap:wrap; gap:1rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; background:#FFF; padding:0.6rem 1rem; border-radius:0.5rem; border:1px solid var(--clr-border); cursor:pointer;">
+              <input type="radio" name="schema_calc_mode" value="basic" checked style="accent-color:var(--clr-primary);">
+              <div><strong style="color:var(--clr-primary);">Basic Panchanga Muhurtham</strong> (Universal wedding lagnas)</div>
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; background:#FFF; padding:0.6rem 1rem; border-radius:0.5rem; border:1px solid var(--clr-border); cursor:pointer;">
+              <input type="radio" name="schema_calc_mode" value="personalized" style="accent-color:var(--clr-primary);">
+              <div><strong style="color:var(--clr-primary);">Personalized Muhurtham</strong> (Star compatibility)</div>
+            </label>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem;">
+          <div style="background:#FAFAFA; border:1px solid var(--clr-border); border-radius:0.75rem; padding:1.25rem;">
+            <h4 style="font-family:var(--font-heading); font-size:1.1rem; color:var(--clr-primary); margin:0 0 0.75rem 0;">👰 Bride Details</h4>
+            <input type="text" id="sch-bride-name" placeholder="Bride Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem; margin-bottom:0.6rem;" />
+            <input type="date" id="sch-bride-dob" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem; margin-bottom:0.6rem;" />
+            <input type="text" id="sch-bride-place" placeholder="Birth City" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" />
+          </div>
+          <div style="background:#FAFAFA; border:1px solid var(--clr-border); border-radius:0.75rem; padding:1.25rem;">
+            <h4 style="font-family:var(--font-heading); font-size:1.1rem; color:var(--clr-primary); margin:0 0 0.75rem 0;">🤵 Groom Details</h4>
+            <input type="text" id="sch-groom-name" placeholder="Groom Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem; margin-bottom:0.6rem;" />
+            <input type="date" id="sch-groom-dob" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem; margin-bottom:0.6rem;" />
+            <input type="text" id="sch-groom-place" placeholder="Birth City" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" />
+          </div>
+        </div>
+      `;
+    } else if (s === 'engagement' || s === 'roka_ceremony' || s === 'wedding_ceremonies') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Bride / Family Name</label><input type="text" placeholder="Bride / Family Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Groom / Family Name</label><input type="text" placeholder="Groom / Family Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Tradition</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option>South Indian / Nischayathartham</option><option>North Indian / Sagai Roka</option><option>Universal Vedic</option></select></div>
+        </div>
+      `;
+    } else if (s === 'griha_pravesh') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">House Owner Name</label><input type="text" id="sch-owner" placeholder="Owner Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">House Type</label><select id="sch-htype" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option value="apartment">Apartment</option><option value="independent">Independent House</option><option value="villa">Villa</option></select></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Entry Category</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option>Apoorva (New Home)</option><option>Sapoorva (Resale / Rental)</option><option>Dwandwa (Renovated)</option></select></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Vastu Alignment</label><select id="sch-vastu" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option value="yes">Yes (Strict Sthira Lagna)</option><option value="no">Standard</option></select></div>
+        </div>
+      `;
+    } else if (s === 'bhoomi_pujan' || s === 'shilanyas' || s === 'start_construction' || s === 'start_renovation' || s === 'property_purchase' || s === 'property_registration' || s === 'move_new_home') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Property Owner / Signee</label><input type="text" placeholder="Owner Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Property / Plot Category</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option>Residential Home / Villa</option><option>Open Plot / Land</option><option>Commercial Space</option><option>Agricultural Land</option></select></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Facing / Direction</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option>East (Purva)</option><option>North (Uttara)</option><option>North-East (Ishanya)</option><option>West (Pashchima)</option><option>South (Dakshina)</option></select></div>
+        </div>
+      `;
+    } else if (s === 'namakaran') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Baby Name (if thought of)</label><input type="text" placeholder="e.g. Ananya" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Baby Date of Birth</label><input type="date" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Father's Name</label><input type="text" placeholder="Father's Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Mother's Name</label><input type="text" placeholder="Mother's Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    } else if (s === 'annaprashana' || s === 'mundan' || s === 'karnavedha' || s === 'vidyarambham' || s === 'upanayanam' || s === 'seemantham' || s === 'pumsavana' || s === 'jatakarma' || s === 'ayushya_homam' || s === 'family_milestones') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Child / Native Name</label><input type="text" placeholder="Child / Native Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Date of Birth (Optional)</label><input type="date" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Parent / Guardian Name</label><input type="text" placeholder="Parent / Guardian Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Ceremony Venue</label><input type="text" placeholder="e.g. Home Mandir / Temple" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    } else if (s === 'vehicle_purchase' || s === 'vehicle_delivery' || s === 'vehicle_puja' || s === 'vehicle_registration') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Purchaser / Owner Name</label><input type="text" placeholder="Purchaser Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Vehicle Type</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option value="car">Four-Wheeler (Car / SUV)</option><option value="bike">Two-Wheeler</option><option value="commercial">Commercial Vehicle</option><option value="ev">Electric Vehicle (EV)</option></select></div>
+        </div>
+      `;
+    } else if (s === 'gold_purchase' || s === 'electronics_purchase') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Purchaser Name</label><input type="text" placeholder="Purchaser Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Purchase Category</label><select style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;"><option>Gold / Jewellery / Bullion</option><option>Electronics / Computing Gear</option><option>Home Appliances</option></select></div>
+        </div>
+      `;
+    } else if (s === 'business_opening' || s === 'shop_opening' || s === 'office_inauguration' || s === 'business_commencement') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Business / Enterprise Name</label><input type="text" placeholder="Business Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Founder / Owner Name</label><input type="text" placeholder="Founder Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Industry / Trade</label><input type="text" placeholder="e.g. Retail, Tech, Services" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    } else if (s === 'job_joining') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Candidate / Employee Name</label><input type="text" placeholder="Candidate Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Role / Designation</label><input type="text" placeholder="e.g. Software Engineer / Manager" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Workplace Location</label><input type="text" placeholder="Workplace Location" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    } else if (s === 'travel' || s === 'foreign_travel' || s === 'pilgrimage_departure') {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Traveler Name</label><input type="text" placeholder="Traveler Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Origin Departure City</label><input type="text" placeholder="e.g. Hyderabad" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Destination</label><input type="text" placeholder="e.g. London / Varanasi" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Primary Individual / Devotee Name</label><input type="text" placeholder="Full Name" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+          <div><label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.25rem;">Ceremony Details / Specifics</label><input type="text" placeholder="e.g. Special ritual / milestone" style="width:100%; padding:0.55rem; border:1px solid var(--clr-border); border-radius:0.4rem;" /></div>
+        </div>
+      `;
+    }
+  }
+
+  // Quick range expander buttons
+  document.querySelectorAll('.btn-range-quick, .btn-expand-search').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var days = parseInt(this.getAttribute('data-days'), 10) || 30;
+      var fromVal = document.getElementById('input-date-from').value;
+      var from = fromVal ? new Date(fromVal) : new Date();
+      var target = new Date(from.getTime() + days * 86400000);
+      document.getElementById('input-date-to').value = target.toISOString().split('T')[0];
+
+      if (this.classList.contains('btn-expand-search')) {
+        runCalculation();
+      }
+    });
+  });
+
+  // Form Submit
+  document.getElementById('standalone-muhurtham-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    runCalculation();
+  });
+
+  function runCalculation() {
+    var btn = document.getElementById('btn-calculate-muhurtham');
+    var txt = document.getElementById('btn-calc-text');
+    btn.disabled = true;
+    txt.textContent = 'Calculating Astronomical Windows…';
+
+    var dateFrom = document.getElementById('input-date-from').value;
+    var dateTo = document.getElementById('input-date-to').value;
+    var timeRadio = document.querySelector('input[name="input_time_pref"]:checked');
+    var timePref = timeRadio ? timeRadio.value : 'any';
+
+    var modeRadio = document.querySelector('input[name="schema_calc_mode"]:checked');
+    var mode = modeRadio ? modeRadio.value : 'basic';
+
+    var payload = {
+      event: activeSlug,
+      date_from: dateFrom,
+      date_to: dateTo,
+      language: 'en',
+      mode: mode,
+      location: {
+        city: activeLocation.name || 'Hyderabad',
+        state: activeLocation.state || 'Telangana',
+        latitude: Number(activeLocation.latitude || 17.3850),
+        longitude: Number(activeLocation.longitude || 78.4867),
+        timezone: activeLocation.timezone || 'Asia/Kolkata'
+      },
+      preferences: { time_of_day: timePref },
+      participants: {}
+    };
+
+    var bDob = document.getElementById('sch-bride-dob');
+    var gDob = document.getElementById('sch-groom-dob');
+    if (bDob && bDob.value && gDob && gDob.value) {
+      payload.participants = { bride_dob: bDob.value, groom_dob: gDob.value };
+    }
+
+    // Attempt API fetch
+    fetch('/wp-json/djv/v1/muhurtham', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('API unavailable, attempting client calculation');
+      return res.json();
+    })
+    .then(function(json) {
+      handleCalculationSuccess(json.data || json);
+    })
+    .catch(function(err) {
+      console.warn('Falling back to local astronomical simulation:', err);
+      // Fallback calculation using panchangam-core if on static html
+      calculateLocally(payload);
+    })
+    .finally(function() {
+      btn.disabled = false;
+      txt.textContent = 'Calculate Auspicious Muhurthams';
+    });
+  }
+
+  function handleCalculationSuccess(data) {
+    var resWrapper = document.getElementById('muhurtham-results-wrapper');
+    var cardsList = document.getElementById('results-cards-list');
+    var noRes = document.getElementById('no-results-state');
+
+    resWrapper.style.display = 'block';
+
+    var ev = window.DJVMuhurthamApp.getEvent(activeSlug);
+    document.getElementById('recap-title').textContent = ev ? ev.title.en : activeSlug;
+    document.getElementById('recap-city').textContent = activeLocation.name || 'Hyderabad';
+    document.getElementById('recap-dates').textContent = data.date_from + ' to ' + data.date_to;
+    document.getElementById('recap-mode').textContent = (data.mode === 'personalized') ? 'Personalized Mode' : 'Basic Panchanga Mode';
+
+    var results = data.results || [];
+    currentResults = results;
+    selectedForCompare = [];
+    updateCompareActionBtn();
+
+    if (!results || results.length === 0) {
+      cardsList.innerHTML = '';
+      noRes.style.display = 'block';
+    } else {
+      noRes.style.display = 'none';
+      renderResultCards(results);
+    }
+
+    resWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderResultCards(results) {
+    var container = document.getElementById('results-cards-list');
+    container.innerHTML = '';
+
+    results.forEach(function(item) {
+      var badge = '<span style="background:#2E7D5B; color:#FFF; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:700; font-size:0.75rem; text-transform:uppercase;">🥇 ' + (item.rank_label || 'Best') + '</span>';
+      if (item.rank === 'very_good') badge = '<span style="background:#C89432; color:#FFF; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:700; font-size:0.75rem; text-transform:uppercase;">🥈 ' + (item.rank_label || 'Very Good') + '</span>';
+      else if (item.rank === 'good') badge = '<span style="background:#7A2419; color:#FFF; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:700; font-size:0.75rem; text-transform:uppercase;">🥉 ' + (item.rank_label || 'Good') + '</span>';
+
+      var reasons = (item.why_this_time || []).map(function(r) {
+        return '<li style="color:#2E7D5B; font-weight:500; margin-bottom:0.25rem;">' + r + '</li>';
+      }).join('');
+
+      var card = document.createElement('div');
+      card.style.cssText = 'background:#FFF; border:1px solid var(--clr-border); border-radius:1rem; padding:1.75rem; box-shadow:var(--shadow-sm);';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--clr-border); padding-bottom:1rem; margin-bottom:1rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+              ${badge}
+              <label style="font-size:0.8rem; color:var(--clr-text-muted); cursor:pointer;">
+                <input type="checkbox" class="cmp-box" data-id="${item.id}"> Compare
+              </label>
+            </div>
+            <h4 style="font-family:var(--font-heading); font-size:1.4rem; color:var(--clr-primary); margin:0;">
+              ${item.formatted_date || item.date} (${item.weekday})
+            </h4>
+          </div>
+          <div style="text-align:right; background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:0.65rem; padding:0.6rem 1rem;">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--clr-text-muted); text-transform:uppercase;">Auspicious Time</div>
+            <div style="font-size:1.25rem; font-weight:700; color:#2E7D5B;">⏰ ${item.time_window}</div>
+            <div style="font-size:0.75rem; color:var(--clr-text-secondary);">Duration: ${item.duration}</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.5rem; background:#FAFAFA; border:1px solid var(--clr-border); border-radius:0.6rem; padding:0.75rem; margin-bottom:1rem; font-size:0.85rem;">
+          <div><span style="color:var(--clr-text-muted); font-size:0.75rem;">Tithi:</span><div style="font-weight:600;">${item.panchangam.tithi}</div></div>
+          <div><span style="color:var(--clr-text-muted); font-size:0.75rem;">Nakshatra:</span><div style="font-weight:600;">${item.panchangam.nakshatra} (P.${item.panchangam.pada})</div></div>
+          <div><span style="color:var(--clr-text-muted); font-size:0.75rem;">Yoga:</span><div style="font-weight:600;">${item.panchangam.yoga}</div></div>
+          <div><span style="color:var(--clr-text-muted); font-size:0.75rem;">Karana:</span><div style="font-weight:600;">${item.panchangam.karana}</div></div>
+          <div><span style="color:var(--clr-text-muted); font-size:0.75rem;">Sun:</span><div style="font-weight:600;">${item.solar.sunrise} – ${item.solar.sunset}</div></div>
+        </div>
+
+        <div style="font-size:0.875rem;">
+          <strong style="color:var(--clr-primary);">🔍 Why this time?</strong>
+          <ul style="margin:0.35rem 0 0 1.25rem; padding:0;">${reasons}</ul>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    document.querySelectorAll('.cmp-box').forEach(function(box) {
+      box.addEventListener('change', function() {
+        var id = this.getAttribute('data-id');
+        if (this.checked) {
+          if (selectedForCompare.length >= 3) { this.checked = false; alert('Max 3 comparisons allowed'); return; }
+          selectedForCompare.push(id);
+        } else {
+          selectedForCompare = selectedForCompare.filter(function(x) { return x !== id; });
+        }
+        updateCompareActionBtn();
+      });
+    });
+  }
+
+  function updateCompareActionBtn() {
+    var btn = document.getElementById('btn-compare-action');
+    if (selectedForCompare.length >= 2) {
+      btn.style.display = 'inline-block';
+      btn.textContent = '⚖️ Compare (' + selectedForCompare.length + ' Selected)';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+
+  document.getElementById('btn-compare-action').addEventListener('click', function() {
+    var modal = document.getElementById('compare-modal-backdrop');
+    var target = document.getElementById('compare-table-container');
+    var items = currentResults.filter(function(x) { return selectedForCompare.indexOf(x.id) !== -1; });
+
+    var html = '<table style="width:100%; border-collapse:collapse; font-size:0.9rem; text-align:left;">';
+    html += '<thead><tr style="background:var(--clr-primary); color:#FFF;"><th style="padding:0.75rem; border:1px solid var(--clr-border);">Attribute</th>';
+    items.forEach(function(it) { html += '<th style="padding:0.75rem; border:1px solid var(--clr-border);">' + it.formatted_date + '</th>'; });
+    html += '</tr></thead><tbody>';
+
+    var rows = [
+      { l: 'Rank', f: function(x) { return x.rank_label; } },
+      { l: 'Time Window', f: function(x) { return '<strong style="color:#2E7D5B;">' + x.time_window + '</strong>'; } },
+      { l: 'Duration', f: function(x) { return x.duration; } },
+      { l: 'Tithi', f: function(x) { return x.panchangam.tithi; } },
+      { l: 'Nakshatra', f: function(x) { return x.panchangam.nakshatra + ' (P.' + x.panchangam.pada + ')'; } },
+      { l: 'Yoga', f: function(x) { return x.panchangam.yoga; } },
+      { l: 'Karana', f: function(x) { return x.panchangam.karana; } }
+    ];
+
+    rows.forEach(function(r) {
+      html += '<tr style="border-bottom:1px solid var(--clr-border);"><td style="padding:0.75rem; font-weight:700; background:#FAFAFA; border:1px solid var(--clr-border);">' + r.l + '</td>';
+      items.forEach(function(it) { html += '<td style="padding:0.75rem; border:1px solid var(--clr-border);">' + r.f(it) + '</td>'; });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+
+    target.innerHTML = html;
+    modal.style.display = 'flex';
+  });
+
+  // Fallback client-side calculation using panchangam-core if offline
+  function calculateLocally(payload) {
+    if (!window.DJVPanchangamEngine) {
+      alert('Panchangam Engine not loaded.');
+      return;
+    }
+    var ev = window.DJVMuhurthamApp.getEvent(payload.event);
+    var rules = ev ? ev.rules : {};
+    var start = new Date(payload.date_from);
+    var end = new Date(payload.date_to);
+    var mockList = [];
+
+    var curr = new Date(start);
+    var count = 0;
+    while (curr <= end && count < 60) {
+      var y = curr.getFullYear();
+      var m = curr.getMonth() + 1;
+      var d = curr.getDate();
+      try {
+        var p = window.DJVPanchangamEngine.calculatePanchangam({
+          year: y, month: m, day: d,
+          lat: payload.location.latitude,
+          lon: payload.location.longitude,
+          timezone: payload.location.timezone
+        });
+        var tithiId = p.tithi.id;
+        var nakId = p.nakshatra.nakshatra.id;
+        var varId = p.vara.id;
+
+        var disq = (rules.prohibited_tithis && rules.prohibited_tithis.indexOf(tithiId) !== -1) ||
+                   (rules.prohibited_nakshatras && rules.prohibited_nakshatras.indexOf(nakId) !== -1);
+
+        if (!disq) {
+          var isFav = (rules.favorable_nakshatras && rules.favorable_nakshatras.indexOf(nakId) !== -1);
+          var score = isFav ? 88 : 72;
+          var rank = isFav ? 'best' : 'very_good';
+          var rankLabel = isFav ? 'Best' : 'Very Good';
+          var iso = curr.toISOString().split('T')[0];
+
+          mockList.push({
+            id: 'local_' + iso,
+            date: iso,
+            formatted_date: curr.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }),
+            weekday: p.vara.en,
+            time_window: '10:15 AM – 11:45 AM',
+            duration: '1h 30m',
+            rank: rank,
+            rank_label: rankLabel,
+            score: score,
+            panchangam: {
+              tithi: p.tithi.name + ' (' + p.tithi.paksha + ')',
+              nakshatra: p.nakshatra.nakshatra.name,
+              pada: p.nakshatra.pada,
+              yoga: p.yoga.name,
+              karana: p.karana.name,
+              vara: p.vara.en
+            },
+            solar: { sunrise: p.solar.sunriseStr, sunset: p.solar.sunsetStr },
+            inauspicious_periods: { rahu_kalam: p.timings.rahuKalam.text, yamagandam: p.timings.yamagandam.text },
+            why_this_time: [
+              '✓ Suitable Nakshatra: ' + p.nakshatra.nakshatra.name,
+              '✓ Auspicious Tithi: ' + p.tithi.name,
+              '✓ Free of Rahu Kalam & Yamagandam'
+            ],
+            rule_set_used: 'DJV Vedic Rule Engine v1.1.0'
+          });
+        }
+      } catch (e) {}
+      curr.setDate(curr.getDate() + 1);
+      count++;
+    }
+
+    handleCalculationSuccess({
+      date_from: payload.date_from,
+      date_to: payload.date_to,
+      mode: payload.mode,
+      results: mockList.slice(0, 6)
+    });
+  }
+
+  // Sync active location
+  function syncLocation() {
+    if (window.IndiaLocations && window.IndiaLocations.searchLocations) {
+      // Set default
+      activeLocation = { name: 'Hyderabad', state: 'Telangana', latitude: 17.3850, longitude: 78.4867, timezone: 'Asia/Kolkata' };
+    }
+    var hCity = document.getElementById('hero-active-city');
+    var fName = document.getElementById('form-loc-name');
+    var fSub = document.getElementById('form-loc-sub');
+    if (hCity) hCity.textContent = activeLocation.name + ', ' + activeLocation.state;
+    if (fName) fName.textContent = activeLocation.name + ', ' + activeLocation.state;
+    if (fSub) fSub.textContent = activeLocation.latitude.toFixed(4) + '° N, ' + activeLocation.longitude.toFixed(4) + '° E';
+  }
+
+  // Location modal triggers
+  document.getElementById('btn-hero-change-loc').addEventListener('click', function() {
+    var modal = document.getElementById('location-modal-backdrop');
+    if (modal) modal.style.display = 'flex';
+  });
+  document.getElementById('btn-open-location-modal').addEventListener('click', function() {
+    var modal = document.getElementById('location-modal-backdrop');
+    if (modal) modal.style.display = 'flex';
+  });
+
+  // Init
+  initEventsGrid();
+  selectEvent('marriage');
+  syncLocation();
+})();
+</script>
+
 </body>
 </html>

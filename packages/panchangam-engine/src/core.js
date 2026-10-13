@@ -413,6 +413,34 @@ function calcNakshatra(moonSiderealLon) {
   };
 }
 
+/* ─── Rashi Calculation ─────────────────────────────────────── */
+
+const RASHIS = [
+  { id: 1,  name: 'Mesha',     nameTe: 'మేషం',     nameHi: 'मेष',     sanskrit: 'मेष' },
+  { id: 2,  name: 'Vrishabha', nameTe: 'వృషభం',    nameHi: 'वृषभ',    sanskrit: 'वृषभ' },
+  { id: 3,  name: 'Mithuna',   nameTe: 'మిథునం',   nameHi: 'मिथुन',   sanskrit: 'मिथुन' },
+  { id: 4,  name: 'Karka',     nameTe: 'కర్కాటకం', nameHi: 'कर्क',     sanskrit: 'कर्क' },
+  { id: 5,  name: 'Simha',     nameTe: 'సింహం',    nameHi: 'सिंह',    sanskrit: 'सिंह' },
+  { id: 6,  name: 'Kanya',     nameTe: 'కన్య',     nameHi: 'कन्या',   sanskrit: 'कन्या' },
+  { id: 7,  name: 'Tula',      nameTe: 'తుల',      nameHi: 'तुला',    sanskrit: 'तुला' },
+  { id: 8,  name: 'Vrischika', nameTe: 'వృశ్చికం', nameHi: 'वृश्चिक', sanskrit: 'वृश्चिक' },
+  { id: 9,  name: 'Dhanu',     nameTe: 'ధనుస్సు',  nameHi: 'धनु',     sanskrit: 'धनु' },
+  { id: 10, name: 'Makara',    nameTe: 'మకరం',    nameHi: 'मकर',     sanskrit: 'मकर' },
+  { id: 11, name: 'Kumbha',    nameTe: 'కుంభం',    nameHi: 'कुंभ',    sanskrit: 'कुम्भ' },
+  { id: 12, name: 'Meena',     nameTe: 'మీనం',     nameHi: 'मीन',     sanskrit: 'मीन' }
+];
+
+function calcRashi(longitude) {
+  const norm = ((longitude % 360) + 360) % 360;
+  const idx = Math.floor(norm / 30);
+  const r = RASHIS[idx] || RASHIS[0];
+  return {
+    ...r,
+    degreeInRashi: parseFloat((norm % 30).toFixed(4)),
+    totalLongitude: parseFloat(norm.toFixed(4))
+  };
+}
+
 /* ─── Yoga Calculation ──────────────────────────────────────── */
 
 const YOGA_NAMES = [
@@ -1480,6 +1508,7 @@ function calculatePanchangam(params) {
       dayLengthStr:     `${dayLengthHours}h ${dayLengthMins}m`,
       moonrise:         moonTimes.moonrise.time,
       moonset:          moonTimes.moonset.time,
+      sunRashi:         calcRashi(sunSidereal),
       diagnostics:      sunTimes.diagnostics
     } : null,
     moonrise: moonTimes.moonrise,
@@ -1487,6 +1516,7 @@ function calculatePanchangam(params) {
     lunar: {
       moonrise:     moonTimes.moonrise,
       moonset:      moonTimes.moonset,
+      moonRashi:    calcRashi(moonSidereal),
       phase:        moonPhase.phaseName,
       phaseTe:      moonPhase.phaseNameTe,
       phaseHi:      moonPhase.phaseNameHi,

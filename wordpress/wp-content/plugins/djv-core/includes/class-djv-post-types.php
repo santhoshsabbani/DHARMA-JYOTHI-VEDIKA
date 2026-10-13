@@ -947,67 +947,24 @@ class DJV_Post_Types {
 			}
 		}
 
-		// 5. Starter Muhurtham Categories & Entries
-		$muhurthams = [
-			[
-				'title'   => 'Vivaha Muhurtham (వివాహ ముహూర్తం)',
-				'slug'    => 'vivaha-muhurtham',
-				'excerpt' => 'Auspicious wedding dates and lagna muhurthams for marital harmony and prosperity.',
-				'content' => 'Wedding muhurtham is selected by matching the horoscopes of the bride and groom, avoiding inauspicious tithis (Rikta), checking Guru and Shukra Balas, and finding an auspicious Lagna with Shubh Grahas.',
-				'meta'    => [
-					'_djv_category'   => 'Vivaha',
-					'_djv_auspicious' => 'Uttara Phalguni, Rohini, Mrigashira, Magha, Anuradha, Hasta',
-					'_djv_description'=> 'Auspicious dates for marriage ceremonies across Telugu and South Indian traditions.',
-				]
-			],
-			[
-				'title'   => 'Gruhapravesham (గృహప్రవేశ ముహూర్తం)',
-				'slug'    => 'gruhapravesham-muhurtham',
-				'excerpt' => 'Housewarming auspicious dates and timings for entering a new home.',
-				'content' => 'Entering a newly built or renovated home during an auspicious period ensures health, happiness, and prosperity for the family. Involves Vastu Homam, Navagraha Pooja, and boiling milk to overflow (Paluponginchuta).',
-				'meta'    => [
-					'_djv_category'   => 'Gruhapravesham',
-					'_djv_auspicious' => 'Vaisakha, Jyeshtha, Magha, Phalguna months',
-					'_djv_description'=> 'Auspicious dates for housewarming and Vastu Shanti pujas.',
-				]
-			],
-			[
-				'title'   => 'Namakaranam (నామకరణ ముహూర్తం)',
-				'slug'    => 'namakaranam-muhurtham',
-				'excerpt' => 'Baby naming ceremony timings based on Janma Nakshatra and Pada sounds.',
-				'content' => 'Namakaranam is performed on the 11th, 16th, 21st, or 101st day after childbirth. The first letter of the baby name is chosen according to the Janma Nakshatra pada to harmonize planetary vibrations.',
-				'meta'    => [
-					'_djv_category'   => 'Namakaranam',
-					'_djv_auspicious' => 'Anuradha, Punarvasu, Magha, Hasta, Swati nakshatras',
-					'_djv_description'=> 'Auspicious times for naming newborns.',
-				]
-			],
-			[
-				'title'   => 'Vahana Khareedi (వాహన కొనుగోలు ముహూర్తం)',
-				'slug'    => 'vahana-muhurtham',
-				'excerpt' => 'Auspicious days for purchasing two-wheelers, cars, and commercial vehicles.',
-				'content' => 'Buying a vehicle during an auspicious Nakshatra and avoiding Rahu Kalam ensures safe journeys and protection. After purchase, Vahana Pooja is performed at a temple before use.',
-				'meta'    => [
-					'_djv_category'   => 'Vahana',
-					'_djv_auspicious' => 'Rohini, Mrigashira, Punarvasu, Hasta, Swati',
-					'_djv_description'=> 'Auspicious periods for purchasing vehicles and equipment.',
-				]
-			]
-		];
-
-		foreach ( $muhurthams as $muh ) {
-			if ( ! get_page_by_path( $muh['slug'], OBJECT, 'djv_muhurtham' ) ) {
-				$pid = wp_insert_post([
-					'post_title'   => $muh['title'],
-					'post_name'    => $muh['slug'],
-					'post_content' => $muh['content'],
-					'post_excerpt' => $muh['excerpt'],
-					'post_status'  => 'publish',
-					'post_type'    => 'djv_muhurtham',
-				]);
-				if ( $pid && ! is_wp_error( $pid ) ) {
-					foreach ( $muh['meta'] as $k => $v ) {
-						update_post_meta( $pid, $k, $v );
+		// 5. Starter Muhurtham Ceremonies from Master Registry (58 Events)
+		if ( class_exists( 'DJV_Muhurtham_Events' ) ) {
+			$all_muh_events = DJV_Muhurtham_Events::get_all();
+			foreach ( $all_muh_events as $slug => $data ) {
+				if ( ! get_page_by_path( $slug, OBJECT, 'djv_muhurtham' ) ) {
+					$title = $data['title']['en'] . ( ! empty( $data['title']['te'] ) ? ' (' . $data['title']['te'] . ')' : '' );
+					$pid = wp_insert_post([
+						'post_title'   => $title,
+						'post_name'    => $slug,
+						'post_content' => $data['content']['about']['en'] ?? ( $data['short_desc']['en'] ?? '' ),
+						'post_excerpt' => $data['short_desc']['en'] ?? '',
+						'post_status'  => 'publish',
+						'post_type'    => 'djv_muhurtham',
+					]);
+					if ( $pid && ! is_wp_error( $pid ) ) {
+						update_post_meta( $pid, '_djv_category', $data['category'] );
+						update_post_meta( $pid, '_djv_icon', $data['icon'] ?? '✨' );
+						update_post_meta( $pid, '_djv_form_schema', $data['form_schema'] );
 					}
 				}
 			}

@@ -72,6 +72,18 @@ class DJV_REST_API {
 			'args'                => self::panchangam_args(),
 		] );
 
+		register_rest_route( $ns, '/muhurtham', [
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => [ __CLASS__, 'post_muhurtham' ],
+			'permission_callback' => '__return_true',
+		] );
+
+		register_rest_route( $ns, '/muhurtham/events', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_muhurtham_events' ],
+			'permission_callback' => '__return_true',
+		] );
+
 		// ── Pooja ─────────────────────────────────────────────────
 		register_rest_route( $ns, '/pooja', [
 			'methods'             => WP_REST_Server::READABLE,
@@ -523,6 +535,100 @@ class DJV_REST_API {
 		];
 
 		return self::respond( $muhurtham, $panchangam['meta'] ?? [] );
+	}
+
+	/**
+	 * POST /djv/v1/muhurtham
+	 *
+	 * Event-based Muhurtham Finder calculation engine endpoint.
+	 */
+	public static function post_muhurtham( WP_REST_Request $req ): WP_REST_Response {
+		$params = $req->get_json_params();
+		if ( empty( $params ) || ! is_array( $params ) ) {
+			$params = $req->get_params();
+		}
+
+		$event = sanitize_key( $params['event'] ?? 'marriage' );
+		if ( ! DJV_Muhurtham_Events::get_event( $event ) ) {
+			return self::respond_error( "Event '{$event}' is not recognized.", 400, 'invalid_event' );
+		}
+
+		// Security & Validation per Sections 27 & 28
+		$date_from = sanitize_text_field( $params['date_from'] ?? date( 'Y-m-d' ) );
+		$date_to   = sanitize_text_field( $params['date_to'] ?? date( 'Y-m-d', strtotime( '+30 days' ) ) );
+
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_from ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_to ) ) {
+			return self::respond_error( 'Dates must be in YYYY-MM-DD format.', 400, 'invalid_date_format' );
+		}
+
+		if ( strtotime( $date_to ) < strtotime( $date_from ) ) {
+			return self::respond_error( 'To Date must be equal to or later than From Date.', 400, 'invalid_date_range' );
+		}
+
+		$loc = is_array( $params['location'] ?? null ) ? $params['location'] : [];
+		$lat = floatval( $loc['latitude'] ?? 17.3850 );
+		$lon = floatval( $loc['longitude'] ?? 78.4867 );
+
+		if ( $lat < -90 || $lat > 90 || $lon < -180 || $lon > 180 ) {
+			return self::respond_error( 'Invalid geographic coordinates.', 400, 'invalid_coordinates' );
+		}
+
+		$tz = sanitize_text_field( $loc['timezone'] ?? 'Asia/Kolkata' );
+
+		$language = sanitize_key( $params['language'] ?? 'en' );
+		if ( ! in_array( $language, [ 'en', 'te', 'hi' ], true ) ) {
+			$language = 'en';
+		}
+
+		$clean_args = [
+			'event'        => $event,
+			'date_from'    => $date_from,
+			'date_to'      => $date_to,
+			'language'     => $language,
+			'mode'         => sanitize_key( $params['mode'] ?? 'basic' ),
+			'location'     => [
+				'city'      => sanitize_text_field( $loc['city'] ?? 'Hyderabad' ),
+				'state'     => sanitize_text_field( $loc['state'] ?? 'Telangana' ),
+				'latitude'  => $lat,
+				'longitude' => $lon,
+				'timezone'  => $tz,
+			],
+			'preferences'  => is_array( $params['preferences'] ?? null ) ? array_map( 'sanitize_text_field', $params['preferences'] ) : [],
+			'participants' => is_array( $params['participants'] ?? null ) ? $params['participants'] : [],
+			'form_data'    => is_array( $params['form_data'] ?? null ) ? array_map( 'sanitize_text_field', $params['form_data'] ) : [],
+		];
+
+		$result = DJV_Muhurtham_Service::find_muhurtham( $clean_args );
+
+		if ( isset( $result['status'] ) && $result['status'] === 'error' ) {
+			return self::respond_error( $result['message'] ?? 'Calculation failed', 400, $result['code'] ?? 'calculation_error' );
+		}
+
+		return self::respond( $result );
+	}
+
+	/**
+	 * GET /djv/v1/muhurtham/events
+	 */
+	public static function get_muhurtham_events( WP_REST_Request $req ): WP_REST_Response {
+		$lang = sanitize_key( $req->get_param( 'language' ) ?: ( $req->get_param( 'lang' ) ?: 'en' ) );
+		if ( ! in_array( $lang, [ 'en', 'te', 'hi' ], true ) ) {
+			$lang = 'en';
+		}
+		$all = DJV_Muhurtham_Events::get_all();
+		$list = [];
+		foreach ( $all as $slug => $def ) {
+			$list[] = [
+				'slug'        => $slug,
+				'title'       => $def['title'][ $lang ] ?? $def['title']['en'],
+				'icon'        => $def['icon'],
+				'category'    => $def['category'],
+				'short_desc'  => $def['short_desc'][ $lang ] ?? $def['short_desc']['en'],
+				'form_schema' => $def['form_schema'],
+				'url'         => home_url( "/muhurtham/{$slug}/" ),
+			];
+		}
+		return self::respond( $list );
 	}
 
 	/**

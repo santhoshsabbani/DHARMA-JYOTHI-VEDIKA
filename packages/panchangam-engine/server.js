@@ -116,12 +116,57 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  if (pathname === '/range') {
+    const startDateStr = query.date_from || query.start || query.date;
+    const endDateStr = query.date_to || query.end || query.date;
+    const latStr = query.latitude || query.lat;
+    const lonStr = query.longitude || query.lon;
+    const timezone = query.timezone || query.tz || 'Asia/Kolkata';
+
+    if (!startDateStr || !endDateStr || !latStr || !lonStr) {
+      res.writeHead(400);
+      return res.end(JSON.stringify({
+        success: false,
+        error: { code: "invalid_parameter", message: "date_from, date_to, latitude, and longitude are required" }
+      }));
+    }
+
+    const lat = parseFloat(latStr);
+    const lon = parseFloat(lonStr);
+    const results = {};
+    const curr = new Date(startDateStr + 'T00:00:00Z');
+    const end = new Date(endDateStr + 'T00:00:00Z');
+    let count = 0;
+
+    while (curr <= end && count < 120) {
+      const y = curr.getUTCFullYear();
+      const m = curr.getUTCMonth() + 1;
+      const d = curr.getUTCDate();
+      const dStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      try {
+        results[dStr] = calculatePanchangam({ year: y, month: m, day: d, lat, lon, timezone });
+      } catch (err) {
+        results[dStr] = { error: err.message };
+      }
+      curr.setUTCDate(curr.getUTCDate() + 1);
+      count++;
+    }
+
+    res.writeHead(200);
+    return res.end(JSON.stringify({
+      success: true,
+      status: 'success',
+      days: results,
+      meta: { count, latitude: lat, longitude: lon, timezone }
+    }));
+  }
+
   res.writeHead(404);
   return res.end(JSON.stringify({
     success: false,
     error: {
       code: "not_found",
-      message: "Available endpoints: /health, /panchangam"
+      message: "Available endpoints: /health, /panchangam, /range"
     }
   }));
 });

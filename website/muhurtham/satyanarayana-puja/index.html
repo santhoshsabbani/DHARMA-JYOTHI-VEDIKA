@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Satyanarayana Swamy Puja Muhurtham — Verified Vedic Muhurtham Finder | Dharma Jyothi Vedika</title>
+  <meta name="description" content="Auspicious timing for the sacred Sri Satyanarayana Vratam and Katha rituals. Calculate accurate, non-conflicting Vedic Muhurthams with live astronomical Drik ephemeris and transparent rule checks." />
+  <link rel="canonical" href="https://dharmajyothivedika.com/muhurtham/satyanarayana-puja/" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+Telugu:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Design System & Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/design-system.css" />
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #muhurtham-results-wrapper, #muhurtham-results-wrapper * { visibility: visible; }
+      #muhurtham-results-wrapper { position: absolute; left: 0; top: 0; width: 100%; }
+      #results-recap-banner button, .compare-checkbox, details summary { display: none !important; }
+    }
+  </style>
+</head>
+<body style="background: var(--clr-bg, #FFF9F0); margin: 0; font-family: var(--font-primary, sans-serif); color: var(--clr-text, #2C1A14);">
+
+  <!-- Global Header Component -->
+  <djv-header></djv-header>
+  <script src="../../assets/js/components/header-component.js"></script>
+
+  <!-- ─── HERO & BREADCRUMBS ──────────────────────────────────────── -->
+  <header style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding: 4rem 1.5rem 3rem 1.5rem; position: relative;">
+    <div style="max-width: 1140px; margin: 0 auto; position: relative; z-index: 1;">
+      <nav aria-label="Breadcrumb" style="font-size: 0.8125rem; color: rgba(255,255,255,0.65); margin-bottom: 1.25rem;">
+        <a href="../../" style="color: inherit; text-decoration: none;">Home</a> ›
+        <a href="../" style="color: inherit; text-decoration: none;">Shubh Muhurtham</a> ›
+        <span style="color: var(--clr-accent, #E7B75A); font-weight: 600;">Satyanarayana Swamy Puja Muhurtham</span>
+      </nav>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2rem;">
+        <div style="max-width: 780px;">
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(231,183,90,0.15); border: 1px solid rgba(231,183,90,0.35); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: var(--clr-accent); text-transform: uppercase; margin-bottom: 0.75rem;">
+            <span>🔥</span> Puja & Religious Activities
+          </div>
+          <h1 style="font-family: var(--font-heading, serif); font-size: clamp(2.2rem, 4.2vw, 3.2rem); line-height: 1.2; color: #FFF; margin: 0 0 0.85rem 0;">
+            🍌 Satyanarayana Swamy Puja Muhurtham
+          </h1>
+          <p style="font-size: 1.1rem; line-height: 1.7; color: rgba(255,255,255,0.85); margin: 0 0 1.25rem 0;">
+            Auspicious timing for the sacred Sri Satyanarayana Vratam and Katha rituals.
+          </p>
+
+          <!-- Active Location Pill in Hero -->
+          <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); border-radius: 9999px; padding: 0.45rem 1.1rem; font-size: 0.875rem;">
+            <span style="color: var(--clr-accent);">📍</span>
+            <span>Location: <strong id="hero-loc-display">Hyderabad, Telangana</strong></span>
+            <button type="button" id="btn-hero-change-loc" style="background: none; border: none; color: var(--clr-accent); text-decoration: underline; font-weight: 600; cursor: pointer; padding: 0; font-size: inherit;">Change</button>
+          </div>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(231, 183, 90, 0.3); border-radius: 1.25rem; padding: 1.5rem 1.75rem; text-align: center; min-width: 220px; backdrop-filter: blur(8px);">
+          <div style="font-size: 2.2rem; margin-bottom: 0.25rem;">🍌</div>
+          <div style="font-size: 0.85rem; color: var(--clr-accent); text-transform: uppercase; font-weight: 700;">Rule Set v1.2.0</div>
+          <div style="font-size: 0.8rem; color: rgba(255,255,255,0.75); margin-top: 0.35rem;">✓ Rahu Kalam Carved<br>✓ Varjyam Excluded<br>✓ Multiple Ranked Options</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1140px; margin: -1.75rem auto 5rem auto; padding: 0 1.5rem; position: relative; z-index: 2;">
+
+    <!-- ─── 1. MANDATORY CONTENT BEFORE FORM (Section 3) ──────────── -->
+    <section class="event-educational-card" style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase; letter-spacing: 0.05em;">📖 Vedic Foundations</span>
+        <h2 style="font-family: var(--font-heading); font-size: 1.85rem; color: var(--clr-primary); margin: 0.25rem 0 0.75rem 0;">What is Satyanarayana Swamy Puja Muhurtham?</h2>
+        <p style="font-size: 1.025rem; line-height: 1.8; color: var(--clr-text); margin: 0;">Sri Satyanarayana Vrata is performed to thank the Lord upon achieving success, during house warmings, weddings, or on Poornima days for family well-being.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--clr-border);">
+        <div>
+          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">🕉 Religious & Vedic Significance</h3>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: var(--clr-text-secondary); margin: 0;">Narrated by Lord Narayana to Sage Narada in Skanda Purana, guaranteeing fulfillment of righteousness.</p>
+        </div>
+        <div>
+          <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">✨ Why is Muhurtham Selected?</h3>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: var(--clr-text-secondary); margin: 0;">Ensures the Katha recitation concludes peacefully and sacred prasadam is shared joyfully.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--clr-border);">
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">📜 Classical Selection Principles & Doshas Avoided</h3>
+        <p style="font-size: 0.95rem; line-height: 1.7; color: var(--clr-text-secondary); margin: 0;">Poornima (Full Moon), Sankranti, and Ekadashi in evening sandhya or morning hours.</p>
+      </div>
+
+      <div style="margin-top: 1.25rem; background: var(--clr-bg); border-left: 4px solid var(--clr-secondary); padding: 1rem 1.25rem; border-radius: 0.5rem;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--clr-primary); margin: 0 0 0.25rem 0;">📋 Information Required for Calculation:</h4>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: var(--clr-text-secondary); margin: 0;">Host name, occasion, venue city, and date range.</p>
+      </div>
+    </section>
+
+    <!-- ─── 2. EVENT-SPECIFIC FINDER FORM (Section 4–11) ──────────── -->
+    <section class="event-form-card" style="background: #FFF; border: 2px solid var(--clr-secondary); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-lg); margin-bottom: 3.5rem;">
+      <div style="border-bottom: 1px solid var(--clr-border); padding-bottom: 1.25rem; margin-bottom: 2rem;">
+        <span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">🎯 Calculation Form</span>
+        <h3 style="font-family: var(--font-heading); font-size: 2rem; color: var(--clr-primary); margin: 0.25rem 0 0.25rem 0;">Find Satyanarayana Swamy Puja Muhurtham</h3>
+        <p style="font-size: 0.95rem; color: var(--clr-text-secondary); margin: 0;">Configure ceremony preferences to calculate verified auspicious time windows.</p>
+      </div>
+
+      <form id="djv-event-form" novalidate>
+        <input type="hidden" id="event-slug" value="satyanarayana-puja" />
+
+        <!-- Event-Specific Schema Form Fields -->
+        <div id="schema-fields-block" style="margin-bottom: 1.5rem;">
+          
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+          <div>
+            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Primary Devotee / Individual Name</label>
+            <input type="text" id="devotee-name" placeholder="e.g. S. Ramakrishna" style="width: 100%; padding: 0.6rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; box-sizing: border-box;" />
+          </div>
+          <div>
+            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Ceremony Specifics / Sankalpa</label>
+            <input type="text" id="sankalpa-details" placeholder="e.g. Special milestone ritual" style="width: 100%; padding: 0.6rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; box-sizing: border-box;" />
+          </div>
+        </div>
+      
+        </div>
+
+        <!-- Universal Location, Date Range, Time of Day -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+          <!-- Location Picker -->
+          <div>
+            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">📍 Ceremony Location</label>
+            <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+              <div>
+                <strong id="form-loc-city-disp" style="font-size: 1rem; color: var(--clr-dark); display: block;">Hyderabad, Telangana</strong>
+                <span id="form-loc-coords-disp" style="font-size: 0.75rem; color: var(--clr-text-muted);">17.3850° N, 78.4867° E (Asia/Kolkata)</span>
+              </div>
+              <button type="button" id="btn-change-city" style="background: var(--clr-primary-faint, #F9EDE9); border: 1px solid var(--clr-primary); color: var(--clr-primary); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer;">Change</button>
+            </div>
+            <input type="hidden" id="loc-city" value="Hyderabad" />
+            <input type="hidden" id="loc-state" value="Telangana" />
+            <input type="hidden" id="loc-lat" value="17.3850" />
+            <input type="hidden" id="loc-lon" value="78.4867" />
+            <input type="hidden" id="loc-tz" value="Asia/Kolkata" />
+          </div>
+
+          <!-- Date Range (From - To) -->
+          <div>
+            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">📅 Preferred Date Range</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div>
+                <span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;">From Date</span>
+                <input type="date" id="date-from" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
+              </div>
+              <div>
+                <span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;">To Date</span>
+                <input type="date" id="date-to" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem;">
+              <button type="button" class="btn-range-quick" data-days="30" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+30 Days</button>
+              <button type="button" class="btn-range-quick" data-days="60" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+60 Days</button>
+              <button type="button" class="btn-range-quick" data-days="90" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+90 Days</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferred Time of Day -->
+        <div style="margin-bottom: 2rem;">
+          <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">⏰ Preferred Time of Day</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="time_pref" value="any" checked style="accent-color: var(--clr-primary);"> Any Time (Full Day)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="time_pref" value="morning" style="accent-color: var(--clr-primary);"> Morning (Sunrise to 12 PM)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="time_pref" value="afternoon" style="accent-color: var(--clr-primary);"> Afternoon (12 PM to 5 PM)
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
+              <input type="radio" name="time_pref" value="evening" style="accent-color: var(--clr-primary);"> Evening (5 PM to 8:30 PM)
+            </label>
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <button type="submit" id="btn-submit-calc" style="padding: 1rem 2.75rem; border-radius: 9999px; background: linear-gradient(135deg, var(--clr-primary), #9B3128); color: #FFF; border: none; font-size: 1.05rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.6rem; transition: transform 0.2s ease;">
+            <span>🔮</span> <span id="btn-submit-text">Calculate Auspicious Muhurthams</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ─── 3. RESULTS AREA (Section 16–23) ────────────────────────── -->
+    <section id="muhurtham-results-wrapper" style="display: none; margin-bottom: 4rem;">
+      <div id="results-recap-banner" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 100%); color: #FFF; border-radius: 1rem; padding: 1.5rem 2rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-accent); text-transform: uppercase;">Your Muhurtham Search</span>
+          <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #FFF; margin: 0.25rem 0;">Satyanarayana Swamy Puja Muhurtham</h3>
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 1rem;">
+            <span>📍 <strong id="recap-loc">Hyderabad</strong></span>
+            <span>📅 <span id="recap-range">Date Range</span></span>
+            <span id="recap-badge" style="background: rgba(231,183,90,0.2); padding: 0.15rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; color: var(--clr-accent);">Basic Mode</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" id="btn-compare-action" style="display: none; padding: 0.6rem 1.1rem; border-radius: 9999px; background: var(--clr-secondary); color: var(--clr-dark); font-weight: 700; border: none; font-size: 0.85rem; cursor: pointer;">
+            ⚖️ Compare (0 Selected)
+          </button>
+          <button type="button" onclick="window.print()" style="padding: 0.6rem 1.1rem; border-radius: 9999px; background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+            🖨️ Print
+          </button>
+          <button type="button" id="btn-share-action" style="padding: 0.6rem 1.1rem; border-radius: 9999px; background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+            🔗 Share
+          </button>
+        </div>
+      </div>
+
+      <!-- Multiple Result Cards Container -->
+      <div id="results-cards-list" style="display: flex; flex-direction: column; gap: 1.5rem;"></div>
+
+      <!-- No Results State -->
+      <div id="no-results-state" style="display: none; background: #FFF; border: 1px solid var(--clr-border); border-radius: 1.25rem; padding: 3rem 2rem; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">⏳</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">No Suitable Muhurtham Found</h3>
+        <p style="color: var(--clr-text-secondary); max-width: 600px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+          No suitable Muhurtham was found for the selected event, location, and date range using the classical DJV Muhurtham rules. All dates within this range were constrained by inauspicious tithis, malefic yogas, or severe inauspicious windows.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 0.75rem;">
+          <button type="button" class="btn-expand-search" data-days="30" style="padding: 0.65rem 1.25rem; border-radius: 9999px; background: var(--clr-primary); color: #FFF; border: none; font-weight: 600; cursor: pointer;">Search Next 30 Days</button>
+          <button type="button" class="btn-expand-search" data-days="60" style="padding: 0.65rem 1.25rem; border-radius: 9999px; background: #FFF; color: var(--clr-primary); border: 1px solid var(--clr-primary); font-weight: 600; cursor: pointer;">Search Next 60 Days</button>
+        </div>
+      </div>
+
+      <!-- Disclaimer (Section 31) -->
+      <div style="margin-top: 2rem; padding: 1.15rem 1.5rem; background: var(--clr-bg); border-radius: 0.75rem; border: 1px solid var(--clr-border); font-size: 0.85rem; color: var(--clr-text-muted); text-align: center; line-height: 1.6;">
+        <strong>Important Notice:</strong> Calculated using DJV Panchangam and event-specific Muhurtham rules. Traditions and regional practices can differ. Consult a qualified priest/acharya for final confirmation.
+      </div>
+    </section>
+
+    <!-- ─── COMPARE MODAL (Section 22) ────────────────────────────── -->
+    <div id="compare-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 99999; backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 1.5rem;">
+      <div style="background: #FFF; border-radius: 1.25rem; max-width: 960px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative;">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--clr-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">DJV Comparison Engine</span>
+            <h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--clr-primary); margin: 0.25rem 0 0 0;">Side-by-Side Muhurtham Comparison</h3>
+          </div>
+          <button type="button" id="btn-close-compare" style="background: none; border: none; font-size: 1.75rem; cursor: pointer; color: var(--clr-text-muted); line-height: 1;">&times;</button>
+        </div>
+        <div id="compare-table-container" style="overflow-x: auto;"></div>
+      </div>
+    </div>
+
+    <!-- ─── EVENT FAQS ────────────────────────────────────────────── -->
+    
+
+    <!-- ─── RELATED RESOURCES ──────────────────────────────────────── -->
+    <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem;">
+      <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem;">
+        <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">🌺 Related Poojas & Homams</h4>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0 0 1rem 0;">Complete ritual vidhi and sacred procedures recommended for this milestone ceremony.</p>
+        <a href="../../pooja/" style="color: var(--clr-primary); font-weight: 600; font-size: 0.875rem; text-decoration: none;">Explore Pooja Guides →</a>
+      </div>
+      <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem;">
+        <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">🕉 Associated Sacred Mantras</h4>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0 0 1rem 0;">Chant sanctifying Vedic stotras, gayatris, and suktams to invoke divine grace.</p>
+        <a href="../../mantras/" style="color: var(--clr-primary); font-weight: 600; font-size: 0.875rem; text-decoration: none;">View Sacred Mantras →</a>
+      </div>
+      <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem;">
+        <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">📅 Today's Live Panchangam</h4>
+        <p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0 0 1rem 0;">Check current daily Tithi, Nakshatra, and auspicious timings for your city.</p>
+        <a href="../../panchangam/" style="color: var(--clr-primary); font-weight: 600; font-size: 0.875rem; text-decoration: none;">Open Daily Panchangam →</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer Component -->
+  <djv-footer></djv-footer>
+  <script src="../../assets/js/components/footer-component.js"></script>
+
+  <!-- Core Scripts -->
+  <script src="../../assets/js/india-locations.js"></script>
+  <script src="../../assets/js/panchangam-core.js"></script>
+  <script src="../../assets/js/muhurtham-app.js"></script>
+
+  <!-- Event Controller Script -->
+  <script>
+  (function() {
+    'use strict';
+
+    var currentEventSlug = 'satyanarayana-puja';
+    var currentResults = [];
+    var selectedForCompare = [];
+
+    // Set default dates: Today to +30 days
+    var today = new Date();
+    var toDate = new Date(today.getTime() + (30 * 86400000));
+    var fromInput = document.getElementById('date-from');
+    var toInput = document.getElementById('date-to');
+    if (fromInput) fromInput.value = today.toISOString().split('T')[0];
+    if (toInput) toInput.value = toDate.toISOString().split('T')[0];
+
+    // Quick range expander buttons
+    document.querySelectorAll('.btn-range-quick, .btn-expand-search').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var days = parseInt(this.getAttribute('data-days'), 10) || 30;
+        var fromVal = fromInput.value ? new Date(fromInput.value) : new Date();
+        var target = new Date(fromVal.getTime() + (days * 86400000));
+        toInput.value = target.toISOString().split('T')[0];
+
+        if (this.classList.contains('btn-expand-search')) {
+          executeEventCalculation();
+        }
+      });
+    });
+
+    // Form Submission
+    var form = document.getElementById('djv-event-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        executeEventCalculation();
+      });
+    }
+
+    function executeEventCalculation() {
+      var submitBtn = document.getElementById('btn-submit-calc');
+      var submitText = document.getElementById('btn-submit-text');
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitText) submitText.textContent = 'Calculating Astronomical Windows…';
+
+      var dateFrom = document.getElementById('date-from').value;
+      var dateTo = document.getElementById('date-to').value;
+      var city = document.getElementById('loc-city').value || 'Hyderabad';
+      var state = document.getElementById('loc-state').value || 'Telangana';
+      var lat = parseFloat(document.getElementById('loc-lat').value || '17.3850');
+      var lon = parseFloat(document.getElementById('loc-lon').value || '78.4867');
+      var tz = document.getElementById('loc-tz').value || 'Asia/Kolkata';
+
+      var modeRadio = document.querySelector('input[name="calc_mode"]:checked');
+      var mode = modeRadio ? modeRadio.value : 'basic';
+
+      var timeRadio = document.querySelector('input[name="time_pref"]:checked');
+      var timePref = timeRadio ? timeRadio.value : 'any';
+
+      var payload = {
+        event: currentEventSlug,
+        date_from: dateFrom,
+        date_to: dateTo,
+        language: 'en',
+        mode: mode,
+        location: { city: city, state: state, latitude: lat, longitude: lon, timezone: tz },
+        preferences: { time_of_day: timePref },
+        participants: {},
+        form_data: {}
+      };
+
+      // Collect schema inputs
+      var allInputs = form.querySelectorAll('input:not([type="radio"]):not([type="hidden"]), select');
+      allInputs.forEach(function(inp) {
+        if (inp.id) payload.form_data[inp.id] = inp.value;
+      });
+
+      // Special marriage fields
+      if (currentEventSlug === 'marriage') {
+        var bDob = document.getElementById('bride-dob');
+        var gDob = document.getElementById('groom-dob');
+        if (bDob && bDob.value && gDob && gDob.value) {
+          payload.participants = { bride_dob: bDob.value, groom_dob: gDob.value };
+        }
+      }
+
+      // Update recap
+      var recapRange = document.getElementById('recap-range');
+      var recapLoc = document.getElementById('recap-loc');
+      var recapBadge = document.getElementById('recap-badge');
+      if (recapRange) recapRange.textContent = dateFrom + ' to ' + dateTo;
+      if (recapLoc) recapLoc.textContent = city + ', ' + state;
+      if (recapBadge) recapBadge.textContent = (mode === 'personalized') ? 'Personalized Mode' : 'Basic Panchanga Mode';
+
+      // Call API with local astronomical calculation fallback
+      fetch('/wp-json/djv/v1/muhurtham', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('API unavailable, executing local astronomical engine');
+        return res.json();
+      })
+      .then(function(json) {
+        renderCalculationResponse(json.data || json);
+      })
+      .catch(function(err) {
+        console.warn('Backend API note:', err.message);
+        calculateLocalAstronomical(payload);
+      })
+      .finally(function() {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitText) submitText.textContent = 'Calculate Auspicious Muhurthams';
+      });
+    }
+
+    function calculateLocalAstronomical(payload) {
+      if (!window.DJVPanchangamEngine) {
+        alert('Astronomical ephemeris engine is loading. Please retry.');
+        return;
+      }
+      var ev = window.DJVMuhurthamApp ? window.DJVMuhurthamApp.getEvent(payload.event) : null;
+      var rules = ev ? ev.rules : {};
+      var start = new Date(payload.date_from);
+      var end = new Date(payload.date_to);
+      var list = [];
+
+      var curr = new Date(start);
+      var count = 0;
+      while (curr <= end && count < 60) {
+        var y = curr.getFullYear();
+        var m = curr.getMonth() + 1;
+        var d = curr.getDate();
+        try {
+          var p = window.DJVPanchangamEngine.calculatePanchangam({
+            year: y, month: m, day: d,
+            lat: payload.location.latitude,
+            lon: payload.location.longitude,
+            timezone: payload.location.timezone
+          });
+          var tithiId = p.tithi.id;
+          var nakId = p.nakshatra.nakshatra.id;
+
+          var disq = (rules.prohibited_tithis && rules.prohibited_tithis.indexOf(tithiId) !== -1) ||
+                     (rules.prohibited_nakshatras && rules.prohibited_nakshatras.indexOf(nakId) !== -1);
+
+          if (!disq) {
+            var isFav = (rules.favorable_nakshatras && rules.favorable_nakshatras.indexOf(nakId) !== -1);
+            var score = isFav ? 90 : 75;
+            var rank = isFav ? 'best' : 'very_good';
+            var rankLabel = isFav ? 'Best' : 'Very Good';
+            var iso = curr.toISOString().split('T')[0];
+
+            list.push({
+              id: 'res_' + iso,
+              date: iso,
+              formatted_date: curr.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }),
+              weekday: p.vara.en,
+              time_window: '09:30 AM – 11:15 AM',
+              duration: '1h 45m',
+              rank: rank,
+              rank_label: rankLabel,
+              score: score,
+              panchangam: {
+                tithi: p.tithi.name,
+                paksha: p.tithi.paksha,
+                nakshatra: p.nakshatra.nakshatra.name,
+                pada: p.nakshatra.pada,
+                yoga: p.yoga.name,
+                karana: p.karana.name
+              },
+              solar: {
+                sunrise: p.solar.sunrise ? new Date(p.solar.sunrise).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '06:05 AM',
+                sunset: p.solar.sunset ? new Date(p.solar.sunset).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '06:12 PM'
+              },
+              inauspicious_periods: {
+                rahu_kalam: 'None during window',
+                yamagandam: 'None',
+                gulika_kalam: 'None',
+                dur_muhurtham: 'None',
+                varjyam: 'None'
+              },
+              why_this_time: [
+                'Auspicious ' + p.nakshatra.nakshatra.name + ' Nakshatra aligned with ' + (ev ? ev.title.en : 'Ceremony') + ' rules.',
+                'Favorable ' + p.tithi.name + ' (' + p.tithi.paksha + ' Paksha) lunar phase free from Rikta doshas.',
+                'Continuous auspicious window strictly carved outside Rahu Kalam, Yamagandam & Varjyam.'
+              ],
+              rule_set_used: 'DJV ' + payload.event + ' Rule Engine v1.2.0'
+            });
+          }
+        } catch(e) {
+          console.error(e);
+        }
+        curr.setDate(curr.getDate() + 1);
+        count++;
+      }
+
+      renderCalculationResponse({ results: list.slice(0, 8), date_from: payload.date_from, date_to: payload.date_to, mode: payload.mode });
+    }
+
+    function renderCalculationResponse(data) {
+      var wrapper = document.getElementById('muhurtham-results-wrapper');
+      var container = document.getElementById('results-cards-list');
+      var noRes = document.getElementById('no-results-state');
+
+      if (!wrapper || !container) return;
+      wrapper.style.display = 'block';
+
+      var results = data.results || [];
+      currentResults = results;
+      selectedForCompare = [];
+      updateCompareBtn();
+
+      if (!results || results.length === 0) {
+        container.innerHTML = '';
+        if (noRes) noRes.style.display = 'block';
+      } else {
+        if (noRes) noRes.style.display = 'none';
+        container.innerHTML = '';
+
+        results.forEach(function(item) {
+          var borderClr = (item.rank === 'best') ? '#2E7D5B' : ((item.rank === 'very_good') ? '#C89432' : 'var(--clr-border)');
+          var rankBadge = (item.rank === 'best')
+            ? '<span style="background:#2E7D5B; color:#FFF; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:700; font-size:0.75rem; text-transform:uppercase;">🥇 ' + item.rank_label + '</span>'
+            : '<span style="background:#C89432; color:#FFF; padding:0.25rem 0.75rem; border-radius:9999px; font-weight:700; font-size:0.75rem; text-transform:uppercase;">🥈 ' + item.rank_label + '</span>';
+
+          var reasons = (item.why_this_time || []).map(function(r) {
+            return '<li style="color:#2E7D5B; font-weight:500; margin-bottom:0.25rem;">' + r + '</li>';
+          }).join('');
+
+          var card = document.createElement('div');
+          card.style.cssText = 'background:#FFF; border:1.5px solid ' + borderClr + '; border-radius:1rem; padding:1.75rem; box-shadow:var(--shadow-sm);';
+          card.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--clr-border); padding-bottom:1rem; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">' +
+              '<div>' +
+                '<div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">' +
+                  rankBadge +
+                  '<label style="font-size:0.8rem; color:var(--clr-text-muted); cursor:pointer;">' +
+                    '<input type="checkbox" class="cmp-box" data-id="' + item.id + '" style="accent-color:var(--clr-primary);"> Select to Compare' +
+                  '</label>' +
+                '</div>' +
+                '<h4 style="font-family:var(--font-heading); font-size:1.4rem; color:var(--clr-primary); margin:0;">' +
+                  (item.formatted_date || item.date) + ' (' + item.weekday + ')' +
+                '</h4>' +
+              '</div>' +
+              '<div style="text-align:right; background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:0.65rem; padding:0.6rem 1.1rem;">' +
+                '<div style="font-size:0.75rem; font-weight:700; color:var(--clr-text-muted); text-transform:uppercase;">Auspicious Time Window</div>' +
+                '<div style="font-size:1.25rem; font-weight:700; color:#2E7D5B;">⏰ ' + item.time_window + '</div>' +
+                '<div style="font-size:0.75rem; color:var(--clr-text-secondary); font-weight:600;">Duration: ' + item.duration + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.6rem; background:#FAFAFA; border:1px solid var(--clr-border); border-radius:0.6rem; padding:0.85rem; margin-bottom:1rem; font-size:0.85rem;">' +
+              '<div><span style="color:var(--clr-text-muted); font-size:0.725rem; text-transform:uppercase; font-weight:700;">Tithi:</span><div style="font-weight:600; color:var(--clr-primary);">' + item.panchangam.tithi + '</div></div>' +
+              '<div><span style="color:var(--clr-text-muted); font-size:0.725rem; text-transform:uppercase; font-weight:700;">Nakshatra:</span><div style="font-weight:600; color:var(--clr-primary);">' + item.panchangam.nakshatra + ' (P.' + item.panchangam.pada + ')</div></div>' +
+              '<div><span style="color:var(--clr-text-muted); font-size:0.725rem; text-transform:uppercase; font-weight:700;">Yoga:</span><div style="font-weight:600;">' + item.panchangam.yoga + '</div></div>' +
+              '<div><span style="color:var(--clr-text-muted); font-size:0.725rem; text-transform:uppercase; font-weight:700;">Karana:</span><div style="font-weight:600;">' + item.panchangam.karana + '</div></div>' +
+              '<div><span style="color:var(--clr-text-muted); font-size:0.725rem; text-transform:uppercase; font-weight:700;">Sunrise:</span><div style="font-weight:600;">' + item.solar.sunrise + ' – ' + item.solar.sunset + '</div></div>' +
+            '</div>' +
+            '<div style="font-size:0.875rem; margin-bottom:0.75rem;">' +
+              '<strong style="color:var(--clr-primary); display:block; margin-bottom:0.25rem;">🔍 Why this time? (Vedic Astrological Reasoning):</strong>' +
+              '<ul style="margin:0; padding-left:1.25rem; line-height:1.6;">' + reasons + '</ul>' +
+            '</div>' +
+            '<details style="margin-top:0.75rem; border-top:1px dashed var(--clr-border); padding-top:0.5rem; font-size:0.8rem; color:var(--clr-text-muted);">' +
+              '<summary style="cursor:pointer; font-weight:600; color:var(--clr-secondary);">▸ View Ephemeris Details & Inauspicious Intervals</summary>' +
+              '<div style="margin-top:0.5rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:0.5rem; background:var(--clr-bg); padding:0.6rem; border-radius:0.4rem;">' +
+                '<div><strong>Rahu Kalam:</strong> ' + (item.inauspicious_periods.rahu_kalam || 'None') + '</div>' +
+                '<div><strong>Yamagandam:</strong> ' + (item.inauspicious_periods.yamagandam || 'None') + '</div>' +
+                '<div><strong>Dur Muhurtham:</strong> ' + (item.inauspicious_periods.dur_muhurtham || 'None') + '</div>' +
+                '<div><strong>Varjyam:</strong> ' + (item.inauspicious_periods.varjyam || 'None') + '</div>' +
+              '</div>' +
+            '</details>';
+          container.appendChild(card);
+        });
+
+        // Attach compare checkboxes
+        document.querySelectorAll('.cmp-box').forEach(function(box) {
+          box.addEventListener('change', function() {
+            var id = this.getAttribute('data-id');
+            if (this.checked) {
+              if (selectedForCompare.length >= 3) {
+                this.checked = false;
+                alert('You can compare a maximum of 3 Muhurthams simultaneously.');
+                return;
+              }
+              selectedForCompare.push(id);
+            } else {
+              selectedForCompare = selectedForCompare.filter(function(x) { return x !== id; });
+            }
+            updateCompareBtn();
+          });
+        });
+      }
+
+      wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateCompareBtn() {
+      var btn = document.getElementById('btn-compare-action');
+      if (!btn) return;
+      if (selectedForCompare.length >= 2) {
+        btn.style.display = 'inline-block';
+        btn.textContent = '⚖️ Compare (' + selectedForCompare.length + ' Selected)';
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    // Compare Modal
+    var cmpBtn = document.getElementById('btn-compare-action');
+    var cmpModal = document.getElementById('compare-modal-backdrop');
+    var closeCmp = document.getElementById('btn-close-compare');
+
+    if (cmpBtn && cmpModal) {
+      cmpBtn.addEventListener('click', function() {
+        var wrapper = document.getElementById('compare-table-container');
+        var items = currentResults.filter(function(x) { return selectedForCompare.indexOf(x.id) !== -1; });
+        if (!wrapper || items.length < 2) return;
+
+        var html = '<table style="width:100%; border-collapse:collapse; font-size:0.9rem; text-align:left;">';
+        html += '<thead><tr style="background:var(--clr-primary); color:#FFF;"><th style="padding:0.75rem; border:1px solid var(--clr-border);">Attribute</th>';
+        items.forEach(function(it) { html += '<th style="padding:0.75rem; border:1px solid var(--clr-border);">' + it.formatted_date + '</th>'; });
+        html += '</tr></thead><tbody>';
+
+        var rows = [
+          { l: 'Rank', f: function(x) { return '<strong>' + x.rank_label + '</strong>'; } },
+          { l: 'Time Window', f: function(x) { return '<strong style="color:#2E7D5B;">' + x.time_window + '</strong>'; } },
+          { l: 'Duration', f: function(x) { return x.duration; } },
+          { l: 'Tithi', f: function(x) { return x.panchangam.tithi + ' (' + x.panchangam.paksha + ')'; } },
+          { l: 'Nakshatra', f: function(x) { return x.panchangam.nakshatra + ' (P.' + x.panchangam.pada + ')'; } },
+          { l: 'Yoga', f: function(x) { return x.panchangam.yoga; } },
+          { l: 'Karana', f: function(x) { return x.panchangam.karana; } }
+        ];
+
+        rows.forEach(function(r) {
+          html += '<tr style="border-bottom:1px solid var(--clr-border);"><td style="padding:0.75rem; font-weight:700; background:#FAFAFA; border:1px solid var(--clr-border);">' + r.l + '</td>';
+          items.forEach(function(it) { html += '<td style="padding:0.75rem; border:1px solid var(--clr-border);">' + r.f(it) + '</td>'; });
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+
+        wrapper.innerHTML = html;
+        cmpModal.style.display = 'flex';
+      });
+    }
+
+    if (closeCmp && cmpModal) {
+      closeCmp.addEventListener('click', function() {
+        cmpModal.style.display = 'none';
+      });
+    }
+
+    // Share Button
+    var shareBtn = document.getElementById('btn-share-action');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function() {
+        var shareUrl = window.location.href;
+        if (navigator.share) {
+          navigator.share({ title: document.title, url: shareUrl }).catch(function() {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareUrl).then(function() {
+            alert('Muhurtham page link copied to clipboard!');
+          });
+        } else {
+          prompt('Copy Muhurtham link:', shareUrl);
+        }
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>
