@@ -40,11 +40,33 @@ defined( 'ABSPATH' ) || exit;
 ════════════════════════════════════════════════════════════ -->
 <div class="mobile-nav" id="mobile-nav" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Navigation menu', 'djv-theme' ); ?>">
   <div class="mobile-nav-drawer" id="mobile-nav-drawer">
-    <div class="mobile-nav-header" style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--clr-border);">
-      <div style="font-weight:700;color:var(--clr-primary);"><?php echo esc_html( function_exists( 'djv__' ) ? djv__( 'DHARMA JYOTHI VEDIKA' ) : get_bloginfo( 'name' ) ); ?></div>
-      <button id="mobile-nav-close-btn" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--clr-text);" aria-label="<?php esc_attr_e( 'Close navigation menu', 'djv-theme' ); ?>">✕</button>
+    <div class="mobile-nav-header">
+      <div class="mobile-nav-brand">
+        <div class="brand-title"><?php echo esc_html( function_exists( 'djv__' ) ? djv__( 'DHARMA JYOTHI VEDIKA' ) : get_bloginfo( 'name' ) ); ?></div>
+        <div class="brand-sub">Vedic Panchangam &amp; Devotion</div>
+      </div>
+      <button id="mobile-nav-close-btn" class="mobile-nav-close" aria-label="<?php esc_attr_e( 'Close navigation menu', 'djv-theme' ); ?>">✕</button>
     </div>
-    <nav aria-label="<?php esc_attr_e( 'Mobile Navigation', 'djv-theme' ); ?>" style="padding:1rem 0;">
+
+    <!-- Mobile Drawer Location & Language Bar -->
+    <div class="mobile-drawer-toolbar">
+      <!-- Location Button in Drawer -->
+      <button type="button" class="mobile-drawer-loc-btn global-location-pill" aria-label="<?php esc_attr_e( 'Change Location', 'djv-theme' ); ?>">
+        <span>📍</span>
+        <span class="global-location-name"><?php esc_html_e( 'Hyderabad', 'djv-theme' ); ?></span>
+        <span class="mobile-loc-edit"><?php esc_html_e( 'Change', 'djv-theme' ); ?> ▾</span>
+      </button>
+
+      <!-- Language Switcher in Drawer -->
+      <div class="mobile-drawer-lang-switch" role="group" aria-label="<?php esc_attr_e( 'Select Language', 'djv-theme' ); ?>">
+        <?php $cur_lang = function_exists( 'djv_get_current_language' ) ? djv_get_current_language() : 'en'; ?>
+        <button type="button" class="hdr-lang-btn <?php echo $cur_lang === 'en' ? 'active' : ''; ?>" data-lang="en">EN</button>
+        <button type="button" class="hdr-lang-btn <?php echo $cur_lang === 'te' ? 'active' : ''; ?>" data-lang="te">తెలుగు</button>
+        <button type="button" class="hdr-lang-btn <?php echo $cur_lang === 'hi' ? 'active' : ''; ?>" data-lang="hi">हिन्दी</button>
+      </div>
+    </div>
+
+    <nav aria-label="<?php esc_attr_e( 'Mobile Navigation', 'djv-theme' ); ?>" class="mobile-drawer-links">
       <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/' ) ) ); ?>" class="nav-link <?php echo is_front_page() ? 'active' : ''; ?>">🏠 <?php esc_html_e( 'Home', 'djv-theme' ); ?></a>
       <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/panchangam/' ) ) ); ?>" class="nav-link <?php echo is_page( 'panchangam' ) ? 'active' : ''; ?>">📅 <?php esc_html_e( 'Panchangam', 'djv-theme' ); ?></a>
       <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/festivals/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_festival' ) ? 'active' : ''; ?>">🎊 <?php esc_html_e( 'Festivals', 'djv-theme' ); ?></a>
@@ -55,6 +77,13 @@ defined( 'ABSPATH' ) || exit;
       <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/articles/' ) ) ); ?>" class="nav-link <?php echo is_home() || is_archive() || is_singular( 'post' ) ? 'active' : ''; ?>">📰 <?php esc_html_e( 'Articles', 'djv-theme' ); ?></a>
       <a href="<?php echo esc_url( djv_append_lang_to_url( home_url( '/services/' ) ) ); ?>" class="nav-link <?php echo is_post_type_archive( 'djv_service' ) ? 'active' : ''; ?>">⭐ <?php esc_html_e( 'Services', 'djv-theme' ); ?></a>
     </nav>
+
+    <!-- Drawer Today's Panchangam CTA -->
+    <div class="mobile-drawer-footer">
+      <a href="<?php echo esc_url( home_url( '/panchangam/' ) ); ?>" class="mobile-drawer-cta">
+        <span>🕉</span> <?php esc_html_e( "Today's Panchangam", 'djv-theme' ); ?>
+      </a>
+    </div>
   </div>
 </div>
 

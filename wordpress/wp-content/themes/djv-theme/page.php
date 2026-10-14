@@ -8,7 +8,7 @@
 get_header();
 ?>
 
-<div class="page-wrapper" style="padding: 3rem 0 5rem 0;">
+<div class="page-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container" style="max-width: 960px;">
 
     <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>

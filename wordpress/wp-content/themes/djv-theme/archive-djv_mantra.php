@@ -282,7 +282,7 @@ $all_mantras_query = new WP_Query([
 .mantras-hero {
   background: linear-gradient(135deg, #241914 0%, #3D100A 50%, #1A0D08 100%);
   color: #FFF;
-  padding: 3.5rem 0 3rem 0;
+  padding: calc(var(--header-h) + 2rem) 0 3rem 0;
   position: relative;
   overflow: hidden;
   border-bottom: 2px solid var(--clr-secondary, #C89432);

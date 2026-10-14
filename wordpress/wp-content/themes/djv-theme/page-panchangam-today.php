@@ -140,7 +140,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
 <!-- ════════════════════════════════════════════════════════════
      PAGE HERO: TODAY'S PANCHANGAM
 ════════════════════════════════════════════════════════════ -->
-<section class="page-hero" aria-labelledby="page-title" style="background: linear-gradient(135deg, #2b1810 0%, #1a0f0a 100%); color: #fff; padding: 2.5rem 0 2rem 0; border-bottom: 2px solid var(--clr-border, #e8d5c4);">
+<section class="page-hero" aria-labelledby="page-title" style="background: linear-gradient(135deg, #2b1810 0%, #1a0f0a 100%); color: #fff; padding-top: calc(var(--header-h) + 2rem); padding-bottom: 2rem; border-bottom: 2px solid var(--clr-border, #e8d5c4);">
   <div class="container page-hero-inner">
     <nav class="breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'djv-theme' ); ?>" style="font-size: 0.8125rem; color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color: inherit; text-decoration: none;"><?php esc_html_e( 'Home', 'djv-theme' ); ?></a>

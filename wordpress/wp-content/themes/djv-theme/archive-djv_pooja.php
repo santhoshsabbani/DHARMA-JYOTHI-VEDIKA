@@ -23,7 +23,7 @@ $all_poojas = get_posts([
 ]);
 ?>
 
-<div class="archive-pooja-wrapper" style="padding: 2rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
+<div class="archive-pooja-wrapper" style="padding: calc(var(--header-h) + 1.75rem) 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container">
 
     <!-- ── Breadcrumb ── -->

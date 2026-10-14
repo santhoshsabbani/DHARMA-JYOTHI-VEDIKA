@@ -14,7 +14,7 @@ $duration = get_post_meta( $post_id, '_djv_duration', true );
 $contact  = get_post_meta( $post_id, '_djv_contact', true );
 ?>
 
-<div class="single-service-wrapper" style="padding: 2.5rem 0 5rem 0;">
+<div class="single-service-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container" style="max-width: 960px;">
 
     <!-- Breadcrumb -->

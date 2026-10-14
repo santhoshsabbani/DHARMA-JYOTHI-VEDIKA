@@ -13,7 +13,7 @@ $query_str = get_search_query();
 $count     = $wp_query->found_posts;
 ?>
 
-<div class="search-results-wrapper" style="padding: 2.5rem 0 5rem 0;">
+<div class="search-results-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container" style="max-width: 900px;">
 
     <!-- Breadcrumb -->

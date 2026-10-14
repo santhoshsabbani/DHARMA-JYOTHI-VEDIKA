@@ -8,10 +8,10 @@ $current_lang = function_exists( 'djv_get_current_language' ) ? djv_get_current_
 ?>
 <div class="header-actions">
   <!-- Global Trilingual Switcher (Reusable Component per Section 4 & 7) -->
-  <div class="header-lang-switch" id="header-lang-switch" role="group" aria-label="<?php esc_attr_e( 'Select Language', 'djv-theme' ); ?>" style="display:inline-flex;align-items:center;background:#FFF;border:1.5px solid var(--clr-border, #E8DFD3);border-radius:9999px;padding:0.2rem 0.35rem;gap:0.2rem;box-shadow:var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05));">
-    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'en' ? 'active' : ''; ?>" data-lang="en" aria-label="English" title="English" style="border:none;background:<?php echo $current_lang === 'en' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'en' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.25rem 0.55rem;border-radius:9999px;cursor:pointer;font-size:0.75rem;font-weight:700;transition:all 0.2s;">EN</button>
-    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'te' ? 'active' : ''; ?>" data-lang="te" aria-label="తెలుగు (Telugu)" title="తెలుగు" style="border:none;background:<?php echo $current_lang === 'te' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'te' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.25rem 0.55rem;border-radius:9999px;cursor:pointer;font-size:0.75rem;font-weight:700;font-family:var(--font-telugu, sans-serif);transition:all 0.2s;">తెలుగు</button>
-    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'hi' ? 'active' : ''; ?>" data-lang="hi" aria-label="हिन्दी (Hindi)" title="हिन्दी" style="border:none;background:<?php echo $current_lang === 'hi' ? 'var(--clr-primary, #7A2419)' : 'transparent'; ?>;color:<?php echo $current_lang === 'hi' ? '#FFF' : 'var(--clr-text, #2A1F1D)'; ?>;padding:0.25rem 0.55rem;border-radius:9999px;cursor:pointer;font-size:0.75rem;font-weight:700;font-family:'Noto Sans Devanagari', serif;transition:all 0.2s;">हिन्दी</button>
+  <div class="header-lang-switch" id="header-lang-switch" role="group" aria-label="<?php esc_attr_e( 'Select Language', 'djv-theme' ); ?>">
+    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'en' ? 'active' : ''; ?>" data-lang="en" aria-label="English" title="English">EN</button>
+    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'te' ? 'active' : ''; ?>" data-lang="te" aria-label="తెలుగు (Telugu)" title="తెలుగు">తెలుగు</button>
+    <button type="button" class="hdr-lang-btn <?php echo $current_lang === 'hi' ? 'active' : ''; ?>" data-lang="hi" aria-label="हिन्दी (Hindi)" title="हिन्दी">हिन्दी</button>
   </div>
 
   <!-- Location Pill Button -->

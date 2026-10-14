@@ -51,7 +51,7 @@ $deity      = wp_get_post_terms( $post_id, 'djv_deity', [ 'fields' => 'names' ] 
 $how_to_start = function_exists( 'djv_get_generic_how_to_start_puja' ) ? djv_get_generic_how_to_start_puja() : null;
 ?>
 
-<div class="single-pooja-wrapper" style="padding: 2rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
+<div class="single-pooja-wrapper" style="padding: calc(var(--header-h) + 1.75rem) 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container" style="max-width: 1040px;">
 
     <!-- ── Breadcrumb ── -->

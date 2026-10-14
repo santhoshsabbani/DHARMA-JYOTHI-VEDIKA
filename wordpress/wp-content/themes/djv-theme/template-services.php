@@ -10,7 +10,7 @@
 get_header();
 ?>
 
-<div class="services-page-wrapper" style="padding: 2.5rem 0 5rem 0;">
+<div class="services-page-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container">
 
     <nav aria-label="<?php esc_attr_e( 'Breadcrumb', 'djv-theme' ); ?>" style="font-size: 0.8125rem; color: var(--clr-text-muted); margin-bottom: 0.75rem;">

@@ -177,49 +177,237 @@
     /* Mobile menu btn */
     .menu-toggle {
       display: none;
-      background: transparent;
-      border: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(200, 148, 50, 0.1);
+      border: 1px solid rgba(200, 148, 50, 0.3);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      color: var(--clr-text);
-      padding: 0.5rem;
-      font-size: 1.3rem;
+      color: var(--clr-primary);
+      width: 38px;
+      height: 38px;
+      font-size: 1.25rem;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .menu-toggle:hover {
+      background: var(--clr-primary);
+      color: var(--clr-white);
+      border-color: var(--clr-primary);
     }
 
-    /* Mobile nav drawer */
+    /* Mobile nav drawer modal */
     .mobile-nav {
       display: none;
       position: fixed;
-      top: var(--header-h);
-      left: 0; right: 0; bottom: 0;
-      background: rgba(36,25,20,0.5);
-      z-index: 199;
+      inset: 0;
+      background: rgba(20, 10, 5, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9999;
       opacity: 0;
       pointer-events: none;
-      transition: opacity var(--transition-base);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .mobile-nav.open {
       opacity: 1;
-      pointer-events: all;
+      pointer-events: auto;
     }
     .mobile-nav-drawer {
-      width: 300px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(340px, 86vw);
       height: 100%;
-      background: var(--clr-white);
+      background: #FFFDF9;
       border-right: 1px solid var(--clr-border);
-      padding: 1.5rem;
+      box-shadow: 4px 0 24px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
       transform: translateX(-100%);
-      transition: transform var(--transition-base);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      z-index: 10000;
+    }
+    .mobile-nav.open .mobile-nav-drawer {
+      transform: translateX(0);
+    }
+
+    /* Drawer Header */
+    .mobile-nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.25rem;
+      background: linear-gradient(135deg, var(--clr-primary) 0%, #5C1A11 100%);
+      color: var(--clr-white);
+      flex-shrink: 0;
+    }
+    .mobile-nav-brand .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--clr-white);
+      letter-spacing: 0.02em;
+    }
+    .mobile-nav-brand .brand-sub {
+      font-size: 0.72rem;
+      color: var(--clr-accent);
+      font-weight: 500;
+      margin-top: 0.15rem;
+    }
+    .mobile-nav-close {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--clr-white);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .mobile-nav-close:hover {
+      background: rgba(255,255,255,0.3);
+      transform: rotate(90deg);
+    }
+
+    /* Drawer Location & Language Toolbar */
+    .mobile-drawer-toolbar {
+      padding: 0.75rem 1.25rem;
+      background: #FAF5EE;
+      border-bottom: 1px solid var(--clr-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .mobile-drawer-loc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      background: #FFF;
+      border: 1px solid rgba(200, 148, 50, 0.4);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--clr-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .mobile-drawer-loc-btn:hover {
+      border-color: var(--clr-primary);
+      background: var(--clr-primary-faint);
+    }
+    .mobile-loc-edit {
+      font-size: 0.7rem;
+      color: var(--clr-text-muted);
+      font-weight: 400;
+    }
+    .mobile-drawer-lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      background: #FFF;
+      padding: 2px;
+      border: 1px solid var(--clr-border);
+      border-radius: 9999px;
+    }
+
+    /* Trilingual Switcher Buttons */
+    .header-lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(200, 148, 50, 0.08);
+      padding: 2px;
+      border-radius: 9999px;
+      border: 1px solid rgba(200, 148, 50, 0.25);
+    }
+    .hdr-lang-btn {
+      padding: 0.25rem 0.55rem;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1.3;
+    }
+    .hdr-lang-btn:hover {
+      color: var(--clr-primary);
+    }
+    .hdr-lang-btn.active {
+      background: var(--clr-primary);
+      color: var(--clr-white);
+      box-shadow: 0 1px 4px rgba(122,36,25,0.25);
+    }
+
+    /* Drawer Links */
+    .mobile-drawer-links {
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex: 1;
       overflow-y: auto;
     }
-    .mobile-nav.open .mobile-nav-drawer { transform: translateX(0); }
-    .mobile-nav .nav-link {
+    .mobile-drawer-links .nav-link {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
       border-radius: var(--radius-lg);
-      font-size: 0.9375rem;
-      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-dark);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .mobile-drawer-links .nav-link:hover,
+    .mobile-drawer-links .nav-link.active {
+      background: rgba(200, 148, 50, 0.12);
+      color: var(--clr-primary);
+      transform: translateX(3px);
+    }
+
+    /* Drawer Footer CTA */
+    .mobile-drawer-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--clr-border);
+      background: #FAF5EE;
+      flex-shrink: 0;
+    }
+    .mobile-drawer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(135deg, var(--clr-primary) 0%, #5C1A11 100%);
+      color: var(--clr-white);
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(122,36,25,0.25);
+      transition: all 0.2s ease;
+    }
+    .mobile-drawer-cta:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
     }
 
     /* Search overlay */
@@ -1556,6 +1744,10 @@
        RESPONSIVE
     ════════════════════════════════════════════════════════════ */
     @media (max-width: 1100px) {
+      .header-nav { display: none !important; }
+      .header-btn--panchangam { display: none !important; }
+      .menu-toggle { display: flex !important; }
+      .mobile-nav { display: block; }
       .qa-grid { grid-template-columns: repeat(3, 1fr); }
       .panchangam-layout { grid-template-columns: 1fr; }
       .panchanga-sidebar { display: grid; grid-template-columns: 1fr 1fr; }
@@ -1577,10 +1769,10 @@
     }
 
     @media (max-width: 768px) {
-      .header-nav, .header-btn--panchangam, .lang-btn { display: none; }
-      .menu-toggle { display: flex; }
+      .header-nav, .header-btn--panchangam, .lang-btn { display: none !important; }
+      .menu-toggle { display: flex !important; }
       .mobile-nav { display: block; }
-      .qa-grid { grid-template-columns: repeat(3, 1fr); }
+      .qa-grid { grid-template-columns: repeat(2, 1fr); }
       .panchanga-grid { grid-template-columns: 1fr; }
       .panchanga-section-block { border-right: none; }
       .festival-cards { grid-template-columns: 1fr; }
@@ -1592,12 +1784,23 @@
       .panchanga-sidebar { grid-template-columns: 1fr; }
     }
 
+    @media (max-width: 640px) {
+      .header-lang-switch { display: none !important; }
+      .header-inner { padding: 0 1rem; gap: 0.5rem; }
+    }
+
     @media (max-width: 480px) {
-      .qa-grid { grid-template-columns: repeat(2, 1fr); }
-      .muhurtham-grid { grid-template-columns: repeat(2, 1fr); }
+      .qa-grid { grid-template-columns: 1fr; }
+      .muhurtham-grid { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr; }
       .hero-actions { flex-direction: column; }
       .btn-hero-primary, .btn-hero-secondary { justify-content: center; }
+    }
+
+    @media (max-width: 360px) {
+      .global-location-name { display: none !important; }
+      .site-logo { max-width: 155px; }
+      .header-inner { padding: 0 0.5rem; gap: 0.25rem; }
     }
 
     /* ─── Utility ── */
@@ -2767,5 +2970,188 @@
   flex-shrink: 0;
   margin-top: 2px;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL RESPONSIVE DESIGN SYSTEM & OVERFLOW PREVENTION
+   Ensures seamless viewing across 320px – 1920px viewports
+   ══════════════════════════════════════════════════════════════ */
+
+/* 1. Global Viewport & Overflow Safety */
+html,
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe,
+embed,
+object {
+  max-width: 100% !important;
+  height: auto;
+}
+
+/* 2. Universal Subpage Fixed Header Clearance */
+/* Prevents fixed 70px header from ever burying breadcrumbs or titles on subpages */
+body:not(.home) .site-header + #main-content > .page-hero:first-child,
+body:not(.home) .site-header + #main-content > .event-hero:first-child,
+body:not(.home) .site-header + #main-content > .mantras-hero:first-child,
+body:not(.home) .site-header + #main-content > .festival-hero:first-child,
+body:not(.home) .site-header + #main-content > .muhurtham-hero:first-child,
+body:not(.home) #main-content > .single-post-wrapper:first-child,
+body:not(.home) #main-content > .archive-wrapper:first-child,
+body:not(.home) #main-content > .archive-festival-wrapper:first-child,
+body:not(.home) #main-content > .single-festival-wrapper:first-child,
+body:not(.home) #main-content > .temples-page-wrapper:first-child,
+body:not(.home) #main-content > .single-temple-wrapper:first-child,
+body:not(.home) #main-content > .archive-pooja-wrapper:first-child,
+body:not(.home) #main-content > .single-pooja-wrapper:first-child,
+body:not(.home) #main-content > .archive-mantra-wrapper:first-child,
+body:not(.home) #main-content > .single-mantra-page:first-child,
+body:not(.home) #main-content > .single-muhurtham-page:first-child,
+body:not(.home) #main-content > .single-muhurtham-wrapper:first-child,
+body:not(.home) #main-content > .muhurtham-hub-wrapper:first-child,
+body:not(.home) #main-content > .services-page-wrapper:first-child,
+body:not(.home) #main-content > .single-service-wrapper:first-child,
+body:not(.home) #main-content > .archive-service-wrapper:first-child,
+body:not(.home) #main-content > .calendar-page-wrapper:first-child,
+body:not(.home) #main-content > .search-results-wrapper:first-child,
+body:not(.home) #main-content > .archive-articles-wrapper:first-child,
+body:not(.home) #main-content > .page-wrapper:first-child {
+  padding-top: calc(var(--header-h, 70px) + 2rem) !important;
+}
+
+/* Ensure subsequent content blocks under heroes maintain clean spacing */
+.panchangam-page-wrapper,
+.temples-page-wrapper {
+  padding: 2.5rem 0 5rem 0 !important;
+}
+
+/* 3. Responsive Temple Filter Grid */
+.temple-filters-grid {
+  display: grid !important;
+  grid-template-columns: 2fr 1.2fr 1fr 1fr auto !important;
+  gap: 1rem !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+@media (max-width: 1024px) {
+  .temple-filters-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.85rem !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .temple-filters-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  .temple-filters-grid button,
+  .temple-filters-grid .btn-filter-reset {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* 4. Responsive Grid & Card Stacking for Handheld Devices */
+@media (max-width: 640px) {
+  .festival-cards,
+  .pooja-grid,
+  .mantra-grid,
+  .temples-grid,
+  .articles-grid,
+  .muhurtham-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .panchangam-page-grid,
+  .djv-temple-layout-grid,
+  .fh-inner,
+  .festival-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 5. Compact Header & Element Scaling for Small Screens (320px–430px) */
+@media (max-width: 480px) {
+  .site-header {
+    height: var(--header-h, 64px) !important;
+  }
+  .header-inner {
+    padding: 0 0.875rem !important;
+  }
+  .site-logo {
+    gap: 0.5rem !important;
+    max-width: 220px !important;
+  }
+  .logo-text .brand-en {
+    font-size: 0.85rem !important;
+  }
+  .logo-text .brand-te {
+    font-size: 0.625rem !important;
+  }
+  .header-btn--location {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.8rem !important;
+  }
+  .page-hero-title,
+  .fh-title,
+  .ph-title {
+    font-size: 1.85rem !important;
+    line-height: 1.25 !important;
+  }
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-inner {
+    padding: 0 0.5rem !important;
+    gap: 0.35rem !important;
+  }
+  .site-logo {
+    max-width: 160px !important;
+  }
+  .site-logo img {
+    height: 32px !important;
+    width: auto !important;
+  }
+  .logo-text .brand-en {
+    font-size: 0.78rem !important;
+    line-height: 1.15 !important;
+  }
+  .logo-text .brand-te {
+    display: none !important;
+  }
+  .header-btn--location {
+    padding: 0.35rem 0.5rem !important;
+  }
+  .global-location-name {
+    display: none !important;
+  }
+  .menu-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.15rem !important;
+  }
+}
+
 
 

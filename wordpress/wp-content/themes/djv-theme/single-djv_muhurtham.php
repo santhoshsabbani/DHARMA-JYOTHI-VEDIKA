@@ -148,7 +148,7 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 <div class="single-muhurtham-page" style="background: var(--clr-bg, #FFF9F0); padding-bottom: 5rem;">
 
 	<!-- ─── Header & Breadcrumb ─────────────────────────────────── -->
-	<header class="event-hero" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding: 3.5rem 0 3rem 0; position: relative;">
+	<header class="event-hero" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding-top: calc(var(--header-h) + 2rem); padding-bottom: 3rem; position: relative;">
 		<div class="container" style="max-width: 1040px; position: relative; z-index: 1;">
 			<nav aria-label="Breadcrumb" style="font-size: 0.8125rem; color: rgba(255,255,255,0.65); margin-bottom: 1.25rem;">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color: inherit; text-decoration: none;"><?php esc_html_e( 'Home', 'djv-theme' ); ?></a> ›

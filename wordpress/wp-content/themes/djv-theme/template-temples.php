@@ -83,7 +83,7 @@ $temple_query = new WP_Query( $temple_args );
 ?>
 
 <!-- Hero Section -->
-<section class="page-hero" aria-labelledby="temples-title" style="background: linear-gradient(135deg, #241914 0%, #3D100A 100%); color: #FFF; padding: 3.5rem 0 3rem 0; position: relative;">
+<section class="page-hero" aria-labelledby="temples-title" style="background: linear-gradient(135deg, #241914 0%, #3D100A 100%); color: #FFF; padding-top: calc(var(--header-h) + 2.25rem); padding-bottom: 3rem; position: relative;">
   <div class="container ph-inner">
     <nav class="breadcrumb" aria-label="<?php esc_attr_e( 'Breadcrumb', 'djv-theme' ); ?>" style="font-size: 0.8125rem; color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
       <a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="color: inherit; text-decoration: none;"><?php esc_html_e( 'Home', 'djv-theme' ); ?></a>
@@ -134,7 +134,7 @@ $temple_query = new WP_Query( $temple_args );
 
     <!-- Search & Filter Controls -->
     <form method="get" action="<?php echo esc_url( home_url( '/temples/' ) ); ?>" id="temple-filters-form" class="temple-filters-bar" style="background: #FFF; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--clr-border, #E2E8F0); box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.05)); margin-bottom: 2.5rem;">
-      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 1rem; align-items: center;">
+      <div class="temple-filters-grid">
 
         <!-- Search Input -->
         <div style="position: relative;">

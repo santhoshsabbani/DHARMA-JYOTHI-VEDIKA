@@ -143,7 +143,7 @@ $canonical_url = home_url( '/festivals/' . $slug . '/' );
 
 <!-- DJV_SINGLE_FESTIVAL_TEMPLATE_LOADED: single-festival.php -->
 
-<div class="single-festival-wrapper" style="padding: 1.75rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
+<div class="single-festival-wrapper" style="padding: calc(var(--header-h) + 1.75rem) 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container" style="max-width: 1060px;">
 
     <!-- ── Top Breadcrumb & Back Link ── -->

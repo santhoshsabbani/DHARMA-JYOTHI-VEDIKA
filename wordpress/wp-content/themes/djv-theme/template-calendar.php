@@ -14,7 +14,7 @@ $current_year  = (int) date( 'Y' );
 $current_month = (int) date( 'n' );
 ?>
 
-<div class="calendar-page-wrapper" style="padding: 2.5rem 0 5rem 0;">
+<div class="calendar-page-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container">
 
     <!-- Breadcrumb -->

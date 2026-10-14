@@ -454,7 +454,7 @@ $share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | 
 /* Single Mantra Page Styling */
 .single-mantra-page {
   background: var(--clr-bg, #FFF9F0);
-  padding: 2.5rem 0 5rem 0;
+  padding: calc(var(--header-h) + 1.75rem) 0 5rem 0;
   min-height: 80vh;
 }
 .single-mantra-container {

@@ -84,7 +84,7 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
 }
 </style>
 
-<div class="archive-festival-wrapper" style="padding: 2rem 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
+<div class="archive-festival-wrapper" style="padding: calc(var(--header-h) + 1.75rem) 0 5rem 0; background: var(--clr-bg, #FDFBF7);">
   <div class="container">
 
     <!-- ── Breadcrumb ── -->
@@ -102,8 +102,8 @@ if ( ! $spotlight_festival && ! empty( $all_festivals ) ) {
     </nav>
 
     <!-- ── Hero & Trilingual Switcher Header ── -->
-    <header class="festival-hero" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1.5rem; border-bottom: 1px solid var(--clr-border, #E8DFD3); padding-bottom: 1.75rem;">
-      <div style="flex: 1; min-width: 300px;">
+    <header class="festival-archive-header" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1.5rem; border-bottom: 1px solid var(--clr-border, #E8DFD3); padding-bottom: 1.75rem; background: transparent;">
+      <div style="flex: 1; min-width: min(100%, 280px);">
         <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(200,148,50,0.12); color: var(--clr-accent, #C89432); font-weight: 700; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
           🪔 <span class="djv-lang-field" data-lang="en">Vedic Calendar &amp; Celebrations</span>
           <span class="djv-lang-field" data-lang="te" style="display:none; font-family: var(--font-telugu, sans-serif);">వేద క్యాలెండర్ &amp; పండుగలు</span>

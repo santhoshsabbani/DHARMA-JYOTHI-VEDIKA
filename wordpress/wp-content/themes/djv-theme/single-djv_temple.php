@@ -106,7 +106,7 @@ if ( $loc_string && $state && $loc_string !== $state ) {
 <style>
 /* DJV Temple Single Page Responsive & Typography System */
 .single-temple-wrapper {
-  padding: 2rem 0 5rem 0;
+  padding: calc(var(--header-h) + 2rem) 0 5rem 0;
   background: var(--clr-bg, #FAF8F5);
   color: var(--clr-text, #1E293B);
   font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);

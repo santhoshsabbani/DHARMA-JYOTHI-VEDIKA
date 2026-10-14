@@ -8,7 +8,7 @@
 get_header();
 ?>
 
-<div class="archive-articles-wrapper" style="padding: 2.5rem 0 5rem 0;">
+<div class="archive-articles-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0;">
   <div class="container">
 
     <!-- Breadcrumbs -->

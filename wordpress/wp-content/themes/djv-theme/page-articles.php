@@ -19,7 +19,7 @@ $articles_query = new WP_Query( [
 ] );
 ?>
 
-<div class="archive-wrapper" style="padding: 3rem 0 5rem 0; background: var(--clr-bg, #fdfaf6);">
+<div class="archive-wrapper" style="padding: calc(var(--header-h) + 2rem) 0 5rem 0; background: var(--clr-bg, #fdfaf6);">
   <div class="container">
 
     <header class="archive-header" style="margin-bottom: 2.5rem; text-align: center;">

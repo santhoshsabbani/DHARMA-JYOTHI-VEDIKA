@@ -102,7 +102,7 @@ function djv_get_i18n( array $i18n, string $key, string $lang ): string {
 <div class="muhurtham-hub-wrapper" style="background: var(--clr-bg, #FFF9F0); padding-bottom: 5rem;">
 
 	<!-- ─── Hero Section ─────────────────────────────────────────── -->
-	<section class="muhurtham-hero" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding: 4.5rem 0 3.5rem 0; position: relative; overflow: hidden;">
+	<section class="muhurtham-hero" style="background: linear-gradient(135deg, #241914 0%, #3D2A22 60%, #5C1A11 100%); color: #FFF; padding-top: calc(var(--header-h) + 2rem); padding-bottom: 3.5rem; position: relative; overflow: hidden;">
 		<div style="position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 20%, rgba(200, 148, 50, 0.18) 0%, transparent 70%); pointer-events: none;"></div>
 
 		<div class="container" style="position: relative; z-index: 1; max-width: 1140px;">
