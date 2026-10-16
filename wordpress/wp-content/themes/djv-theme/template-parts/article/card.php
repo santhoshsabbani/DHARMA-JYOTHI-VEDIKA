@@ -15,6 +15,10 @@ $cat_name   = ! empty( $categories ) ? $categories[0]->name : __( 'Vedic Wisdom'
     <div style="aspect-ratio:16/9;overflow:hidden;">
       <?php the_post_thumbnail( 'medium', [ 'style' => 'width:100%;height:100%;object-fit:cover;' ] ); ?>
     </div>
+  <?php else : ?>
+    <div style="aspect-ratio:16/9; background:linear-gradient(135deg, #7a2419 0%, #b45309 100%); display:flex; align-items:center; justify-content:center; color:#fff;">
+      <span style="font-size:3rem; opacity:0.85;">🕉️</span>
+    </div>
   <?php endif; ?>
 
   <div style="padding:1.5rem;flex:1;display:flex;flex-direction:column;">

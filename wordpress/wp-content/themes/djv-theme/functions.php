@@ -331,7 +331,7 @@ function djv_theme_custom_route_fallback(): void {
 		}
 	}
 
-	if ( $request_uri === 'articles' ) {
+	if ( $request_uri === 'articles' || preg_match( '#^articles(/page/\d+)?/?$#', $request_uri ) ) {
 		if ( is_404() || ! is_page() ) {
 			status_header( 200 );
 			$template = locate_template( [ 'page-articles.php' ] );
