@@ -264,7 +264,7 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
         <?php esc_html_e( 'Calculating Panchangam…', 'djv-theme' ); ?>
       </h3>
       <p style="color:var(--clr-text-secondary, #666); font-size:0.9rem; margin:0;">
-        <?php esc_html_e( 'Running Drik Ganita planetary equations via DJV Core engine.', 'djv-theme' ); ?>
+        <?php esc_html_e( 'Running Drik Ganita planetary equations via PujaPanchang engine.', 'djv-theme' ); ?>
       </p>
     </div>
 
@@ -579,16 +579,6 @@ $ssr_data  = function_exists( 'djv_get_ssr_panchangam' ) ? djv_get_ssr_panchanga
           </div>
         </div>
 
-        <!-- Data Integrity Inspector (Metadata) -->
-        <div class="sidebar-widget">
-          <div class="sw-head"><span>⚙️</span> <?php esc_html_e( 'Engine Verification Metadata', 'djv-theme' ); ?></div>
-          <div class="sw-body">
-            <p style="font-size:0.75rem; color:var(--clr-text-muted); margin:0 0 0.5rem 0;">
-              <?php esc_html_e( 'Calculated in real-time from verified astronomical coordinates:', 'djv-theme' ); ?>
-            </p>
-            <pre class="pc-meta-box" id="pc-meta-json" style="background:#1e1e24; color:#e6e6e6; border-radius:var(--radius-lg, 0.75rem); padding:0.875rem; font-family:monospace; font-size:0.72rem; overflow-x:auto; max-height:220px;"><?php esc_html_e( 'Loading metadata…', 'djv-theme' ); ?></pre>
-          </div>
-        </div>
 
         <!-- Devotional Disclaimer -->
         <div class="disclaimer" role="note" style="margin-top:1rem;">

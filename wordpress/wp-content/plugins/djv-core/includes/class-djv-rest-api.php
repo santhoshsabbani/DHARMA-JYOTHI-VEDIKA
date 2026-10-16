@@ -84,6 +84,50 @@ class DJV_REST_API {
 			'permission_callback' => '__return_true',
 		] );
 
+		// ── Admin: Submissions ────────────────────────────────────
+		register_rest_route( $ns, '/admin/submissions', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_admin_submissions' ],
+			'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+			'args'                => [
+				'event'       => [ 'type' => 'string', 'default' => 'all' ],
+				'status'      => [ 'type' => 'string', 'default' => 'all' ],
+				'calc_status' => [ 'type' => 'string', 'default' => 'all' ],
+				'search'      => [ 'type' => 'string', 'default' => '' ],
+				'date_from'   => [ 'type' => 'string', 'default' => '' ],
+				'date_to'     => [ 'type' => 'string', 'default' => '' ],
+				'page'        => [ 'type' => 'integer', 'default' => 1 ],
+				'per_page'    => [ 'type' => 'integer', 'default' => 20, 'maximum' => 100 ],
+			],
+		] );
+
+		register_rest_route( $ns, '/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)', [
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => [ __CLASS__, 'get_admin_submission_single' ],
+			'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+		] );
+
+		register_rest_route( $ns, '/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)/status', [
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => [ __CLASS__, 'post_admin_submission_status' ],
+			'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+			'args'                => [
+				'status' => [ 'type' => 'string', 'required' => true, 'enum' => [ 'received', 'in_review', 'processed', 'cancelled' ] ],
+			],
+		] );
+
+		register_rest_route( $ns, '/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)/retry', [
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => [ __CLASS__, 'post_admin_submission_retry' ],
+			'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+		] );
+
+		register_rest_route( $ns, '/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)', [
+			'methods'             => WP_REST_Server::DELETABLE,
+			'callback'            => [ __CLASS__, 'delete_admin_submission' ],
+			'permission_callback' => function() { return current_user_can( 'manage_options' ); },
+		] );
+
 		// ── Pooja ─────────────────────────────────────────────────
 		register_rest_route( $ns, '/pooja', [
 			'methods'             => WP_REST_Server::READABLE,
@@ -540,7 +584,8 @@ class DJV_REST_API {
 	/**
 	 * POST /djv/v1/muhurtham
 	 *
-	 * Event-based Muhurtham Finder calculation engine endpoint.
+	 * Unified Common Muhurtham Form & Calculation Engine Endpoint.
+	 * Every Muhurtham event uses this identical submission handler and database storage.
 	 */
 	public static function post_muhurtham( WP_REST_Request $req ): WP_REST_Response {
 		$params = $req->get_json_params();
@@ -548,63 +593,225 @@ class DJV_REST_API {
 			$params = $req->get_params();
 		}
 
-		$event = sanitize_key( $params['event'] ?? 'marriage' );
-		if ( ! DJV_Muhurtham_Events::get_event( $event ) ) {
-			return self::respond_error( "Event '{$event}' is not recognized.", 400, 'invalid_event' );
+		// 1. Anti-spam honeypot verification
+		if ( ! empty( $params['djv_honey'] ) ) {
+			return self::respond_error( __( 'Spam detection triggered.', 'djv-core' ), 400, 'spam_detected' );
 		}
 
-		// Security & Validation per Sections 27 & 28
+		// 2. Validate Event
+		$event = sanitize_key( $params['event'] ?? 'marriage' );
+		require_once DJV_PLUGIN_DIR . 'includes/data-muhurtham-events.php';
+		$event_def = DJV_Muhurtham_Events::get_event( $event );
+		if ( ! $event_def ) {
+			return self::respond_error( sprintf( __( "Event '%s' is not recognized.", 'djv-core' ), $event ), 400, 'invalid_event' );
+		}
+
+		// Validate publication status
+		$custom_opts = get_option( 'djv_muhurtham_events_custom', [] );
+		if ( isset( $custom_opts[ $event ]['published'] ) && false === $custom_opts[ $event ]['published'] ) {
+			return self::respond_error( sprintf( __( "Event '%s' is currently not available for calculations.", 'djv-core' ), $event ), 403, 'event_unpublished' );
+		}
+
+		// 3. Validate Applicant Name (Required for all events)
+		$applicant_name = sanitize_text_field( trim( $params['applicant_name'] ?? '' ) );
+		if ( empty( $applicant_name ) ) {
+			return self::respond_error( __( 'Applicant name is required for all Muhurtham submissions.', 'djv-core' ), 400, 'applicant_name_required' );
+		}
+
+		// 4. Validate Date Range
 		$date_from = sanitize_text_field( $params['date_from'] ?? date( 'Y-m-d' ) );
 		$date_to   = sanitize_text_field( $params['date_to'] ?? date( 'Y-m-d', strtotime( '+30 days' ) ) );
 
 		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_from ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_to ) ) {
-			return self::respond_error( 'Dates must be in YYYY-MM-DD format.', 400, 'invalid_date_format' );
+			return self::respond_error( __( 'Dates must be in YYYY-MM-DD format.', 'djv-core' ), 400, 'invalid_date_format' );
 		}
 
 		if ( strtotime( $date_to ) < strtotime( $date_from ) ) {
-			return self::respond_error( 'To Date must be equal to or later than From Date.', 400, 'invalid_date_range' );
+			return self::respond_error( __( 'To Date must be equal to or later than From Date.', 'djv-core' ), 400, 'invalid_date_range' );
 		}
 
+		// 5. Validate Location & Coordinates
 		$loc = is_array( $params['location'] ?? null ) ? $params['location'] : [];
+		$ceremony_location = sanitize_text_field( $params['ceremony_location'] ?? ( $loc['venue'] ?? ( $loc['city'] ?? 'Hyderabad' ) ) );
+		if ( empty( $ceremony_location ) ) {
+			$ceremony_location = sanitize_text_field( $loc['city'] ?? 'Hyderabad' );
+		}
+
+		$city = sanitize_text_field( $loc['city'] ?? 'Hyderabad' );
+		$state = sanitize_text_field( $loc['state'] ?? 'Telangana' );
 		$lat = floatval( $loc['latitude'] ?? 17.3850 );
 		$lon = floatval( $loc['longitude'] ?? 78.4867 );
+		$tz  = sanitize_text_field( $loc['timezone'] ?? 'Asia/Kolkata' );
 
 		if ( $lat < -90 || $lat > 90 || $lon < -180 || $lon > 180 ) {
-			return self::respond_error( 'Invalid geographic coordinates.', 400, 'invalid_coordinates' );
+			return self::respond_error( __( 'Invalid geographic coordinates.', 'djv-core' ), 400, 'invalid_coordinates' );
 		}
-
-		$tz = sanitize_text_field( $loc['timezone'] ?? 'Asia/Kolkata' );
 
 		$language = sanitize_key( $params['language'] ?? 'en' );
 		if ( ! in_array( $language, [ 'en', 'te', 'hi' ], true ) ) {
 			$language = 'en';
 		}
 
+		$calc_mode = sanitize_key( $params['mode'] ?? 'basic' );
+		if ( ! in_array( $calc_mode, [ 'basic', 'personalized' ], true ) ) {
+			$calc_mode = 'basic';
+		}
+
+		$prefs = is_array( $params['preferences'] ?? null ) ? $params['preferences'] : [];
+		$time_of_day = sanitize_key( $prefs['time_of_day'] ?? ( $params['time_of_day'] ?? 'any' ) );
+		if ( ! in_array( $time_of_day, [ 'any', 'morning', 'afternoon', 'evening' ], true ) ) {
+			$time_of_day = 'any';
+		}
+
+		$contact_email = sanitize_email( $params['contact_email'] ?? '' );
+		$phone_number  = sanitize_text_field( $params['phone_number'] ?? '' );
+
+		// 6. Assemble submission payload & SAVE to database FIRST
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+
+		$submission_payload = [
+			'event'             => $event,
+			'applicant_name'    => $applicant_name,
+			'contact_email'     => $contact_email,
+			'phone_number'      => $phone_number,
+			'ceremony_location' => $ceremony_location,
+			'location'          => [
+				'city'      => $city,
+				'state'     => $state,
+				'latitude'  => $lat,
+				'longitude' => $lon,
+				'timezone'  => $tz,
+			],
+			'date_from'         => $date_from,
+			'date_to'           => $date_to,
+			'mode'              => $calc_mode,
+			'preferences'       => [ 'time_of_day' => $time_of_day ],
+			'participants'      => is_array( $params['participants'] ?? null ) ? $params['participants'] : [],
+			'birth_details'     => is_array( $params['birth_details'] ?? null ) ? $params['birth_details'] : [],
+			'form_data'         => is_array( $params['form_data'] ?? null ) ? array_map( 'sanitize_text_field', $params['form_data'] ) : [],
+			'notes'             => sanitize_textarea_field( $params['notes'] ?? '' ),
+		];
+
+		$saved_sub = DJV_Muhurtham_Submissions::create_submission( $submission_payload );
+		if ( is_wp_error( $saved_sub ) ) {
+			return self::respond_error( $saved_sub->get_error_message(), 500, $saved_sub->get_error_code() );
+		}
+
+		$submission_id = $saved_sub['submission_id'];
+
+		// 7. Execute Astronomical Calculation with selected event rules
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-service.php';
+
 		$clean_args = [
 			'event'        => $event,
 			'date_from'    => $date_from,
 			'date_to'      => $date_to,
 			'language'     => $language,
-			'mode'         => sanitize_key( $params['mode'] ?? 'basic' ),
+			'mode'         => $calc_mode,
 			'location'     => [
-				'city'      => sanitize_text_field( $loc['city'] ?? 'Hyderabad' ),
-				'state'     => sanitize_text_field( $loc['state'] ?? 'Telangana' ),
+				'city'      => $city,
+				'state'     => $state,
 				'latitude'  => $lat,
 				'longitude' => $lon,
 				'timezone'  => $tz,
 			],
-			'preferences'  => is_array( $params['preferences'] ?? null ) ? array_map( 'sanitize_text_field', $params['preferences'] ) : [],
-			'participants' => is_array( $params['participants'] ?? null ) ? $params['participants'] : [],
-			'form_data'    => is_array( $params['form_data'] ?? null ) ? array_map( 'sanitize_text_field', $params['form_data'] ) : [],
+			'preferences'  => [ 'time_of_day' => $time_of_day ],
+			'participants' => $submission_payload['participants'],
+			'form_data'    => $submission_payload['form_data'],
 		];
 
 		$result = DJV_Muhurtham_Service::find_muhurtham( $clean_args );
 
+		// 8. Handle Calculation outcome — NEVER lose the saved submission!
 		if ( isset( $result['status'] ) && $result['status'] === 'error' ) {
-			return self::respond_error( $result['message'] ?? 'Calculation failed', 400, $result['code'] ?? 'calculation_error' );
+			$err_msg = $result['message'] ?? __( 'Calculation engine failed to evaluate dates.', 'djv-core' );
+			DJV_Muhurtham_Submissions::update_calculation_results( $submission_id, 'failed', null, $err_msg );
+
+			return self::respond_error(
+				$err_msg,
+				400,
+				$result['code'] ?? 'calculation_error',
+				[
+					'submission_id' => $submission_id,
+					'reference_id'  => $submission_id,
+					'allow_retry'   => true,
+				]
+			);
 		}
 
+		// Attach submission references to response
+		$result['submission_id']   = $submission_id;
+		$result['reference_id']    = $submission_id;
+		$result['applicant_name']  = $applicant_name;
+		$result['ceremony_location']= $ceremony_location;
+
+		// Persist results into submission record
+		DJV_Muhurtham_Submissions::update_calculation_results( $submission_id, 'success', $result );
+
 		return self::respond( $result );
+	}
+
+	/**
+	 * GET /djv/v1/admin/submissions
+	 */
+	public static function get_admin_submissions( WP_REST_Request $req ): WP_REST_Response {
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+		$params = $req->get_params();
+		$data = DJV_Muhurtham_Submissions::get_submissions( $params );
+		return self::respond( $data );
+	}
+
+	/**
+	 * GET /djv/v1/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)
+	 */
+	public static function get_admin_submission_single( WP_REST_Request $req ): WP_REST_Response {
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+		$id = sanitize_text_field( $req->get_param( 'id' ) );
+		$row = DJV_Muhurtham_Submissions::get_submission( $id );
+		if ( ! $row ) {
+			return self::respond_error( __( 'Submission not found.', 'djv-core' ), 404, 'not_found' );
+		}
+		return self::respond( $row );
+	}
+
+	/**
+	 * POST /djv/v1/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)/status
+	 */
+	public static function post_admin_submission_status( WP_REST_Request $req ): WP_REST_Response {
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+		$id = sanitize_text_field( $req->get_param( 'id' ) );
+		$status = sanitize_key( $req->get_param( 'status' ) );
+		$ok = DJV_Muhurtham_Submissions::update_status( $id, $status );
+		if ( ! $ok ) {
+			return self::respond_error( __( 'Failed to update submission status.', 'djv-core' ), 400, 'update_failed' );
+		}
+		return self::respond( [ 'success' => true, 'submission_id' => $id, 'new_status' => $status ] );
+	}
+
+	/**
+	 * POST /djv/v1/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)/retry
+	 */
+	public static function post_admin_submission_retry( WP_REST_Request $req ): WP_REST_Response {
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+		$id = sanitize_text_field( $req->get_param( 'id' ) );
+		$res = DJV_Muhurtham_Submissions::retry_calculation( $id );
+		if ( is_wp_error( $res ) ) {
+			return self::respond_error( $res->get_error_message(), 400, $res->get_error_code() );
+		}
+		return self::respond( [ 'success' => true, 'submission_id' => $id, 'results' => $res ] );
+	}
+
+	/**
+	 * DELETE /djv/v1/admin/submissions/(?P<id>[a-zA-Z0-9_-]+)
+	 */
+	public static function delete_admin_submission( WP_REST_Request $req ): WP_REST_Response {
+		require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+		$id = sanitize_text_field( $req->get_param( 'id' ) );
+		$ok = DJV_Muhurtham_Submissions::delete_submission( $id );
+		if ( ! $ok ) {
+			return self::respond_error( __( 'Failed to delete submission.', 'djv-core' ), 400, 'delete_failed' );
+		}
+		return self::respond( [ 'success' => true, 'deleted_id' => $id ] );
 	}
 
 	/**

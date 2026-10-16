@@ -48,7 +48,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Ugadi 2027 Date, Significance, Pachadi Recipe & Panchanga Sravanam',
 			'seo_title_te'    => 'ఉగాది 2027 తేదీ, పూజా విధానం, ఉగాది పచ్చడి ప్రాముఖ్యత & పంచాంగ శ్రవణం',
 			'seo_title_hi'    => 'उगादि 2027 तिथि, पूजा विधि, पचड़ी का महत्व एवं पंचांग श्रवण',
-			'seo_desc_en'     => 'Celebrate Telugu New Year Ugadi with authentic Panchangam dates, tithi muhurat, traditional Ugadi Pachadi procedure, and spiritual significance at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Celebrate Telugu New Year Ugadi with authentic Panchangam dates, tithi muhurat, traditional Ugadi Pachadi procedure, and spiritual significance at PujaPanchang.',
 			'seo_desc_te'     => 'ధర్మ జ్యోతి వేదికలో ఉగాది పండుగ విశిష్టత, చైత్ర శుద్ధ పాడ్యమి తిథి ముహూర్తం, ఉగాది పచ్చడి తయారీ విధానం మరియు పంచాంగ శ్రవణ విశేషాలు తెలుసుకోండి.',
 			'seo_desc_hi'     => 'धर्मा ज्योति वेदिका पर उगादि पर्व की प्रामाणिक तिथि, शुभ मुहूर्त, षड्रस पचड़ी का आध्यात्मिक महत्व और पूजा विधान पढ़ें।'
 		],
@@ -87,7 +87,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Gudi Padwa 2027 Date, Muhurat, Gudi Sthapana & Rituals',
 			'seo_title_te'    => 'గుడి పడ్వా 2027 తేదీ, ముహూర్తం, పూజా విధానం మరియు విశిష్టత',
 			'seo_title_hi'    => 'गुड़ी पड़वा 2027 तिथि, गुड़ी स्थापना शुभ मुहूर्त एवं पूजा विधि',
-			'seo_desc_en'     => 'Complete Gudi Padwa guidelines including Gudi hoisting procedure, auspicious muhurat, authentic mantras, and history at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Gudi Padwa guidelines including Gudi hoisting procedure, auspicious muhurat, authentic mantras, and history at PujaPanchang.',
 			'seo_desc_te'     => 'గుడి పడ్వా నూతన సంవత్సర విశేషాలు, గుడి స్థాపన ముహూర్తం మరియు విశిష్టత ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'गुड़ी पड़वा की प्रामाणिक तिथि, शुभ मुहूर्त, गुड़ी निर्माण विधि और धार्मिक महत्व जानिए।'
 		],
@@ -165,7 +165,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Hanuman Jayanti 2027 Date, Puja Muhurat, Sindoor Vidhi & Chalisa',
 			'seo_title_te'    => 'హనుమాన్ జయంతి 2027 తేదీ, తమలపాకుల పూజ, దీక్షా విధానం & చాలీసా',
 			'seo_title_hi'    => 'हनुमान जयंती 2027 तिथि, शुभ मुहूर्त, चोला अर्पण विधि एवं मंत्र',
-			'seo_desc_en'     => 'Celebrate Hanuman Jayanti with auspicious puja timings, Sindoor archana procedure, Telugu Hanuman Jayanti dates, and powerful Hanuman mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Celebrate Hanuman Jayanti with auspicious puja timings, Sindoor archana procedure, Telugu Hanuman Jayanti dates, and powerful Hanuman mantras at PujaPanchang.',
 			'seo_desc_te'     => 'హనుమాన్ జయంతి పూజా విశేషాలు, తమలపాకుల ఆకు పూజ, మండల దీక్షా నియమాలు మరియు హనుమాన్ చాలీసా ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'हनुमान जयंती की प्रामाणिक तिथि, चोला चढ़ाने का सही समय, सुंदरकांड पाठ और संकटमोचन मंत्र।'
 		],
@@ -204,7 +204,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Akshaya Tritiya 2027 Date, Gold Buying Muhurat & Puja Vidhi',
 			'seo_title_te'    => 'అక్షయ తృతీయ 2027 తేదీ, బంగారం కొనుగోలు ముహూర్తం & దాన విశిష్టత',
 			'seo_title_hi'    => 'अक्षय तृतीया 2027 तिथि, सोना खरीदने का शुभ मुहूर्त एवं दान महत्व',
-			'seo_desc_en'     => 'Akshaya Tritiya 2027 auspicious gold buying muhurat, Lakshmi Kubera puja procedure, Udaka Kumbha Dana rules at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Akshaya Tritiya 2027 auspicious gold buying muhurat, Lakshmi Kubera puja procedure, Udaka Kumbha Dana rules at PujaPanchang.',
 			'seo_desc_te'     => 'అక్షయ తృతీయ పూజా విధానం, బంగారం కొనుగోలు శుభ ముహూర్తం, కుంభ దానం మరియు లక్ష్మీ మంత్రాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'अक्षय तृतीया का शुभ मुहूर्त, लक्ष्मी-कुबेर पूजन, स्वर्ण क्रय समय और दान के नियम।'
 		],
@@ -243,7 +243,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Narasimha Jayanti 2027 Date, Twilight Muhurat, Puja Vidhi & Panakam',
 			'seo_title_te'    => 'నరసింహ జయంతి 2027 తేదీ, పూజా విధానం & పానకం విశిష్టత',
 			'seo_title_hi'    => 'नृसिंह जयंती 2027 तिथि, गोधूलि पूजा मुहूर्त एवं नृसिंह कवच',
-			'seo_desc_en'     => 'Narasimha Jayanti 2027 twilight puja muhurat, Ahobilam and Yadagirigutta rituals, Narasimha Kavacha chanting at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Narasimha Jayanti 2027 twilight puja muhurat, Ahobilam and Yadagirigutta rituals, Narasimha Kavacha chanting at PujaPanchang.',
 			'seo_desc_te'     => 'నరసింహ జయంతి విశేషాలు, సాయంసంధ్య ముహూర్తం, పానకం నైవేద్యం మరియు రక్షణ మంత్రాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'नृसिंह जयंती की प्रामाणिक तिथि, सायंकाल पूजा मुहूर्त, नृसिंह मंत्र और कथा।'
 		],
@@ -282,7 +282,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Guru Purnima 2027 Date, Vyasa Puja Muhurat & Guru Padapuja Vidhi',
 			'seo_title_te'    => 'గురు పౌర్ణమి 2027 తేదీ, పూజా విధానం, వ్యాస జయంతి విశిష్టత',
 			'seo_title_hi'    => 'गुरु पूर्णिमा 2027 तिथि, गुरु पूजन विधि एवं व्यास पूर्णिमा महत्व',
-			'seo_desc_en'     => 'Guru Purnima 2027 date, Vyasa Puja muhurat, Guru Stotram lyrics, padapuja vidhi, and spiritual significance at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Guru Purnima 2027 date, Vyasa Puja muhurat, Guru Stotram lyrics, padapuja vidhi, and spiritual significance at PujaPanchang.',
 			'seo_desc_te'     => 'గురు పౌర్ణమి ప్రాముఖ్యత, గురు పూజా విధానం మరియు వేదవ్యాస జయంతి విశేషాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'गुरु पूर्णिमा का शुभ मुहूर्त, गुरु पाद पूजन विधि, गुरु मंत्र और चातुर्मास नियम।'
 		],
@@ -321,7 +321,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Tholi Ekadashi 2027 Date, Fasting Rules & Devshayani Vrat Vidhi',
 			'seo_title_te'    => 'తొలి ఏకాదశి 2027 తేదీ, ఉపవాస నియమాలు & పేలపిండి విశిష్టత',
 			'seo_title_hi'    => 'देवशयनी एकादशी 2027 तिथि, व्रत नियम एवं पंढरपुर वारी महत्व',
-			'seo_desc_en'     => 'Complete guide to Tholi Ekadashi (Devshayani Ekadashi) with exact fasting muhurat, Dwadashi Parana time, and Pela Pindi naivedyam at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete guide to Tholi Ekadashi (Devshayani Ekadashi) with exact fasting muhurat, Dwadashi Parana time, and Pela Pindi naivedyam at PujaPanchang.',
 			'seo_desc_te'     => 'తొలి ఏకాదశి ఉపవాస విధానం, పేలపిండి నైవేద్యం విశిష్టత, ద్వాదశి పారణ ముహూర్తం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'देवशयनी एकादशी की व्रत कथा, पूजा विधि, पारण का सही समय और चातुर्मास के नियम।'
 		],
@@ -360,7 +360,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Nag Panchami 2027 Date, Puja Muhurat, Milk Offering & Sarpa Dosha',
 			'seo_title_te'    => 'నాగ పంచమి 2027 తేదీ, పుట్టలో పాలు పోసే ముహూర్తం & విశిష్టత',
 			'seo_title_hi'    => 'नाग पंचमी 2027 तिथि, नाग पूजा शुभ मुहूर्त एवं कालसर्प दोष निवारण',
-			'seo_desc_en'     => 'Authentic Nag Panchami 2027 guidelines including ant-hill worship vidhi, auspicious milk offering muhurat, and Naga mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Authentic Nag Panchami 2027 guidelines including ant-hill worship vidhi, auspicious milk offering muhurat, and Naga mantras at PujaPanchang.',
 			'seo_desc_te'     => 'నాగ పంచమి పూజా విధానం, పుట్టలో పాలు పోయడం విశిష్టత, అన్నదమ్ముల క్షేమం కోసం నియమాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'नाग पंचमी की प्रामाणिक तिथि, नाग देवता पूजन विधि, मंत्र और कालसर्प दोष के उपाय।'
 		],
@@ -399,7 +399,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Telangana Bonalu 2027 Dates, Secunderabad Ujjaini Mahakali & Rituals',
 			'seo_title_te'    => 'తెలంగాణ బోనాలు 2027 తేదీలు, సికింద్రాబాద్ మహంకాళి బోనం విశేషాలు',
 			'seo_title_hi'    => 'तेलंगाना बोनालु 2027 तिथियां, महाकाली बोनम विधि एवं रंगम महत्व',
-			'seo_desc_en'     => 'Experience Telangana Bonalu festival with complete schedule of Golconda, Secunderabad Mahankali, and Old City Lal Darwaza Bonalu at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Experience Telangana Bonalu festival with complete schedule of Golconda, Secunderabad Mahankali, and Old City Lal Darwaza Bonalu at PujaPanchang.',
 			'seo_desc_te'     => 'బోనాల పండుగ చారిత్రక విశేషాలు, కుండ అలంకరణ పద్ధతి, పోతురాజు మరియు రంగం భవిష్యవాణి ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'बोनालु उत्सव की संपूर्ण जानकारी: महाकाली को बोनम अर्पण, रंगम भविष्यवाणी और तिथियां।'
 		],
@@ -477,7 +477,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Raksha Bandhan 2027 Date, Bhadra-Free Rakhi Muhurat & Upakarma',
 			'seo_title_te'    => 'రాఖీ పౌర్ణమి 2027 తేదీ, రాఖీ కట్టే శుభ ముహూర్తం & జంధ్యాల మార్పిడి',
 			'seo_title_hi'    => 'रक्षा बंधन 2027 तिथि, भद्रा रहित राखी बांधने का शुभ मुहूर्त',
-			'seo_desc_en'     => 'Raksha Bandhan 2027 accurate auspicious timings, Bhadra kaal warning, brother-sister rakhi rituals, and Upakarma vidhi at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Raksha Bandhan 2027 accurate auspicious timings, Bhadra kaal warning, brother-sister rakhi rituals, and Upakarma vidhi at PujaPanchang.',
 			'seo_desc_te'     => 'రాఖీ పౌర్ణమి శుభ ముహూర్తం, భద్ర కాలం సమయాలు మరియు యజ్ఞోపవీత ధారణ విధానం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'रक्षाबंधन 2027: राखी बांधने का सर्वश्रेष्ठ मुहूर्त, भद्रा काल समय और रक्षा सूत्र मंत्र।'
 		],
@@ -516,7 +516,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Krishna Janmashtami 2027 Date, Midnight Nishita Muhurat & Puja Vidhi',
 			'seo_title_te'    => 'శ్రీ కృష్ణాష్టమి 2027 తేదీ, అర్ధరాత్రి పూజా ముహూర్తం & వెన్న నైవేద్యం',
 			'seo_title_hi'    => 'कृष्ण जन्माष्टमी 2027 तिथि, निशीथ काल पूजा मुहूर्त एवं माखन भोग',
-			'seo_desc_en'     => 'Complete Krishna Janmashtami 2027 celebration guide: exact midnight Nishita birth timing, Rohini Nakshatra details, Bal Gopal puja vidhi, and butter naivedyam at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Krishna Janmashtami 2027 celebration guide: exact midnight Nishita birth timing, Rohini Nakshatra details, Bal Gopal puja vidhi, and butter naivedyam at PujaPanchang.',
 			'seo_desc_te'     => 'కృష్ణాష్టమి అర్ధరాత్రి పూజా ముహూర్తం, చిన్ని కృష్ణుని పాదాల ముగ్గులు, వెన్న నైవేద్యం మరియు ఉట్లోత్సవం విశేషాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'कृष्ण जन्माष्टमी का प्रामाणिक निशीथ काल मुहूर्त, लड्डू गोपाल पूजन विधि, रोहिणी नक्षत्र और व्रत नियम।'
 		],
@@ -555,7 +555,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Ganesh Chaturthi 2027 Date, Madhyahna Muhurat, 21 Patri & Moon Sighting Time',
 			'seo_title_te'    => 'వినాయక చవితి 2027 తేదీ, మధ్యాహ్న పూజా ముహూర్తం, 21 పత్రి & వ్రత కథ',
 			'seo_title_hi'    => 'गणेश चतुर्थी 2027 तिथि, स्थापना शुभ मुहूर्त, 21 पत्र पूजा एवं चंद्र दर्शन नियम',
-			'seo_desc_en'     => 'Complete Ganesh Chaturthi 2027 guide: Madhyahna idol installation muhurat, avoid moon sighting timings, 21 sacred leaves checklist, and Modaka naivedyam at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Ganesh Chaturthi 2027 guide: Madhyahna idol installation muhurat, avoid moon sighting timings, 21 sacred leaves checklist, and Modaka naivedyam at PujaPanchang.',
 			'seo_desc_te'     => 'వినాయక చవితి పూజా విధానం, మట్టి గణపతి ప్రతిష్ట ముహూర్తం, ఏకవింశతి పత్రి జాబితా, శ్యమంతకమణి కథ ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'गणेश चतुर्थी की प्रामाणिक तिथि, मध्याह्न स्थापना मुहूर्त, 21 पत्र सूची, मोदक भोग और चंद्र दर्शन वर्जित समय।'
 		],
@@ -594,7 +594,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Ganesh Visarjan 2027 Date, Ananta Chaturdashi Timings & Uttarpuja Vidhi',
 			'seo_title_te'    => 'గణేష్ నిమజ్జనం 2027 తేదీ, ఉత్తర పూజా ముహూర్తం & హుస్సేన్ సాగర్ శోభాయాత్ర',
 			'seo_title_hi'    => 'गणेश विसर्जन 2027 तिथि, अनंत चतुर्दशी शुभ मुहूर्त एवं उत्तरपूजा विधि',
-			'seo_desc_en'     => 'Ganesh Visarjan 2027 accurate immersion timings, step-by-step Uttarpuja procedure, and farewell mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Ganesh Visarjan 2027 accurate immersion timings, step-by-step Uttarpuja procedure, and farewell mantras at PujaPanchang.',
 			'seo_desc_te'     => 'గణేష్ నిమజ్జనం ఉత్తర పూజ, అనంత చతుర్దశి ముహూర్తం మరియు సంప్రదాయ నియమాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'गणेश विसर्जन का शुभ समय, उत्तरपूजा विधि, विसर्जन मंत्र और अनंत चतुर्दशी व्रत।'
 		],
@@ -633,7 +633,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Sharad Navratri 2026 Dates, Ghatasthapana Muhurat & Navadurga Alankarams',
 			'seo_title_te'    => 'శరన్నవరాత్రులు 2026 తేదీలు, ఘటస్థాపన ముహూర్తం & కనకదుర్గ అలంకారాలు',
 			'seo_title_hi'    => 'शारदीय नवरात्रि 2026 तिथियां, घटस्थापना शुभ मुहूर्त एवं नवदुर्गा पूजन विधि',
-			'seo_desc_en'     => 'Sharad Navratri 2026 complete day-by-day calendar: Ghatasthapana timing, Vijayawada Kanaka Durga Alankarams list, Chandi path vidhi, and Durga mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Sharad Navratri 2026 complete day-by-day calendar: Ghatasthapana timing, Vijayawada Kanaka Durga Alankarams list, Chandi path vidhi, and Durga mantras at PujaPanchang.',
 			'seo_desc_te'     => 'శరన్నవరాత్రుల ఘటస్థాపన ముహూర్తం, ఇంద్రకీలాద్రి దేవీ అలంకారాల జాబితా, కుంకుమార్చన విధానం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'शारदीय नवरात्रि की तिथियां, घटस्थापना का श्रेष्ठ मुहूर्त, नवदुर्गा के नौ स्वरूप और पूजा नियम।'
 		],
@@ -672,7 +672,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Vijayadashami Dussehra 2026 Date, Shami Puja Vidhi & Vijaya Muhurat',
 			'seo_title_te'    => 'విజయదశమి దసరా 2026 తేదీ, జమ్మి చెట్టు పూజ ముహూర్తం & శమీ శ్లోకం',
 			'seo_title_hi'    => 'विजयादशमी दशहरा 2026 तिथि, विजय मुहूर्त, शमी पूजन एवं शस्त्र पूजा',
-			'seo_desc_en'     => 'Vijayadashami 2026 celebration guide: exact Vijaya Muhurat timing, Shami Jammi puja sloka and procedure, Ayudha puja rules, and Vidyarambham at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Vijayadashami 2026 celebration guide: exact Vijaya Muhurat timing, Shami Jammi puja sloka and procedure, Ayudha puja rules, and Vidyarambham at PujaPanchang.',
 			'seo_desc_te'     => 'విజయదశమి దసరా విశేషాలు, జమ్మి ఆకుల మార్పిడి సంప్రదాయం, ఆయుధ పూజ మరియు విజయ ముహూర్తం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'विजयादशमी (दशहरा) का शुभ विजय मुहूर्त, शमी वृक्ष पूजन विधि, शस्त्र पूजा और धार्मिक महत्व।'
 		],
@@ -711,7 +711,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Diwali 2026 Date, Lakshmi Puja Pradosha Muhurat & Diya Lighting Rules',
 			'seo_title_te'    => 'దీపావళి 2026 లక్ష్మీ పూజ ముహూర్తం, ప్రదోష కాలం & దీపోత్సవ విశేషాలు',
 			'seo_title_hi'    => 'दिवाली 2026 तिथि, लक्ष्मी पूजन प्रदोष काल शुभ मुहूर्त एवं पूजन विधि',
-			'seo_desc_en'     => 'Complete Diwali 2026 guide: exact Pradosha and Nishita kala Lakshmi puja timings, step-by-step Lakshmi-Kubera vidhi, and auspicious mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Diwali 2026 guide: exact Pradosha and Nishita kala Lakshmi puja timings, step-by-step Lakshmi-Kubera vidhi, and auspicious mantras at PujaPanchang.',
 			'seo_desc_te'     => 'దీపావళి లక్ష్మీ పూజా విధానం, ప్రదోష కాల శుభ ముహూర్తం, దీపాలు వెలిగించే పద్ధతి మరియు లక్ష్మీ మంత్రాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'दीपावली की संपूर्ण जानकारी: लक्ष्मी-गणेश पूजन का श्रेष्ठ मुहूर्त, दीप प्रज्वलन नियम और महालक्ष्मी मंत्र।'
 		],
@@ -750,7 +750,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Karthika Purnima 2026 Date, 365 Wicks Deepotsavam & Tripurari Puja',
 			'seo_title_te'    => 'కార్తీక పౌర్ణమి 2026 తేదీ, 365 వత్తుల దీపం పెట్టే పద్ధతి & ఉసిరి పూజ',
 			'seo_title_hi'    => 'कार्तिक पूर्णिमा 2026 तिथि, देव दीपावली दीपदान एवं 365 बत्ती नियम',
-			'seo_desc_en'     => 'Karthika Purnima 2026 celebration guide: 365-wick deeparadhana method, Usiri Amla deepam vidhi, Satyanarayana Vratham muhurat, and Shiva mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Karthika Purnima 2026 celebration guide: 365-wick deeparadhana method, Usiri Amla deepam vidhi, Satyanarayana Vratham muhurat, and Shiva mantras at PujaPanchang.',
 			'seo_desc_te'     => 'కార్తీక పౌర్ణమి 365 వత్తుల దీపోత్సవం, నదీ స్నానం విశిష్టత, ఉసిరి దీపం పెట్టే విధానం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'कार्तिक पूर्णिमा देव दीपावली का शुभ मुहूर्त, 365 बत्तियों का दीपदान, स्नान का महत्व और शिव पूजा विधि।'
 		],
@@ -789,7 +789,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Makara Sankranti 2027 Date, Uttarayana Punya Kala Muhurat, Bhogi & Kanuma',
 			'seo_title_te'    => 'మకర సంక్రాంతి 2027 పుణ్యకాలం ముహూర్తం, భోగి & కనుమ విశేషాలు',
 			'seo_title_hi'    => 'मकर संक्रांति 2027 तिथि, पुण्यकाल शुभ मुहूर्त, तिल दान एवं उत्तरायण',
-			'seo_desc_en'     => 'Makara Sankranti 2027 exact Uttarayana transit time, Punya Kala muhurat, three-day Telugu Pedda Panduga traditions (Bhogi, Sankranti, Kanuma), and Surya mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Makara Sankranti 2027 exact Uttarayana transit time, Punya Kala muhurat, three-day Telugu Pedda Panduga traditions (Bhogi, Sankranti, Kanuma), and Surya mantras at PujaPanchang.',
 			'seo_desc_te'     => 'మకర సంక్రాంతి పెద్ద పండుగ విశేషాలు, పుణ్యకాల ముహూర్తం, అరిసెలు, భోగి పళ్ళు మరియు కనుమ పశువుల పూజ ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'मकर संक्रांति का सटीक पुण्यकाल मुहूर्त, सूर्य पूजा विधि, तिल-गुड़ दान और उत्तरायण का आध्यात्मिक महत्व।'
 		],
@@ -828,7 +828,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Maha Shivaratri 2027 Date, Lingodbhava Midnight Muhurat & 4 Prahar Puja',
 			'seo_title_te'    => 'మహా శివరాత్రి 2027 తేదీ, లింగోద్భవ ముహూర్తం & జాగరణ నియమాలు',
 			'seo_title_hi'    => 'महाशिवरात्रि 2027 तिथि, चार प्रहर अभिषेक शुभ मुहूर्त एवं ॐ नमः शिवाय मंत्र',
-			'seo_desc_en'     => 'Complete Maha Shivaratri 2027 guide: exact Nishita Lingodbhava midnight timing, Char Prahar Rudrabhishekam schedule, Bilva archana rules, and Shiva mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Maha Shivaratri 2027 guide: exact Nishita Lingodbhava midnight timing, Char Prahar Rudrabhishekam schedule, Bilva archana rules, and Shiva mantras at PujaPanchang.',
 			'seo_desc_te'     => 'మహా శివరాత్రి లింగోద్భవ కాలం, నాలుగు యామాల పంచామృతాభిషేకం, బిల్వార్చన మరియు రాత్రి జాగరణ విశేషాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'महाशिवरात्रि की प्रामाणिक तिथि, निशीथ काल लिंगोद्भव मुहूर्त, चार प्रहर पूजा विधि, बेलपत्र अर्पण नियम और शिव मंत्र।'
 		],
@@ -867,7 +867,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Vasant Panchami 2027 Date, Saraswati Puja Muhurat & Aksharabhyasam Vidhi',
 			'seo_title_te'    => 'వసంత పంచమి 2027 తేదీ, సరస్వతీ పూజా ముహూర్తం & బాసర అక్షరాభ్యాసం',
 			'seo_title_hi'    => 'बसंत पंचमी 2027 तिथि, सरस्वती पूजा शुभ मुहूर्त एवं अक्षराभ्यास विधि',
-			'seo_desc_en'     => 'Vasant Panchami 2027 celebration guide: auspicious Saraswati puja timings, Basara temple Aksharabhyasam rules, yellow dress significance, and Saraswati mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Vasant Panchami 2027 celebration guide: auspicious Saraswati puja timings, Basara temple Aksharabhyasam rules, yellow dress significance, and Saraswati mantras at PujaPanchang.',
 			'seo_desc_te'     => 'వసంత పంచమి సరస్వతీ పూజా విధానం, బాసర అక్షరాభ్యాసం విశేషాలు, పుస్తకాల పూజ మరియు విద్యా మంత్రాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'बसंत पंचमी की प्रामाणिक तिथि, सरस्वती वंदना, विद्यारंभ मुहूर्त और पीले वस्त्रों का महत्व।'
 		],
@@ -906,7 +906,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Ratha Saptami 2027 Date, Arunodaya Snana Muhurat & Jilledu Leaf Snana',
 			'seo_title_te'    => 'రథ సప్తమి 2027 తేదీ, జిల్లేడు ఆకుల స్నానం ముహూర్తం & సూర్య అర్ఘ్య విధానం',
 			'seo_title_hi'    => 'रथ सप्तमी 2027 तिथि, सूर्य जयंती अरुणोदय स्नान मुहूर्त एवं आक पत्ता स्नान',
-			'seo_desc_en'     => 'Ratha Saptami 2027 complete guide: exact Arunodaya bathing timing, Jilledu leaf snana method, outdoor milk boiling tradition, and Surya mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Ratha Saptami 2027 complete guide: exact Arunodaya bathing timing, Jilledu leaf snana method, outdoor milk boiling tradition, and Surya mantras at PujaPanchang.',
 			'seo_desc_te'     => 'రథ సప్తమి స్నాన ముహూర్తం, ఏడు జిల్లేడు ఆకుల ప్రాముఖ్యత, సూర్య భగవానుని పూజా విధానం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'रथ सप्तमी की प्रामाणिक तिथि, अरुणोदय स्नान का सही समय, आदित्य हृदय स्तोत्र और सूर्य अर्घ्य नियम।'
 		],
@@ -945,7 +945,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Holi 2027 Date, Holika Dahan Muhurat & Rangwali Celebration',
 			'seo_title_te'    => 'హోలీ 2027 తేదీ, కామదహనం ముహూర్తం & రంగుల పండుగ విశేషాలు',
 			'seo_title_hi'    => 'होली 2027 तिथि, होलिका दहन शुभ मुहूर्त एवं रंगोत्सव',
-			'seo_desc_en'     => 'Holi 2027 celebration guide: exact Holika Dahan bonfire timings, Bhadra-free muhurat, herbal colors significance, and Radha Krishna mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Holi 2027 celebration guide: exact Holika Dahan bonfire timings, Bhadra-free muhurat, herbal colors significance, and Radha Krishna mantras at PujaPanchang.',
 			'seo_desc_te'     => 'హోలీ కామదహనం ముహూర్తం, హోలికా దహన కథ, సహజసిద్ధ రంగుల ప్రాముఖ్యత ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'होलिका दहन का सही मुहूर्त, भद्रा काल समय, प्रह्लाद कथा और होली पूजा विधि।'
 		],
@@ -984,7 +984,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Telangana Bathukamma 2026 Dates, Saddula Bathukamma Schedule & Songs',
 			'seo_title_te'    => 'తెలంగాణ బతుకమ్మ 2026 తేదీలు, సద్దుల బతుకమ్మ & తీరొక్క పూల విశేషాలు',
 			'seo_title_hi'    => 'बथुकम्मा 2026 तिथियां, तेलंगाना सद्दुल बथुकम्मा एवं पुष्प पूजन विधि',
-			'seo_desc_en'     => 'Complete Telangana Bathukamma 2026 festival guide: 9-day schedule from Engili Pula to Saddula Bathukamma, flower varieties, and folklore songs at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Telangana Bathukamma 2026 festival guide: 9-day schedule from Engili Pula to Saddula Bathukamma, flower varieties, and folklore songs at PujaPanchang.',
 			'seo_desc_te'     => 'బతుకమ్మ పండుగ విశేషాలు, తొమ్మిది రోజుల పేర్లు, సద్దుల బతుకమ్మ నైవేద్యాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'बथुकम्मा पुष्प पर्व की तिथियां, फूलों की सूची, सद्दुल बथुकम्मा और लोकगीतों का महत्व।'
 		],
@@ -1023,7 +1023,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Atla Tadde 2026 Date, Moonrise Time, Gauri Puja Vidhi & Atlu Vayanam',
 			'seo_title_te'    => 'అట్ల తద్దె 2026 తేదీ, చంద్రోదయ సమయం, వాయనం ఇచ్చే పద్ధతి & గోరింటాకు',
 			'seo_title_hi'    => 'अट्ला तद्दे 2026 तिथि, चंद्रोदय समय, पूजा विधि एवं महत्व',
-			'seo_desc_en'     => 'Atla Tadde 2026 complete Telugu festival guide: moonrise timing, 10 Atlu offering vidhi, Gorintaku significance, and Gauri mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Atla Tadde 2026 complete Telugu festival guide: moonrise timing, 10 Atlu offering vidhi, Gorintaku significance, and Gauri mantras at PujaPanchang.',
 			'seo_desc_te'     => 'అట్ల తద్దె పూజా విధానం, చంద్రోదయ ముహూర్తం, 10 అట్లు వాయనం ఇచ్చే పద్ధతి ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'अट्ला तद्दे पर्व की प्रामाणिक तिथि, चंद्र दर्शन समय, गौरी पूजा विधि और अट्टु भोग नियम।'
 		],
@@ -1062,7 +1062,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Karwa Chauth 2026 Date, Moonrise Time, Sargi Muhurat & Puja Vidhi',
 			'seo_title_te'    => 'కరవా చౌత్ 2026 తేదీ, చంద్రోదయ సమయం & నిర్జల ఉపవాస నియమాలు',
 			'seo_title_hi'    => 'करवा चौथ 2026 तिथि, चंद्रोदय का समय, सरगी मुहूर्त एवं पूजा विधि',
-			'seo_desc_en'     => 'Karwa Chauth 2026 complete guide: city-wise moonrise timings, Sargi eating muhurat, Karwa katha text, and sieve sighting rituals at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Karwa Chauth 2026 complete guide: city-wise moonrise timings, Sargi eating muhurat, Karwa katha text, and sieve sighting rituals at PujaPanchang.',
 			'seo_desc_te'     => 'కరవా చౌత్ విశేషాలు, చంద్రోదయ సమయం, సర్గి ముహూర్తం మరియు సంప్రదాయాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'करवा चौथ की प्रामाणिक तिथि, आपके शहर में चांद निकलने का सही समय, पूजा मुहूर्त और व्रत कथा।'
 		],
@@ -1101,7 +1101,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Dhanteras 2026 Date, Gold Buying Muhurat, Yamadeepdaan & Puja Vidhi',
 			'seo_title_te'    => 'ధన త్రయోదశి 2026 తేదీ, బంగారం కొనుగోలు ముహూర్తం & యమదీప దానం',
 			'seo_title_hi'    => 'धनतेरस 2026 तिथि, बर्तन व सोना खरीदने का शुभ मुहूर्त एवं यम दीपदान',
-			'seo_desc_en'     => 'Dhanteras 2026 complete guide: auspicious buying timings, Dhanvantari puja procedure, Yamadeepdaan rules, and Kubera mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Dhanteras 2026 complete guide: auspicious buying timings, Dhanvantari puja procedure, Yamadeepdaan rules, and Kubera mantras at PujaPanchang.',
 			'seo_desc_te'     => 'ధన త్రయోదశి విశేషాలు, ధన్వంతరి జయంతి, బంగారం కొనుగోలు శుభ ముహూర్తం మరియు యమదీపం ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'धनतेरस का शुभ मुहूर्त, धन्वंतरि पूजन, यम दीपदान विधि और सोना-चांदी खरीदने का सर्वश्रेष्ठ समय।'
 		],
@@ -1140,7 +1140,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Naraka Chaturdashi 2026 Date, Abhyanga Snana Muhurat & Significance',
 			'seo_title_te'    => 'నరక చతుర్దశి 2026 తేదీ, తలంటు స్నానం ముహూర్తం & నరకాసుర వధ కథ',
 			'seo_title_hi'    => 'नरक चतुर्दशी 2026 तिथि, रूप चौदस अभ्यंग स्नान मुहूर्त एवं कथा',
-			'seo_desc_en'     => 'Naraka Chaturdashi 2026 pre-dawn Abhyanga Snana muhurat, Satyabhama and Krishna victory story, and Choti Diwali rituals at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Naraka Chaturdashi 2026 pre-dawn Abhyanga Snana muhurat, Satyabhama and Krishna victory story, and Choti Diwali rituals at PujaPanchang.',
 			'seo_desc_te'     => 'నరక చతుర్దశి అభ్యంగన స్నాన ముహూర్తం, నరకాసుర వధ విశేషాలు మరియు బాణసంచా సంబరాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'नरक चतुर्दशी छोटी दिवाली का शुभ मुहूर्त, यम तर्पण, अभ्यंग स्नान विधि और कथा।'
 		],
@@ -1179,7 +1179,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Govardhan Puja 2026 Date, Annakut 56 Bhog Muhurat & Vidhi',
 			'seo_title_te'    => 'గోవర్ధన పూజ 2026 తేదీ, అన్నకూట్ విశేషాలు & గోపూజ విధానం',
 			'seo_title_hi'    => 'गोवर्धन पूजा 2026 तिथि, अन्नकूट 56 भोग शुभ मुहूर्त एवं पूजन विधि',
-			'seo_desc_en'     => 'Govardhan Puja 2026 Annakut celebration guide: exact morning and evening muhurat, cow dung Giriraj sthapana, and Krishna mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Govardhan Puja 2026 Annakut celebration guide: exact morning and evening muhurat, cow dung Giriraj sthapana, and Krishna mantras at PujaPanchang.',
 			'seo_desc_te'     => 'గోవర్ధన పూజ విశేషాలు, అన్నకూటోత్సవం, గోపూజ ముహూర్తం మరియు కృష్ణ సంకీర్తనలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'गोवर्धन पूजा का शुभ मुहूर्त, अन्नकूट 56 भोग, गोमाता पूजन विधि और गिरिराज परिक्रमा महत्व।'
 		],
@@ -1218,7 +1218,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Bhai Dooj 2026 Date, Yama Dwitiya Tilak Muhurat & Rituals',
 			'seo_title_te'    => 'యమ ద్వితీయ 2026 తేదీ, భగినీ హస్తభోజనం ముహూర్తం & కథ',
 			'seo_title_hi'    => 'भाई दूज 2026 तिथि, यम द्वितीया टीका शुभ मुहूर्त एवं कथा',
-			'seo_desc_en'     => 'Bhai Dooj 2026 accurate tilak muhurat timings, Yama and Yamuna story, sister feast traditions at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Bhai Dooj 2026 accurate tilak muhurat timings, Yama and Yamuna story, sister feast traditions at PujaPanchang.',
 			'seo_desc_te'     => 'భగినీ హస్తభోజనం విశేషాలు, యమ ద్వితీయ శుభ ముహూర్తం మరియు సంప్రదాయాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'भाई दूज यम द्वितीया का शुभ मुहूर्त, टीका लगाने का सही समय और यम-यमुना की कथा।'
 		],
@@ -1257,7 +1257,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Karthika Masam 2026 Dates, Somavara Fasting Rules & Daily Deepam Vidhi',
 			'seo_title_te'    => 'కార్తీక మాసం 2026 తేదీలు, కార్తీక సోమవారం ఉపవాస నియమాలు & పురాణం',
 			'seo_title_hi'    => 'कार्तिक मास 2026 तिथियां, कार्तिक सोमवार व्रत नियम एवं दीपदान विधि',
-			'seo_desc_en'     => 'Complete Karthika Masam 2026 schedule: Karthika Somavaram fasting rules, daily deeparadhana guidelines, Vanabhojanam details, and Shiva mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Complete Karthika Masam 2026 schedule: Karthika Somavaram fasting rules, daily deeparadhana guidelines, Vanabhojanam details, and Shiva mantras at PujaPanchang.',
 			'seo_desc_te'     => 'కార్తీక మాసం విశేషాలు, సోమవారాల ఉపవాస పద్ధతి, తులసి దీపం, కార్తీక పురాణ పారాయణ ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'कार्तिक मास का संपूर्ण महात्म्य, स्नान-दान के नियम, कार्तिक सोमवार व्रत और दीप प्रज्वलन विधि।'
 		],
@@ -1296,7 +1296,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Vaikuntha Ekadashi 2027 Date, Tirumala Uttara Dvara Darshanam & Gita Jayanti',
 			'seo_title_te'    => 'వైకుంఠ ఏకాదశి 2027 తేదీ, తిరుమల ఉత్తర ద్వార దర్శనం & ఉపవాస నియమాలు',
 			'seo_title_hi'    => 'वैकुंठ एकादशी 2027 तिथि, मोक्षदा एकादशी, उत्तर द्वार दर्शन एवं गीता जयंती',
-			'seo_desc_en'     => 'Vaikuntha Ekadashi 2027 complete guide: Mukkoti Ekadashi significance, Tirumala Uttara Dvara timings, Gita Jayanti recitation, and fasting rules at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Vaikuntha Ekadashi 2027 complete guide: Mukkoti Ekadashi significance, Tirumala Uttara Dvara timings, Gita Jayanti recitation, and fasting rules at PujaPanchang.',
 			'seo_desc_te'     => 'ముక్కోటి ఏకాదశి విశేషాలు, ఉత్తర ద్వార దర్శన ఫలం, గీతా జయంతి మరియు ఏకాదశి ఉపవాస పద్ధతి ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'वैकुंठ एकादशी मोक्षदा एकादशी का शुभ समय, उत्तर द्वार दर्शन का महत्व, व्रत कथा और गीता जयंती।'
 		],
@@ -1335,7 +1335,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Datta Jayanti 2026 Date, Dattatreya Puja Muhurat & Guru Charitra',
 			'seo_title_te'    => 'దత్త జయంతి 2026 తేదీ, త్రిమూర్తి అవతార పూజా విధానం & గురు చరిత్ర',
 			'seo_title_hi'    => 'दत्तात्रेय जयंती 2026 तिथि, शुभ मुहूर्त, गुरु चरित्र पाठ एवं महत्व',
-			'seo_desc_en'     => 'Datta Jayanti 2026 complete celebration guide: Dattatreya birth muhurat, Audumbara tree worship, Guru Charitra parayana, and mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Datta Jayanti 2026 complete celebration guide: Dattatreya birth muhurat, Audumbara tree worship, Guru Charitra parayana, and mantras at PujaPanchang.',
 			'seo_desc_te'     => 'దత్తాత్రేయ జయంతి విశేషాలు, గురు పూజా విధానం, అనసూయ అత్రి మహర్షి కథ ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'दत्तात्रेय जयंती का पावन मुहूर्त, गुरु पूजन विधि, 24 गुरुओं की सीख और मंत्र।'
 		],
@@ -1374,7 +1374,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Bhogi 2027 Date, Bhogi Mantalu Timings & Bhogi Pallu Ceremony',
 			'seo_title_te'    => 'భోగి 2027 పండుగ తేదీ, భోగి మంటల సమయం & భోగి పళ్ళు పోసే విధానం',
 			'seo_title_hi'    => 'भोगी 2027 तिथि, भोगी अग्नि समय एवं बच्चों के भोगी पल्लु संस्कार',
-			'seo_desc_en'     => 'Bhogi 2027 festive celebration guide: early morning bonfire timing, traditional Bhogi Pallu ceremony for children, and Telugu customs at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Bhogi 2027 festive celebration guide: early morning bonfire timing, traditional Bhogi Pallu ceremony for children, and Telugu customs at PujaPanchang.',
 			'seo_desc_te'     => 'భోగి పండుగ విశేషాలు, భోగి మంటల ప్రాముఖ్యత, పిల్లలకు భోగి పళ్ళు పోసే పద్ధతి ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'भोगी उत्सव की संपूर्ण विधि, सुबह की पावन अग्नि, भोगी पल्लु नियम और संक्रांति महत्व।'
 		],
@@ -1413,7 +1413,7 @@ function djv_get_canonical_festivals(): array {
 			'seo_title_en'    => 'Kanuma & Mukkanuma 2027 Dates, Cattle Worship Vidhi & Travel Rules',
 			'seo_title_te'    => 'కనుమ 2027 పండుగ విశేషాలు, పశువుల పూజ పద్ధతి & ముక్కనుమ సంబరాలు',
 			'seo_title_hi'    => 'कनुमा 2027 तिथि, गोमाता-बैल पूजन विधि एवं यात्रा नियम',
-			'seo_desc_en'     => 'Kanuma 2027 traditions: cattle worship procedure, no-travel custom explanation, Mukkanuma feasts, and Pongal offerings at Dharma Jyothi Vedika.',
+			'seo_desc_en'     => 'Kanuma 2027 traditions: cattle worship procedure, no-travel custom explanation, Mukkanuma feasts, and Pongal offerings at PujaPanchang.',
 			'seo_desc_te'     => 'కనుమ పశువుల పూజ, కనుమ నాడు ప్రయాణాలు ఎందుకు చేయకూడదు, ముక్కనుమ విందుల వివరాలు ధర్మ జ్యోతి వేదికలో చదవండి.',
 			'seo_desc_hi'     => 'कनुमा पर्व की संपूर्ण विधि, गोपूजा का महत्व, यात्रा निषेध का कारण और मुक्कनुमा उत्सव।'
 		]

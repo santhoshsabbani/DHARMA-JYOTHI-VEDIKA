@@ -241,111 +241,9 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 
 		</section>
 
-		<!-- ─── INTERACTIVE DYNAMIC FORM (Section 4–11) ───────────────── -->
-		<section id="muhurtham-finder-form-section" style="background: #FFF; border: 2px solid var(--clr-secondary); border-radius: 1.25rem; padding: 2.5rem; box-shadow: var(--shadow-lg, 0 8px 30px rgba(0,0,0,0.08)); margin-bottom: 3.5rem;">
-			<div style="border-bottom: 1px solid var(--clr-border); padding-bottom: 1.5rem; margin-bottom: 2rem;">
-				<span style="font-size: 0.8125rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase; letter-spacing: 0.05em;">
-					🎯 <?php esc_html_e( 'Vedic Astrological Calculator', 'djv-theme' ); ?>
-				</span>
-				<h2 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.3rem); color: var(--clr-primary); margin: 0.4rem 0 0.5rem 0;">
-					<?php echo esc_html( djv_loc( $labels, 'form_title', $current_lang ) ); ?>
-				</h2>
-				<p style="font-size: 1rem; color: var(--clr-text-secondary); margin: 0;">
-					<?php echo esc_html( djv_loc( $labels, 'form_sub', $current_lang ) ); ?>
-				</p>
-			</div>
+		<!-- ─── REUSABLE COMMON MUHURTHAM FORM COMPONENT ─────────────── -->
+		<?php djv_render_common_muhurtham_form( $event_def, $current_lang ); ?>
 
-			<form id="djv-muhurtham-form" novalidate>
-				<input type="hidden" id="form-event-slug" value="<?php echo esc_attr( $current_slug ); ?>">
-				<input type="hidden" id="form-lang" value="<?php echo esc_attr( $current_lang ); ?>">
-
-				<!-- Event-Specific Schema Form Fields -->
-				<?php djv_render_event_form_fields( $form_schema, $current_lang, $event_def ); ?>
-
-				<!-- Universal Sections: Location, Date Range, Time of Day -->
-				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem;">
-
-					<!-- Location Picker (Integrated with DJV system) -->
-					<div>
-						<label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
-							📍 <?php echo esc_html( djv_loc( $labels, 'location_label', $current_lang ) ); ?>
-						</label>
-						<div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-							<div>
-								<div id="form-location-display" style="font-weight: 700; color: var(--clr-dark); font-size: 1rem;">Hyderabad, Telangana</div>
-								<div id="form-location-coords" style="font-size: 0.75rem; color: var(--clr-text-muted);">17.3850° N, 78.4867° E (Asia/Kolkata)</div>
-							</div>
-							<button type="button" id="form-change-loc-btn" class="global-location-pill" style="background: var(--clr-primary-faint, #F9EDE9); border: 1px solid var(--clr-primary); color: var(--clr-primary); padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer;">
-								<?php esc_html_e( 'Change City', 'djv-theme' ); ?>
-							</button>
-						</div>
-						<!-- Hidden inputs for location coordinates -->
-						<input type="hidden" id="form-loc-city" value="Hyderabad">
-						<input type="hidden" id="form-loc-state" value="Telangana">
-						<input type="hidden" id="form-loc-lat" value="17.3850">
-						<input type="hidden" id="form-loc-lon" value="78.4867">
-						<input type="hidden" id="form-loc-tz" value="Asia/Kolkata">
-					</div>
-
-					<!-- Date Range (From - To) -->
-					<div>
-						<label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
-							📅 <?php echo esc_html( djv_loc( $labels, 'date_range_label', $current_lang ) ); ?>
-						</label>
-						<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-							<div>
-								<span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;"><?php echo esc_html( djv_loc( $labels, 'from_date', $current_lang ) ); ?></span>
-								<input type="date" id="form-date-from" value="<?php echo esc_attr( date('Y-m-d') ); ?>" style="width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem;">
-							</div>
-							<div>
-								<span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;"><?php echo esc_html( djv_loc( $labels, 'to_date', $current_lang ) ); ?></span>
-								<input type="date" id="form-date-to" value="<?php echo esc_attr( date('Y-m-d', strtotime('+30 days')) ); ?>" style="width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem;">
-							</div>
-						</div>
-						<!-- Quick Range Expansion Buttons -->
-						<div style="display: flex; gap: 0.4rem; margin-top: 0.6rem;">
-							<button type="button" class="btn-range-preset" data-days="30" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+30 Days</button>
-							<button type="button" class="btn-range-preset" data-days="60" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+60 Days</button>
-							<button type="button" class="btn-range-preset" data-days="90" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.35rem; cursor: pointer;">+90 Days</button>
-						</div>
-					</div>
-
-				</div>
-
-				<!-- Preferred Time of Day (Radio Pills) -->
-				<div style="margin-bottom: 2rem;">
-					<label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">
-						⏰ <?php echo esc_html( djv_loc( $labels, 'time_pref_label', $current_lang ) ); ?>
-					</label>
-					<div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
-						<label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.55rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
-							<input type="radio" name="time_of_day" value="any" checked style="accent-color: var(--clr-primary);">
-							<span><?php echo esc_html( djv_loc( $labels, 'time_any', $current_lang ) ); ?></span>
-						</label>
-						<label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.55rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
-							<input type="radio" name="time_of_day" value="morning" style="accent-color: var(--clr-primary);">
-							<span><?php echo esc_html( djv_loc( $labels, 'time_morning', $current_lang ) ); ?></span>
-						</label>
-						<label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.55rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
-							<input type="radio" name="time_of_day" value="afternoon" style="accent-color: var(--clr-primary);">
-							<span><?php echo esc_html( djv_loc( $labels, 'time_afternoon', $current_lang ) ); ?></span>
-						</label>
-						<label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.55rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
-							<input type="radio" name="time_of_day" value="evening" style="accent-color: var(--clr-primary);">
-							<span><?php echo esc_html( djv_loc( $labels, 'time_evening', $current_lang ) ); ?></span>
-						</label>
-					</div>
-				</div>
-
-				<!-- Form Actions -->
-				<div style="text-align: center;">
-					<button type="submit" id="btn-submit-muhurtham" style="padding: 1rem 2.5rem; border-radius: 9999px; background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-light, #9B3128)); color: #FFF; border: none; font-size: 1.05rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.6rem; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-						<span>🔮</span>
-						<span id="btn-submit-text"><?php echo esc_html( djv_loc( $labels, 'submit_btn', $current_lang ) ); ?></span>
-					</button>
-				</div>
-			</form>
-		</section>
 
 		<!-- ─── RESULTS CONTAINER (Section 16–23) ─────────────────────── -->
 		<section id="muhurtham-results-wrapper" style="display: none; margin-bottom: 4rem;">
@@ -364,6 +262,11 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 						<span>📅 <span id="recap-dates-text">Date Range</span></span>
 						<span id="recap-mode-badge" style="background: rgba(231,183,90,0.2); border: 1px solid rgba(231,183,90,0.4); padding: 0.15rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; color: var(--clr-accent);">Basic Mode</span>
 					</div>
+					<div id="recap-ref-box" style="margin-top: 0.5rem; display: none;">
+						<span style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(46,125,91,0.25); border: 1px solid rgba(78,190,143,0.5); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: #4EBE8F;">
+							✓ Saved Reference ID: <code id="recap-sub-id" style="color: #FFF; background: transparent; padding: 0;">—</code>
+						</span>
+					</div>
 				</div>
 				<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
 					<button type="button" id="btn-results-compare" style="display: none; padding: 0.6rem 1.1rem; border-radius: 9999px; background: var(--clr-secondary); color: var(--clr-dark); font-weight: 700; border: none; font-size: 0.85rem; cursor: pointer;">
@@ -374,6 +277,25 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 					</button>
 					<button type="button" id="btn-results-share" style="padding: 0.6rem 1.1rem; border-radius: 9999px; background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
 						🔗 <?php esc_html_e( 'Share', 'djv-theme' ); ?>
+					</button>
+				</div>
+			</div>
+
+			<!-- Calculation Failure & Retry Block (Section 5: Never lose a saved submission) -->
+			<div id="calc-error-block" style="display: none; background: #FFF; border: 1.5px solid #F5C6CB; border-radius: 1.25rem; padding: 2.5rem 2rem; text-align: center; margin-bottom: 2rem;">
+				<div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+				<h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #721C24; margin: 0 0 0.5rem 0;">
+					<?php esc_html_e( 'Calculation Error Encountered', 'djv-theme' ); ?>
+				</h3>
+				<p id="calc-error-message" style="color: #6B574F; max-width: 600px; margin: 0 auto 1.25rem auto; line-height: 1.6; font-size: 0.95rem;">
+					<!-- Error description -->
+				</p>
+				<div style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.75rem; padding: 0.65rem 1.25rem; display: inline-block; margin-bottom: 1.25rem; font-size: 0.85rem;">
+					<?php esc_html_e( 'Your submission is safely recorded with Reference ID:', 'djv-theme' ); ?> <strong id="calc-error-sub-id" style="color: var(--clr-primary);">—</strong>
+				</div>
+				<div>
+					<button type="button" id="btn-calc-retry" style="padding: 0.75rem 2rem; border-radius: 9999px; background: var(--clr-primary); color: #FFF; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+						<span>🔄</span> <?php esc_html_e( 'Retry Calculation', 'djv-theme' ); ?>
 					</button>
 				</div>
 			</div>
@@ -409,7 +331,7 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			<div style="margin-top: 2rem; padding: 1.25rem 1.5rem; background: var(--clr-bg); border-radius: 0.75rem; border: 1px solid var(--clr-border); font-size: 0.85rem; color: var(--clr-text-muted); line-height: 1.6; text-align: center;">
 				<strong><?php esc_html_e( 'Important Notice:', 'djv-theme' ); ?></strong>
 				<span id="results-disclaimer-text">
-					<?php esc_html_e( 'Calculated using DJV Panchangam and event-specific Muhurtham rules. Traditions and regional practices can differ. Consult a qualified priest/acharya for final confirmation.', 'djv-theme' ); ?>
+					<?php esc_html_e( 'Calculated using PujaPanchang and event-specific Muhurtham rules. Traditions and regional practices can differ. Consult a qualified priest/acharya for final confirmation.', 'djv-theme' ); ?>
 				</span>
 			</div>
 		</section>
@@ -419,7 +341,7 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			<div style="background: #FFF; border-radius: 1.25rem; max-width: 960px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
 				<div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--clr-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
 					<div>
-						<span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">DJV Comparison Engine</span>
+						<span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-secondary); text-transform: uppercase;">PujaPanchang Comparison Engine</span>
 						<h3 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--clr-primary); margin: 0.25rem 0 0 0;">
 							<?php esc_html_e( 'Side-by-Side Muhurtham Comparison', 'djv-theme' ); ?>
 						</h3>
@@ -594,19 +516,74 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 		});
 	}
 
+	function showFormAlert(msg) {
+		var alertBox = document.getElementById('form-validation-alert');
+		var alertMsg = document.getElementById('form-validation-msg');
+		if (alertBox && alertMsg) {
+			alertMsg.textContent = msg;
+			alertBox.style.display = 'block';
+			alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		} else {
+			alert(msg);
+		}
+	}
+
+	function hideFormAlert() {
+		var alertBox = document.getElementById('form-validation-alert');
+		if (alertBox) alertBox.style.display = 'none';
+	}
+
 	function executeCalculation() {
+		hideFormAlert();
+
+		// 1. Validate Applicant Name (Required for all events)
+		var applicantNameInp = document.getElementById('applicant-name');
+		var applicantName = applicantNameInp ? applicantNameInp.value.trim() : '';
+		if (!applicantName) {
+			showFormAlert('Please enter the Applicant Name (Required).');
+			if (applicantNameInp) applicantNameInp.focus();
+			return;
+		}
+
+		// 2. Validate Ceremony Location (Required)
+		var ceremonyLocInp = document.getElementById('ceremony-location');
+		var ceremonyLocation = ceremonyLocInp ? ceremonyLocInp.value.trim() : '';
+		if (!ceremonyLocation) {
+			showFormAlert('Please enter the Ceremony Venue / Location Name (Required).');
+			if (ceremonyLocInp) ceremonyLocInp.focus();
+			return;
+		}
+
+		// 3. Validate Date Range
+		var dateFromInp = document.getElementById('form-date-from');
+		var dateToInp = document.getElementById('form-date-to');
+		var dateFrom = dateFromInp ? dateFromInp.value : '';
+		var dateTo = dateToInp ? dateToInp.value : '';
+
+		if (!dateFrom || !dateTo) {
+			showFormAlert('Both From Date and To Date are required.');
+			return;
+		}
+
+		if (new Date(dateTo) < new Date(dateFrom)) {
+			showFormAlert('To Date must be equal to or later than From Date.');
+			return;
+		}
+
 		var submitBtn = document.getElementById('btn-submit-muhurtham');
 		var submitText = document.getElementById('btn-submit-text');
 		var resultsWrapper = document.getElementById('muhurtham-results-wrapper');
 		var cardsContainer = document.getElementById('results-cards-container');
 		var noResultsBlock = document.getElementById('no-results-found-block');
+		var calcErrorBlock = document.getElementById('calc-error-block');
 
 		if (submitBtn) submitBtn.disabled = true;
-		if (submitText) submitText.textContent = 'Calculating Astronomical Ephemeris…';
+		if (submitText) submitText.textContent = 'Saving Submission & Calculating Ephemeris…';
 
-		var eventSlug = document.getElementById('form-event-slug').value || 'marriage';
-		var dateFrom = document.getElementById('form-date-from').value;
-		var dateTo = document.getElementById('form-date-to').value;
+		var eventSlug = document.getElementById('form-event-slug') ? document.getElementById('form-event-slug').value : 'marriage';
+		var contactEmail = document.getElementById('contact-email') ? document.getElementById('contact-email').value.trim() : '';
+		var phoneNumber = document.getElementById('phone-number') ? document.getElementById('phone-number').value.trim() : '';
+
 		var lat = parseFloat(document.getElementById('form-loc-lat').value || '17.3850');
 		var lon = parseFloat(document.getElementById('form-loc-lon').value || '78.4867');
 		var city = document.getElementById('form-loc-city').value || 'Hyderabad';
@@ -622,6 +599,10 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 
 		var payload = {
 			event: eventSlug,
+			applicant_name: applicantName,
+			contact_email: contactEmail,
+			phone_number: phoneNumber,
+			ceremony_location: ceremonyLocation,
 			date_from: dateFrom,
 			date_to: dateTo,
 			language: lang,
@@ -636,20 +617,11 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			preferences: {
 				time_of_day: timePref
 			},
-			participants: {}
+			participants: {},
+			birth_details: {}
 		};
 
-		// Collect all event-specific schema form fields
-		var formData = {};
-		var allFormInputs = form.querySelectorAll('input:not([type="radio"]):not([type="hidden"]), select, textarea');
-		allFormInputs.forEach(function(inp) {
-			if (inp.id) {
-				formData[inp.id] = inp.value;
-			}
-		});
-		payload.form_data = formData;
-
-		// If Marriage personalized mode, collect bride & groom
+		// Collect Marriage Bride & Groom details if present
 		if (eventSlug === 'marriage') {
 			var bName = document.getElementById('bride-name');
 			var bDob = document.getElementById('bride-dob');
@@ -660,23 +632,37 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			var gTime = document.getElementById('groom-time');
 			var gPlace = document.getElementById('groom-place');
 
-			if (bDob && bDob.value && gDob && gDob.value) {
+			if ((bDob && bDob.value) || (gDob && gDob.value) || (bName && bName.value)) {
 				payload.participants = {
-					bride: { name: bName ? bName.value : '', dob: bDob.value, time: bTime ? bTime.value : '', place: bPlace ? bPlace.value : '' },
-					groom: { name: gName ? gName.value : '', dob: gDob.value, time: gTime ? gTime.value : '', place: gPlace ? gPlace.value : '' },
-					bride_dob: bDob.value,
-					groom_dob: gDob.value,
+					bride: { name: bName ? bName.value : '', dob: bDob ? bDob.value : '', time: bTime ? bTime.value : '', place: bPlace ? bPlace.value : '' },
+					groom: { name: gName ? gName.value : '', dob: gDob ? gDob.value : '', time: gTime ? gTime.value : '', place: gPlace ? gPlace.value : '' },
+					bride_dob: bDob ? bDob.value : '',
+					groom_dob: gDob ? gDob.value : '',
 					bride_time: bTime ? bTime.value : '',
 					groom_time: gTime ? gTime.value : ''
 				};
 			}
+		} else {
+			// Other events optional birth details
+			var aDob = document.getElementById('applicant-dob');
+			var aTime = document.getElementById('applicant-time');
+			var aCity = document.getElementById('applicant-city');
+			if ((aDob && aDob.value) || (aCity && aCity.value)) {
+				payload.birth_details = {
+					dob: aDob ? aDob.value : '',
+					time: aTime ? aTime.value : '',
+					city: aCity ? aCity.value : ''
+				};
+			}
 		}
 
-		// Update recap banner
+		// Update recap banner display
 		var recapDates = document.getElementById('recap-dates-text');
+		var recapLoc = document.getElementById('recap-location-text');
 		var recapMode = document.getElementById('recap-mode-badge');
 		if (recapDates) recapDates.textContent = dateFrom + ' to ' + dateTo;
-		if (recapMode) recapMode.textContent = mode === 'personalized' ? 'Personalized Kundali Mode' : 'Basic Panchanga Mode';
+		if (recapLoc) recapLoc.textContent = ceremonyLocation + ' (' + city + ')';
+		if (recapMode) recapMode.textContent = (mode === 'personalized') ? 'Personalized Mode' : 'Basic Panchanga Mode';
 
 		// Call POST /wp-json/djv/v1/muhurtham
 		fetch('/wp-json/djv/v1/muhurtham', {
@@ -685,18 +671,54 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			body: JSON.stringify(payload)
 		})
 		.then(function(res) {
-			if (!res.ok) {
-				return res.json().then(function(j) { throw new Error(j.message || 'Server error'); });
-			}
-			return res.json();
+			return res.json().then(function(json) {
+				return { ok: res.ok, status: res.status, data: json };
+			});
 		})
-		.then(function(data) {
+		.then(function(resp) {
 			if (submitBtn) submitBtn.disabled = false;
 			if (submitText) submitText.textContent = 'Calculate Auspicious Muhurthams';
 
 			if (resultsWrapper) resultsWrapper.style.display = 'block';
 
-			var payloadData = data.data || data;
+			var payloadData = resp.data.data || resp.data;
+			var subId = payloadData.submission_id || payloadData.reference_id || (resp.data.data && resp.data.data.submission_id) || '';
+
+			// Show Reference ID Badge
+			if (subId) {
+				var refBadge = document.getElementById('recap-ref-box');
+				var refCode = document.getElementById('recap-sub-id');
+				if (refCode) refCode.textContent = subId;
+				if (refBadge) refBadge.style.display = 'block';
+			}
+
+			// If Calculation Failed
+			if (!resp.ok || payloadData.status === 'error') {
+				if (cardsContainer) cardsContainer.innerHTML = '';
+				if (noResultsBlock) noResultsBlock.style.display = 'none';
+
+				if (calcErrorBlock) {
+					var errMsg = document.getElementById('calc-error-message');
+					var errSubId = document.getElementById('calc-error-sub-id');
+					if (errMsg) errMsg.textContent = payloadData.message || 'Astronomical ephemeris calculation could not complete for the requested parameters.';
+					if (errSubId) errSubId.textContent = subId || 'Saved in Database';
+					calcErrorBlock.style.display = 'block';
+
+					var retryBtn = document.getElementById('btn-calc-retry');
+					if (retryBtn) {
+						retryBtn.onclick = function() {
+							executeCalculation();
+						};
+					}
+				}
+
+				resultsWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				return;
+			}
+
+			// Calculation Succeeded
+			if (calcErrorBlock) calcErrorBlock.style.display = 'none';
+
 			var results = payloadData.results || [];
 			currentResults = results;
 			selectedForCompare = [];
@@ -717,7 +739,13 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			console.error('Muhurtham calculation error:', err);
 			if (submitBtn) submitBtn.disabled = false;
 			if (submitText) submitText.textContent = 'Calculate Auspicious Muhurthams';
-			alert('Muhurtham calculation failed: ' + (err.message || 'Unknown error. Please check your date range and inputs.'));
+
+			if (resultsWrapper) resultsWrapper.style.display = 'block';
+			if (calcErrorBlock) {
+				var errMsg = document.getElementById('calc-error-message');
+				if (errMsg) errMsg.textContent = err.message || 'Connection error. Please check your network and retry.';
+				calcErrorBlock.style.display = 'block';
+			}
 		});
 	}
 
@@ -826,7 +854,6 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 						<div><strong>Gulika Kalam:</strong> ${item.inauspicious_periods.gulika_kalam || 'None'}</div>
 						<div><strong>Dur Muhurtham:</strong> ${item.inauspicious_periods.dur_muhurtham || 'None'}</div>
 						<div><strong>Varjyam:</strong> ${item.inauspicious_periods.varjyam || 'None'}</div>
-						<div><strong>Rule Engine:</strong> ${item.rule_set_used}</div>
 					</div>
 				</details>
 			`;
@@ -943,7 +970,7 @@ function djv_loc( array $labels, string $key, string $lang ): string {
 			if (navigator.share) {
 				navigator.share({
 					title: document.title,
-					text: 'Check these verified Vedic Muhurthams calculated by Dharma Jyothi Vedika:',
+					text: 'Check these verified Vedic Muhurthams calculated by PujaPanchang:',
 					url: shareUrl
 				}).catch(function() {});
 			} else if (navigator.clipboard) {

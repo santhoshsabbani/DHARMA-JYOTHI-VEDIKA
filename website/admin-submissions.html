@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DJV Muhurtham Submissions — Dharma Jyothi Vedika Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/website/assets/css/design-system.css" />
+  <link rel="stylesheet" href="/website/assets/css/main.css" />
+
+  <style>
+    :root {
+      --admin-bg: #F8F9FA;
+      --admin-card: #FFFFFF;
+      --admin-border: #E8D5C4;
+      --admin-primary: #7A2419;
+      --admin-accent: #C89432;
+    }
+    body {
+      background: var(--admin-bg);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      color: #241914;
+    }
+    .admin-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem 1.5rem;
+    }
+    .admin-header {
+      background: linear-gradient(135deg, #7A2419 0%, #5C1A11 100%);
+      color: #FFF;
+      border-radius: 1rem;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(122,36,25,0.15);
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: #FFF;
+      border: 1px solid var(--admin-border);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .metric-card strong {
+      display: block;
+      font-size: 1.85rem;
+      color: var(--admin-primary);
+      margin-top: 0.25rem;
+    }
+    .filter-bar {
+      background: #FFF;
+      border: 1px solid var(--admin-border);
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .filter-bar input, .filter-bar select {
+      padding: 0.55rem 0.85rem;
+      border: 1px solid var(--admin-border);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: #FFF;
+      font-family: inherit;
+    }
+    .table-card {
+      background: #FFF;
+      border: 1px solid var(--admin-border);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    }
+    table.submissions-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    table.submissions-table th {
+      background: #FFF9F0;
+      color: var(--admin-primary);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      border-bottom: 2px solid var(--admin-border);
+      white-space: nowrap;
+    }
+    table.submissions-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #F0E6DE;
+      vertical-align: middle;
+    }
+    table.submissions-table tr:hover {
+      background: #FAF8F5;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-status-new { background: #EBF8FF; color: #2B6CB0; }
+    .badge-status-in_review { background: #FEFCBF; color: #975A16; }
+    .badge-status-processed { background: #E6FFFA; color: #234E52; }
+    .badge-status-archived { background: #EDF2F7; color: #4A5568; }
+    .badge-calc-completed { background: #DEF7EC; color: #03543F; }
+    .badge-calc-failed { background: #FDE8E8; color: #9B1C1C; }
+    .badge-calc-pending { background: #FEF08A; color: #854D0E; }
+    .btn-action {
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.4rem;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--admin-border);
+      background: #FFF;
+      color: var(--admin-primary);
+      margin-right: 0.3rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: var(--admin-primary);
+      color: #FFF;
+      border-color: var(--admin-primary);
+    }
+    .btn-action.btn-del {
+      color: #C53030;
+      border-color: #FEB2B2;
+    }
+    .btn-action.btn-del:hover {
+      background: #C53030;
+      color: #FFF;
+    }
+    .btn-action.btn-retry {
+      color: #2B6CB0;
+      border-color: #BEE3F8;
+    }
+    .btn-action.btn-retry:hover {
+      background: #2B6CB0;
+      color: #FFF;
+    }
+
+    /* Modal Backdrop */
+    #detail-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-box {
+      background: #FFF;
+      border-radius: 1rem;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+      <div>
+        <span style="font-size: 0.75rem; font-weight: 700; color: #E7B75A; text-transform: uppercase; letter-spacing: 0.08em;">
+          🏛️ DHARMA JYOTHI VEDIKA
+        </span>
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 1.85rem; margin: 0.25rem 0 0 0; color: #FFF;">
+          DJV Muhurtham Submissions Dashboard
+        </h1>
+        <p style="font-size: 0.875rem; color: rgba(255,255,255,0.8); margin: 0.35rem 0 0 0;">
+          One centralized database system and administration interface for all 58 Vedic ceremonies.
+        </p>
+      </div>
+      <div>
+        <a href="/wp-json/djv/v1/admin/submissions/export.csv" id="btn-export-csv" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; border-radius: 9999px; background: #E7B75A; color: #241914; font-weight: 700; text-decoration: none; font-size: 0.875rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+          <span>📥</span> Export CSV
+        </a>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span style="font-size: 0.75rem; font-weight: 600; color: #8C7B74; text-transform: uppercase;">Total Submissions</span>
+        <strong id="metric-total">0</strong>
+      </div>
+      <div class="metric-card">
+        <span style="font-size: 0.75rem; font-weight: 600; color: #2E7D5B; text-transform: uppercase;">Calculated (Success)</span>
+        <strong id="metric-completed" style="color: #2E7D5B;">0</strong>
+      </div>
+      <div class="metric-card">
+        <span style="font-size: 0.75rem; font-weight: 600; color: #C53030; text-transform: uppercase;">Failed Calculations</span>
+        <strong id="metric-failed" style="color: #C53030;">0</strong>
+      </div>
+      <div class="metric-card">
+        <span style="font-size: 0.75rem; font-weight: 600; color: #2B6CB0; text-transform: uppercase;">New Submissions</span>
+        <strong id="metric-new" style="color: #2B6CB0;">0</strong>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <input type="text" id="filter-search" placeholder="🔍 Search Ref ID, Applicant, or Venue..." style="min-width: 260px;" />
+      
+      <select id="filter-event">
+        <option value="all">All Muhurtham Events (58)</option>
+        <option value="marriage">Marriage (Vivaha)</option>
+        <option value="griha-pravesh">Griha Pravesh</option>
+        <option value="vehicle-purchase">Vehicle Purchase</option>
+        <option value="business-opening">Business Opening</option>
+        <option value="namakaran">Namakaran</option>
+        <option value="bhoomi-pujan">Bhoomi Pujan</option>
+        <option value="annaprashana">Annaprashana</option>
+        <option value="travel">Travel Muhurtham</option>
+      </select>
+
+      <select id="filter-status">
+        <option value="all">All Submission Statuses</option>
+        <option value="new">New</option>
+        <option value="in_review">In Review</option>
+        <option value="processed">Processed</option>
+        <option value="archived">Archived</option>
+      </select>
+
+      <select id="filter-calc-status">
+        <option value="all">All Calc Statuses</option>
+        <option value="completed">Completed</option>
+        <option value="failed">Failed (Action Needed)</option>
+        <option value="pending">Pending</option>
+      </select>
+
+      <button type="button" id="btn-refresh" style="padding: 0.55rem 1rem; border-radius: 0.5rem; background: var(--admin-primary); color: #FFF; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+        🔄 Refresh
+      </button>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+      <table class="submissions-table">
+        <thead>
+          <tr>
+            <th>Reference ID</th>
+            <th>Ceremony Event</th>
+            <th>Applicant Details</th>
+            <th>Ceremony Location</th>
+            <th>Preferred Range</th>
+            <th>Calc Status</th>
+            <th>Status</th>
+            <th>Submitted At</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="submissions-tbody">
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 3rem; color: #8C7B74;">
+              Loading submissions database...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail-modal">
+    <div class="modal-box">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--admin-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <h3 id="modal-title" style="margin: 0; font-family: 'Playfair Display', serif; color: var(--admin-primary); font-size: 1.4rem;">
+          Submission Record Details
+        </h3>
+        <button type="button" id="btn-close-modal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #8C7B74;">&times;</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    var allSubmissions = [];
+
+    function loadSubmissions() {
+      var s = document.getElementById('filter-search').value.trim();
+      var ev = document.getElementById('filter-event').value;
+      var st = document.getElementById('filter-status').value;
+      var cs = document.getElementById('filter-calc-status').value;
+
+      var params = new URLSearchParams();
+      if (s) params.append('search', s);
+      if (ev !== 'all') params.append('event', ev);
+      if (st !== 'all') params.append('status', st);
+      if (cs !== 'all') params.append('calc_status', cs);
+
+      fetch('/wp-json/djv/v1/admin/submissions?' + params.toString())
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          allSubmissions = data.submissions || [];
+          renderMetrics(data.metrics || {});
+          renderTable(allSubmissions);
+        })
+        .catch(function(err) {
+          console.error(err);
+          document.getElementById('submissions-tbody').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#C53030;padding:2rem;">Failed to fetch submissions: ' + err.message + '</td></tr>';
+        });
+    }
+
+    function renderMetrics(m) {
+      document.getElementById('metric-total').textContent = m.total || 0;
+      document.getElementById('metric-completed').textContent = m.completed || 0;
+      document.getElementById('metric-failed').textContent = m.failed || 0;
+      document.getElementById('metric-new').textContent = m.new_status || 0;
+    }
+
+    function renderTable(list) {
+      var tbody = document.getElementById('submissions-tbody');
+      if (!tbody) return;
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:3rem;color:#8C7B74;">No Muhurtham submissions matching current filter criteria.</td></tr>';
+        return;
+      }
+
+      var html = '';
+      list.forEach(function(s) {
+        var calcBadge = (s.calculation_status === 'completed')
+          ? '<span class="badge badge-calc-completed">✓ Completed</span>'
+          : ((s.calculation_status === 'failed')
+              ? '<span class="badge badge-calc-failed">⚠️ Failed</span>'
+              : '<span class="badge badge-calc-pending">⏳ Pending</span>');
+
+        var stBadge = '<span class="badge badge-status-' + s.submission_status + '">' + s.submission_status + '</span>';
+
+        html += '<tr>' +
+          '<td><strong style="color:var(--admin-primary);">' + s.submission_id + '</strong></td>' +
+          '<td><strong>' + (s.event_type || s.event_slug) + '</strong><br><small style="color:#8C7B74;">' + s.calc_mode + ' mode</small></td>' +
+          '<td><strong>' + s.applicant_name + '</strong>' +
+            (s.contact_email ? '<br><small style="color:#8C7B74;">' + s.contact_email + '</small>' : '') +
+            (s.phone_number ? '<br><small style="color:#8C7B74;">' + s.phone_number + '</small>' : '') +
+          '</td>' +
+          '<td>' + s.ceremony_location + '<br><small style="color:#8C7B74;">' + (s.city || '') + ', ' + (s.state || '') + '</small></td>' +
+          '<td><small>' + s.date_from + ' to ' + s.date_to + '<br>' + (s.time_of_day || 'any') + '</small></td>' +
+          '<td>' + calcBadge + '</td>' +
+          '<td>' + stBadge + '</td>' +
+          '<td><small style="color:#8C7B74;">' + s.created_at + '</small></td>' +
+          '<td style="text-align:right;white-space:nowrap;">' +
+            '<button type="button" class="btn-action btn-view" data-id="' + s.submission_id + '">View</button>' +
+            (s.calculation_status === 'failed' ? '<button type="button" class="btn-action btn-retry" data-id="' + s.submission_id + '">🔄 Retry</button>' : '') +
+            '<select class="action-status-change" data-id="' + s.submission_id + '" style="font-size:0.75rem;padding:0.25rem 0.5rem;border-radius:0.4rem;border:1px solid #CCC;margin-right:0.3rem;">' +
+              '<option value="new"' + (s.submission_status==='new'?' selected':'') + '>New</option>' +
+              '<option value="in_review"' + (s.submission_status==='in_review'?' selected':'') + '>In Review</option>' +
+              '<option value="processed"' + (s.submission_status==='processed'?' selected':'') + '>Processed</option>' +
+              '<option value="archived"' + (s.submission_status==='archived'?' selected':'') + '>Archived</option>' +
+            '</select>' +
+            '<button type="button" class="btn-action btn-del" data-id="' + s.submission_id + '">✕</button>' +
+          '</td>' +
+        '</tr>';
+      });
+
+      tbody.innerHTML = html;
+      attachEvents();
+    }
+
+    function attachEvents() {
+      // View details modal
+      document.querySelectorAll('.btn-view').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-id');
+          var item = allSubmissions.find(function(x) { return x.submission_id === id; });
+          if (!item) return;
+
+          document.getElementById('modal-title').textContent = item.submission_id + ' — ' + item.event_type;
+          var bodyHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;font-size:0.9rem;">' +
+            '<div><strong>Applicant:</strong> ' + item.applicant_name + '</div>' +
+            '<div><strong>Contact Email:</strong> ' + (item.contact_email || '—') + '</div>' +
+            '<div><strong>Phone:</strong> ' + (item.phone_number || '—') + '</div>' +
+            '<div><strong>Ceremony Location:</strong> ' + item.ceremony_location + '</div>' +
+            '<div><strong>City / Timezone:</strong> ' + (item.city || '') + ' (' + (item.timezone || '') + ')</div>' +
+            '<div><strong>Date Range:</strong> ' + item.date_from + ' to ' + item.date_to + ' (' + item.time_of_day + ')</div>' +
+            '<div><strong>Mode:</strong> ' + item.calc_mode + '</div>' +
+            '<div><strong>Engine / Rules:</strong> v' + item.engine_version + ' / v' + item.rule_set_version + '</div>' +
+          '</div>';
+
+          if (item.personal_details && Object.keys(item.personal_details).length > 0) {
+            bodyHtml += '<div style="background:#FFF9F0;border:1px solid #E8D5C4;padding:1rem;border-radius:0.5rem;margin-bottom:1.5rem;">' +
+              '<h4 style="margin:0 0 0.5rem 0;color:var(--admin-primary);">Participant Details:</h4>' +
+              '<pre style="margin:0;font-size:0.8rem;white-space:pre-wrap;">' + JSON.stringify(item.personal_details, null, 2) + '</pre>' +
+            '</div>';
+          }
+
+          if (item.error_message) {
+            bodyHtml += '<div style="background:#FFF5F5;border:1px solid #FEB2B2;padding:1rem;border-radius:0.5rem;margin-bottom:1.5rem;color:#C53030;">' +
+              '<strong>⚠️ Calculation Error Message:</strong><br>' + item.error_message +
+            '</div>';
+          }
+
+          var results = item.calculation_results || [];
+          bodyHtml += '<div><h4 style="margin:0 0 0.75rem 0;color:var(--admin-primary);">Calculated Muhurthams (' + results.length + ' Candidate Windows):</h4>';
+          if (results.length === 0) {
+            bodyHtml += '<p style="color:#8C7B74;font-size:0.875rem;">No auspicious windows qualified under classical dosha prohibitions for this search.</p>';
+          } else {
+            bodyHtml += '<div style="display:flex;flex-direction:column;gap:0.75rem;">';
+            results.forEach(function(r) {
+              bodyHtml += '<div style="background:#FAFAFA;border:1px solid #DDD;padding:0.75rem;border-radius:0.5rem;font-size:0.85rem;">' +
+                '<strong>' + (r.formatted_date || r.date) + ' (' + r.weekday + ')</strong> — <span style="color:#2E7D5B;font-weight:700;">' + r.time_window + '</span> (' + r.rank_label + ')' +
+                '<br><small style="color:#666;">Tithi: ' + r.panchangam.tithi + ' | Nakshatra: ' + r.panchangam.nakshatra + ' | Yoga: ' + r.panchangam.yoga + '</small>' +
+              '</div>';
+            });
+            bodyHtml += '</div>';
+          }
+          bodyHtml += '</div>';
+
+          document.getElementById('modal-body').innerHTML = bodyHtml;
+          document.getElementById('detail-modal').style.display = 'flex';
+        });
+      });
+
+      // Retry calculation
+      document.querySelectorAll('.btn-retry').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-id');
+          var self = this;
+          self.disabled = true;
+          self.textContent = '⏳ Retrying…';
+          fetch('/wp-json/djv/v1/admin/submissions/' + id + '/retry', { method: 'POST' })
+            .then(function(res) { return res.json(); })
+            .then(function(json) {
+              alert(json.success ? '✅ Calculation successfully recalculated!' : '❌ Error: ' + json.message);
+              loadSubmissions();
+            })
+            .catch(function(err) {
+              alert('Network error: ' + err.message);
+            });
+        });
+      });
+
+      // Change status
+      document.querySelectorAll('.action-status-change').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          var id = this.getAttribute('data-id');
+          var val = this.value;
+          fetch('/wp-json/djv/v1/admin/submissions/' + id + '/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: val })
+          }).then(function() {
+            loadSubmissions();
+          });
+        });
+      });
+
+      // Delete submission
+      document.querySelectorAll('.btn-del').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-id');
+          if (!confirm('Are you sure you want to permanently delete submission ' + id + '?')) return;
+          fetch('/wp-json/djv/v1/admin/submissions/' + id, { method: 'DELETE' })
+            .then(function() {
+              loadSubmissions();
+            });
+        });
+      });
+    }
+
+    // Modal close
+    document.getElementById('btn-close-modal').addEventListener('click', function() {
+      document.getElementById('detail-modal').style.display = 'none';
+    });
+    document.getElementById('detail-modal').addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
+
+    // Filter triggers
+    ['filter-search', 'filter-event', 'filter-status', 'filter-calc-status'].forEach(function(id) {
+      document.getElementById(id).addEventListener('change', loadSubmissions);
+      if (id === 'filter-search') {
+        document.getElementById(id).addEventListener('input', function() {
+          clearTimeout(window._searchTimer);
+          window._searchTimer = setTimeout(loadSubmissions, 300);
+        });
+      }
+    });
+
+    document.getElementById('btn-refresh').addEventListener('click', loadSubmissions);
+
+    // Initial load
+    loadSubmissions();
+
+  })();
+  </script>
+</body>
+</html>

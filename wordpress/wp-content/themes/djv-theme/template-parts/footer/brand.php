@@ -6,8 +6,8 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-$site_name = get_bloginfo( 'name' ) ?: 'DHARMA JYOTHI VEDIKA';
-$site_desc = get_bloginfo( 'description' ) ?: 'ధర్మ జ్యోతి వేదిక';
+$site_name = get_bloginfo( 'name' ) ?: 'PujaPanchang';
+$site_desc = get_bloginfo( 'description' ) ?: 'పూజా పంచాంగ్';
 ?>
 <div class="footer-brand">
   <div class="footer-logo-row" style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
@@ -19,9 +19,9 @@ $site_desc = get_bloginfo( 'description' ) ?: 'ధర్మ జ్యోతి �
     </svg>
     <div>
       <h2 class="footer-title" style="margin:0;font-size:1.15rem;font-family:var(--font-heading,serif);color:#FFF;">
-        <span class="djv-lang-field" data-lang="en">DHARMA JYOTHI VEDIKA</span>
-        <span class="djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu,sans-serif);">ధర్మ జ్యోతి వేదిక</span>
-        <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari',serif;">धर्म ज्योति वेदिका</span>
+        <span class="djv-lang-field" data-lang="en">PujaPanchang</span>
+        <span class="djv-lang-field" data-lang="te" style="display:none;font-family:var(--font-telugu,sans-serif);">పూజా పంచాంగ్</span>
+        <span class="djv-lang-field" data-lang="hi" style="display:none;font-family:'Noto Sans Devanagari',serif;">पूजा पंचांग</span>
       </h2>
       <span class="footer-tagline" style="font-size:0.8rem;color:var(--clr-accent,#E7B75A);">
         <span class="djv-lang-field" data-lang="en">Vedic Panchangam &amp; Devotion</span>
@@ -34,8 +34,8 @@ $site_desc = get_bloginfo( 'description' ) ?: 'ధర్మ జ్యోతి �
     <?php esc_html_e( 'Authentic daily Hindu Panchangam, Muhurtham calculations, festival timings, and Vedic devotional guidance. Calculated dynamically according to classical Surya Siddhanta and modern astronomical ephemerides.', 'djv-theme' ); ?>
   </p>
   <div class="footer-social" style="display:flex;gap:0.75rem;font-size:1.25rem;">
-    <a href="https://www.youtube.com/@DharmaJyothiVedika" target="_blank" rel="noopener" aria-label="YouTube" style="color:#E7B75A;text-decoration:none;">▶</a>
-    <a href="https://www.instagram.com/dharmajyothivedika" target="_blank" rel="noopener" aria-label="Instagram" style="color:#E7B75A;text-decoration:none;">📷</a>
-    <a href="https://www.facebook.com/dharmajyothivedika" target="_blank" rel="noopener" aria-label="Facebook" style="color:#E7B75A;text-decoration:none;">📘</a>
+    <a href="https://www.youtube.com/@PujaPanchang" target="_blank" rel="noopener" aria-label="YouTube" style="color:#E7B75A;text-decoration:none;">▶</a>
+    <a href="https://www.instagram.com/pujapanchang" target="_blank" rel="noopener" aria-label="Instagram" style="color:#E7B75A;text-decoration:none;">📷</a>
+    <a href="https://www.facebook.com/pujapanchang" target="_blank" rel="noopener" aria-label="Facebook" style="color:#E7B75A;text-decoration:none;">📘</a>
   </div>
 </div>

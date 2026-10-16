@@ -38,21 +38,51 @@ require_once DJV_PLUGIN_DIR . 'includes/class-djv-post-types.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-rest-api.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-panchangam.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-admin.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-festivals.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-festival-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-festival-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-poojas.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-temple-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-temple-master.php';
+require_once DJV_PLUGIN_DIR . 'includes/data-muhurtham-events.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-service.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-content-strategy.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
 function djv_load(): void {
-	DJV_Post_Types::register();
-	new DJV_REST_API();
+	DJV_Muhurtham_Submissions::maybe_auto_init();
+	DJV_Content_Strategy::init();
+	DJV_REST_API::init();
 	if ( is_admin() ) {
 		new DJV_Admin();
+		add_action( 'add_meta_boxes', [ 'DJV_Festival_Master', 'register_admin_metabox' ] );
+		add_action( 'add_meta_boxes', [ 'DJV_Temple_Master', 'register_admin_metabox' ] );
+		add_action( 'save_post_djv_temple', [ 'DJV_Temple_Master', 'save_admin_metabox' ] );
 	}
 	add_action( DJV_CRON_HOOK, 'djv_run_nightly_precalculate' );
 }
 add_action( 'plugins_loaded', 'djv_load' );
+
+function djv_init_textdomain(): void {
+	load_plugin_textdomain( 'djv-core', false, dirname( DJV_PLUGIN_BASENAME ) . '/languages' );
+}
+add_action( 'init', 'djv_init_textdomain', 5 );
+
 add_action( 'init', [ 'DJV_Post_Types', 'register' ] );
+add_action( 'init', [ 'DJV_Temple_Master', 'maybe_auto_sync' ], 20 );
+add_action( 'init', [ 'DJV_Muhurtham_Service', 'ensure_seed_posts' ], 25 );
+
+// Disable WordPress Admin Bar on the Frontend for all users (including Administrators)
+add_filter( 'show_admin_bar', function( $show ) {
+	return is_admin() ? $show : false;
+}, 999 );
 
 /* ─── Cron ───────────────────────────────────────────────────── */
-function djv_add_cron_schedules( array $schedules ): array {
+function djv_add_cron_schedules( $schedules ) {
+	if ( ! is_array( $schedules ) ) {
+		$schedules = [];
+	}
 	$schedules['djv_nightly'] = [
 		'interval' => DAY_IN_SECONDS,
 		'display'  => __( 'DJV Nightly (Once per day)', 'djv-core' ),
@@ -62,19 +92,21 @@ function djv_add_cron_schedules( array $schedules ): array {
 add_filter( 'cron_schedules', 'djv_add_cron_schedules' );
 
 function djv_run_nightly_precalculate(): void {
-	$lat       = floatval( get_option( 'djv_default_lat', 17.3850 ) );
-	$lon       = floatval( get_option( 'djv_default_lon', 78.4867 ) );
-	$tz_offset = floatval( get_option( 'djv_default_tz', 5.5 ) );
-	$panchangam = new DJV_Panchangam();
-	for ( $i = 0; $i < 7; $i++ ) {
-		$date = date( 'Y-m-d', strtotime( "+{$i} days" ) );
-		$panchangam->get_panchangam( $date, $lat, $lon, $tz_offset );
+	if ( empty( get_option('djv_engine_api_url') ) ) {
+		error_log('[DJV] Nightly cron skipped: Panchangam engine API URL is not configured.');
+		return;
 	}
+	$lat      = floatval( get_option( 'djv_default_lat', 17.3850 ) );
+	$lon      = floatval( get_option( 'djv_default_lon', 78.4867 ) );
+	$timezone = sanitize_text_field( get_option( 'djv_default_tz', 'Asia/Kolkata' ) );
+	$panchangam = new DJV_Panchangam();
+	$panchangam->precalculate_next_30_days( $lat, $lon, $timezone );
 }
 
 /* ─── Activation ─────────────────────────────────────────────── */
 function djv_activate(): void {
 	DJV_Post_Types::register();
+	DJV_Muhurtham_Submissions::init_table();
 	flush_rewrite_rules();
 	if ( ! wp_next_scheduled( DJV_CRON_HOOK ) ) {
 		wp_schedule_event( time(), 'djv_nightly', DJV_CRON_HOOK );
@@ -82,7 +114,7 @@ function djv_activate(): void {
 	add_option( 'djv_default_city',  'Hyderabad' );
 	add_option( 'djv_default_lat',   17.3850 );
 	add_option( 'djv_default_lon',   78.4867 );
-	add_option( 'djv_default_tz',    5.5 );
+	add_option( 'djv_default_tz',    'Asia/Kolkata' );
 	add_option( 'djv_ayanamsa',      'lahiri' );
 	add_option( 'djv_month_system',  'amanta' );
 	add_option( 'djv_cache_enabled', 1 );

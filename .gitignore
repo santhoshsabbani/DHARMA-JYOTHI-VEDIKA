@@ -79,6 +79,7 @@ desktop.ini
 $RECYCLE.BIN/
 
 # ── IDE / Editor ─────────────────────────────────────────────
+.agents/
 .vscode/
 .idea/
 *.swp

@@ -203,13 +203,33 @@ function djv_get_translation_dictionary(): array {
 
 	$dict = [
 		// Brand & Site Identity (Section 8)
+		'PujaPanchang' => [
+			'te' => 'పూజా పంచాంగ్',
+			'hi' => 'पूजा पंचांग',
+		],
+		'PUJAPANCHANG' => [
+			'te' => 'పూజా పంచాంగ్',
+			'hi' => 'पूजा पंचांग',
+		],
+		'The PujaPanchang Commitment' => [
+			'te' => 'పూజా పంచాంగ్ నిబద్ధత',
+			'hi' => 'पूजा पंचांग प्रतिबद्धता',
+		],
+		'PujaPanchang Shubh Muhurtham Finder' => [
+			'te' => 'పూజా పంచాంగ్ శుభ ముహూర్త శోధకం',
+			'hi' => 'पूजा पंचांग शुभ मुहूर्त खोज',
+		],
+		'How PujaPanchang Finds Your Auspicious Muhurtham' => [
+			'te' => 'పూజా పంచాంగ్ ముహూర్తాన్ని ఎలా గణిస్తుంది?',
+			'hi' => 'पूजा पंचांग शुभ मुहूर्त की गणना कैसे करता है?',
+		],
 		'DHARMA JYOTHI VEDIKA' => [
-			'te' => 'ధర్మ జ్యోతి వేదిక',
-			'hi' => 'धर्म ज्योति वेदिका',
+			'te' => 'పూజా పంచాంగ్',
+			'hi' => 'पूजा पंचांग',
 		],
 		'Dharma Jyothi Vedika' => [
-			'te' => 'ధర్మ జ్యోతి వేదిక',
-			'hi' => 'धर्म ज्योति वेदिका',
+			'te' => 'పూజా పంచాంగ్',
+			'hi' => 'पूजा पंचांग',
 		],
 		'Hindu Panchangam & Devotional Platform' => [
 			'te' => 'హిందూ పంచాంగం & భక్తి వేదిక',
@@ -1175,72 +1195,72 @@ function djv_filter_global_document_title( string $title ): string {
 	// Front page title
 	if ( is_front_page() || is_home() ) {
 		if ( $lang === 'te' ) {
-			return 'ధర్మ జ్యోతి వేదిక – హిందూ పంచాంగం & భక్తి వేదిక';
+			return 'పూజా పంచాంగ్ – హిందూ పంచాంగం & భక్తి వేదిక';
 		} elseif ( $lang === 'hi' ) {
-			return 'धर्म ज्योति वेदिका – हिंदू पंचांग एवं भक्ति मंच';
+			return 'पूजा पंचांग – हिंदू पंचांग एवं भक्ति मंच';
 		}
 	}
 
 	// Panchangam page
 	if ( is_page( 'panchangam' ) || is_page( 'panchangam/today' ) || is_page( 'today' ) ) {
 		if ( $lang === 'te' ) {
-			return 'నేటి హిందూ పంచాంగం | ధర్మ జ్యోతి వేదిక';
+			return 'నేటి హిందూ పంచాంగం | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'आज का हिंदू पंचांग | धर्म ज्योति वेदिका';
+			return 'आज का हिंदू पंचांग | पूजा पंचांग';
 		}
 	}
 
 	// Festivals Archive
 	if ( is_post_type_archive( 'djv_festival' ) || is_page( 'festivals' ) ) {
 		if ( $lang === 'te' ) {
-			return 'హిందూ పండుగలు & వ్రతాలు | ధర్మ జ్యోతి వేదిక';
+			return 'హిందూ పండుగలు & వ్రతాలు | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'हिंदू त्योहार एवं व्रत | धर्म ज्योति वेदिका';
+			return 'हिंदू त्योहार एवं व्रत | पूजा पंचांग';
 		}
 	}
 
 	// Muhurtham Archive
 	if ( is_post_type_archive( 'djv_muhurtham' ) || is_page( 'muhurtham' ) ) {
 		if ( $lang === 'te' ) {
-			return 'శుభ ముహూర్తములు & కాల నిర్ణయం | ధర్మ జ్యోతి వేదిక';
+			return 'శుభ ముహూర్తములు & కాల నిర్ణయం | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'शुभ मुहूर्त खोज | धर्म ज्योति वेदिका';
+			return 'शुभ मुहूर्त खोज | पूजा पंचांग';
 		}
 	}
 
 	// Pooja Archive
 	if ( is_post_type_archive( 'djv_pooja' ) || is_page( 'pooja' ) ) {
 		if ( $lang === 'te' ) {
-			return 'పూజా విధానం, సంకల్పం & సామగ్రి | ధర్మ జ్యోతి వేదిక';
+			return 'పూజా విధానం, సంకల్పం & సామగ్రి | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'पूजा विधि, संकल्प एवं सामग्री | धर्म ज्योति वेदिका';
+			return 'पूजा विधि, संकल्प एवं सामग्री | पूजा पंचांग';
 		}
 	}
 
 	// Mantras Archive
 	if ( is_post_type_archive( 'djv_mantra' ) || is_page( 'mantras' ) ) {
 		if ( $lang === 'te' ) {
-			return 'పవిత్ర మంత్రాలు & స్తోత్రాలు | ధర్మ జ్యోతి వేదిక';
+			return 'పవిత్ర మంత్రాలు & స్తోత్రాలు | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'पवित्र मंत्र एवं स्तोत्र | धर्म ज्योति वेदिका';
+			return 'पवित्र मंत्र एवं स्तोत्र | पूजा पंचांग';
 		}
 	}
 
 	// Temples Archive
 	if ( is_post_type_archive( 'djv_temple' ) || is_page( 'temples' ) ) {
 		if ( $lang === 'te' ) {
-			return 'పుణ్యక్షేత్రాలు & దివ్యాలయాలు | ధర్మ జ్యోతి వేదిక';
+			return 'పుణ్యక్షేత్రాలు & దివ్యాలయాలు | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'भारत के पावन मंदिर | धर्म ज्योति वेदिका';
+			return 'भारत के पावन मंदिर | पूजा पंचांग';
 		}
 	}
 
 	// Articles Archive
 	if ( is_page( 'articles' ) ) {
 		if ( $lang === 'te' ) {
-			return 'వేద వ్యాసాలు & ఆధ్యాత్మిక జ్ఞానం | ధర్మ జ్యోతి వేదిక';
+			return 'వేద వ్యాసాలు & ఆధ్యాత్మిక జ్ఞానం | పూజా పంచాంగ్';
 		} elseif ( $lang === 'hi' ) {
-			return 'वैदिक लेख एवं आध्यात्मिक ज्ञान | धर्म ज्योति वेदिका';
+			return 'वैदिक लेख एवं आध्यात्मिक ज्ञान | पूजा पंचांग';
 		}
 	}
 

@@ -111,40 +111,93 @@
 
       <form id="djv-event-form" novalidate>
         <input type="hidden" id="event-slug" value="loan-application" />
+        <input type="text" name="djv_honey" id="djv_honey" style="display:none !important;" tabindex="-1" autocomplete="off" />
 
         <!-- Event-Specific Schema Form Fields -->
         <div id="schema-fields-block" style="margin-bottom: 1.5rem;">
           
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+    <!-- 1. Calculation Mode Toggle -->
+    <div style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+      <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">Calculation Mode:</label>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+        <label style="display: flex; align-items: flex-start; gap: 0.65rem; background: #FFF; padding: 0.85rem 1.15rem; border-radius: 0.65rem; border: 1.5px solid var(--clr-border); cursor: pointer;">
+          <input type="radio" name="calc_mode" value="basic" checked style="margin-top: 0.25rem; accent-color: var(--clr-primary);">
           <div>
-            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Proprietor / Candidate Name</label>
-            <input type="text" id="business-owner" placeholder="e.g. R. V. Sharma" style="width: 100%; padding: 0.6rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; box-sizing: border-box;" />
+            <strong style="color: var(--clr-primary); font-size: 0.95rem; display: block;">Basic Panchanga Muhurtham</strong>
+            <span style="font-size: 0.8125rem; color: var(--clr-text-muted); line-height: 1.4; display: block; margin-top: 0.15rem;">Universal auspicious dates & lagnas (Birth details optional)</span>
+          </div>
+        </label>
+        <label style="display: flex; align-items: flex-start; gap: 0.65rem; background: #FFF; padding: 0.85rem 1.15rem; border-radius: 0.65rem; border: 1.5px solid var(--clr-border); cursor: pointer;">
+          <input type="radio" name="calc_mode" value="personalized" style="margin-top: 0.25rem; accent-color: var(--clr-primary);">
+          <div>
+            <strong style="color: var(--clr-primary); font-size: 0.95rem; display: block;">Personalized Calculation Mode</strong>
+            <span style="font-size: 0.8125rem; color: var(--clr-text-muted); line-height: 1.4; display: block; margin-top: 0.15rem;">Includes birth star synergy, Tarabala & Chandrabala analysis</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- 2. Common Personal Details (Applicant Name Required, Email/Phone Optional) -->
+    <div style="background: #FAFAFA; border: 1px solid var(--clr-border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+      <h4 style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--clr-primary); margin: 0 0 1rem 0;">👤 Personal Details</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+        <div>
+          <label for="applicant-name" style="font-size: 0.85rem; font-weight: 700; color: var(--clr-text); display: block; margin-bottom: 0.35rem;">
+            Applicant Name <span style="color: #B52020;">*</span>
+          </label>
+          <input type="text" id="applicant-name" name="applicant_name" required placeholder="e.g. Rajesh Sharma" style="width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.9rem; box-sizing: border-box;" />
+        </div>
+        <div>
+          <label for="contact-email" style="font-size: 0.85rem; font-weight: 600; color: var(--clr-text); display: block; margin-bottom: 0.35rem;">
+            Contact Email (Optional)
+          </label>
+          <input type="email" id="contact-email" name="contact_email" placeholder="e.g. rajesh@example.com" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.9rem; box-sizing: border-box;" />
+        </div>
+        <div>
+          <label for="phone-number" style="font-size: 0.85rem; font-weight: 600; color: var(--clr-text); display: block; margin-bottom: 0.35rem;">
+            Phone Number (Optional)
+          </label>
+          <input type="tel" id="phone-number" name="phone_number" placeholder="e.g. +91 98765 43210" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.9rem; box-sizing: border-box;" />
+        </div>
+      </div>
+
+      
+      <!-- Optional Birth Details for Personalized Mode -->
+      <div id="general-birth-block" style="background: #FFF; border: 1px dashed var(--clr-border); border-radius: 0.5rem; padding: 1rem; margin-top: 1rem;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--clr-primary); margin-bottom: 0.5rem;">
+          ✨ Birth Details (Optional unless personalized calculation)
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.2rem;">Date of Birth</label>
+            <input type="date" id="applicant-dob" style="width: 100%; padding: 0.5rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.85rem; box-sizing: border-box;" />
           </div>
           <div>
-            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Enterprise / Activity Title</label>
-            <input type="text" id="business-name" placeholder="e.g. Vedic Retail / Tech Ventures" style="width: 100%; padding: 0.6rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; box-sizing: border-box;" />
+            <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.2rem;">Birth Time</label>
+            <input type="time" id="applicant-time" value="12:00" style="width: 100%; padding: 0.5rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.85rem; box-sizing: border-box;" />
           </div>
           <div>
-            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Sector / Type</label>
-            <select id="business-sector" style="width: 100%; padding: 0.6rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; box-sizing: border-box;">
-              <option value="retail">Retail Shop / Store</option>
-              <option value="office">Corporate Office / Software</option>
-              <option value="finance">Trading / Financial / Banking</option>
-              <option value="manufacturing">Manufacturing / Industry</option>
-            </select>
+            <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.2rem;">Birth City</label>
+            <input type="text" id="applicant-city" placeholder="e.g. Hyderabad" style="width: 100%; padding: 0.5rem; border: 1px solid var(--clr-border); border-radius: 0.4rem; font-size: 0.85rem; box-sizing: border-box;" />
           </div>
         </div>
+      </div>
       
+    </div>
+  
         </div>
 
         <!-- Universal Location, Date Range, Time of Day -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
-          <!-- Location Picker -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+          <!-- Ceremony Location (Required) & City Picker -->
           <div>
-            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">📍 Ceremony Location</label>
+            <label for="ceremony-location" style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">
+              📍 Ceremony Venue / Location <span style="color: #B52020;">*</span>
+            </label>
+            <input type="text" id="ceremony-location" name="ceremony_location" required placeholder="e.g. Home, Grand Banquet Hall, or Temple" style="width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box; margin-bottom: 0.75rem;" />
             <div style="background: #FFF; border: 1px solid var(--clr-border); border-radius: 0.65rem; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
               <div>
-                <strong id="form-loc-city-disp" style="font-size: 1rem; color: var(--clr-dark); display: block;">Hyderabad, Telangana</strong>
+                <strong id="form-loc-city-disp" style="font-size: 0.95rem; color: var(--clr-dark); display: block;">Hyderabad, Telangana</strong>
                 <span id="form-loc-coords-disp" style="font-size: 0.75rem; color: var(--clr-text-muted);">17.3850° N, 78.4867° E (Asia/Kolkata)</span>
               </div>
               <button type="button" id="btn-change-city" style="background: var(--clr-primary-faint, #F9EDE9); border: 1px solid var(--clr-primary); color: var(--clr-primary); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 600; cursor: pointer;">Change</button>
@@ -158,15 +211,17 @@
 
           <!-- Date Range (From - To) -->
           <div>
-            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">📅 Preferred Date Range</label>
+            <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.4rem;">
+              📅 Preferred Date Range <span style="color: #B52020;">*</span>
+            </label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
               <div>
                 <span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;">From Date</span>
-                <input type="date" id="date-from" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
+                <input type="date" id="date-from" required style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
               </div>
               <div>
                 <span style="font-size: 0.75rem; color: var(--clr-text-muted); display: block; margin-bottom: 0.2rem;">To Date</span>
-                <input type="date" id="date-to" style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
+                <input type="date" id="date-to" required style="width: 100%; padding: 0.55rem; border: 1px solid var(--clr-border); border-radius: 0.5rem; font-size: 0.9rem; box-sizing: border-box;" />
               </div>
             </div>
             <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem;">
@@ -178,7 +233,7 @@
         </div>
 
         <!-- Preferred Time of Day -->
-        <div style="margin-bottom: 2rem;">
+        <div style="margin-bottom: 1.5rem;">
           <label style="font-weight: 700; color: var(--clr-primary); font-size: 0.95rem; display: block; margin-bottom: 0.5rem;">⏰ Preferred Time of Day</label>
           <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
             <label style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF; border: 1px solid var(--clr-border); padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; font-size: 0.875rem;">
@@ -196,6 +251,11 @@
           </div>
         </div>
 
+        <!-- Form Validation Alert -->
+        <div id="form-validation-alert" style="display: none; background: #FDF2F2; border: 1.5px solid #F5C6CB; color: #721C24; padding: 0.85rem 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          <strong>⚠️ Validation Error:</strong> <span id="form-validation-msg"></span>
+        </div>
+
         <div style="text-align: center;">
           <button type="submit" id="btn-submit-calc" style="padding: 1rem 2.75rem; border-radius: 9999px; background: linear-gradient(135deg, var(--clr-primary), #9B3128); color: #FFF; border: none; font-size: 1.05rem; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-md); display: inline-flex; align-items: center; gap: 0.6rem; transition: transform 0.2s ease;">
             <span>🔮</span> <span id="btn-submit-text">Calculate Auspicious Muhurthams</span>
@@ -210,10 +270,15 @@
         <div>
           <span style="font-size: 0.75rem; font-weight: 700; color: var(--clr-accent); text-transform: uppercase;">Your Muhurtham Search</span>
           <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #FFF; margin: 0.25rem 0;">Loan Application Muhurtham</h3>
-          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 1rem;">
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
             <span>📍 <strong id="recap-loc">Hyderabad</strong></span>
             <span>📅 <span id="recap-range">Date Range</span></span>
             <span id="recap-badge" style="background: rgba(231,183,90,0.2); padding: 0.15rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; color: var(--clr-accent);">Basic Mode</span>
+          </div>
+          <div id="recap-ref-box" style="margin-top: 0.5rem; display: none;">
+            <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(46,125,91,0.25); border: 1px solid rgba(78,190,143,0.5); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8125rem; font-weight: 700; color: #4EBE8F;">
+              ✓ Saved Reference ID: <code id="recap-sub-id" style="color: #FFF; background: transparent; padding: 0;">—</code>
+            </span>
           </div>
         </div>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -225,6 +290,21 @@
           </button>
           <button type="button" id="btn-share-action" style="padding: 0.6rem 1.1rem; border-radius: 9999px; background: rgba(255,255,255,0.15); color: #FFF; border: 1px solid rgba(255,255,255,0.3); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
             🔗 Share
+          </button>
+        </div>
+      </div>
+
+      <!-- Calculation Failure & Retry Container (Never lose a saved record) -->
+      <div id="calc-error-block" style="display: none; background: #FFF; border: 1.5px solid #F5C6CB; border-radius: 1.25rem; padding: 2.5rem 2rem; text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #721C24; margin: 0 0 0.5rem 0;">Calculation Error Encountered</h3>
+        <p id="calc-error-message" style="color: #6B574F; max-width: 600px; margin: 0 auto 1.25rem auto; line-height: 1.6; font-size: 0.95rem;"></p>
+        <div style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.75rem; padding: 0.65rem 1.25rem; display: inline-block; margin-bottom: 1.25rem; font-size: 0.85rem;">
+          Your submission is safely recorded with Reference ID: <strong id="calc-error-sub-id" style="color: var(--clr-primary);">—</strong>
+        </div>
+        <div>
+          <button type="button" id="btn-calc-retry" style="padding: 0.75rem 2rem; border-radius: 9999px; background: var(--clr-primary); color: #FFF; border: none; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span>🔄</span> Retry Calculation
           </button>
         </div>
       </div>
@@ -306,6 +386,7 @@
     var currentEventSlug = 'loan-application';
     var currentResults = [];
     var selectedForCompare = [];
+    var lastSubmissionId = null;
 
     // Set default dates: Today to +30 days
     var today = new Date();
@@ -338,14 +419,66 @@
       });
     }
 
+    // Retry Calculation Button
+    var retryBtn = document.getElementById('btn-calc-retry');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', function() {
+        executeEventCalculation();
+      });
+    }
+
+    function showValidationAlert(msg) {
+      var alertBox = document.getElementById('form-validation-alert');
+      var alertMsg = document.getElementById('form-validation-msg');
+      if (alertBox && alertMsg) {
+        alertMsg.textContent = msg;
+        alertBox.style.display = 'block';
+        alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        alert(msg);
+      }
+    }
+
+    function hideValidationAlert() {
+      var alertBox = document.getElementById('form-validation-alert');
+      if (alertBox) alertBox.style.display = 'none';
+    }
+
     function executeEventCalculation() {
+      hideValidationAlert();
+
+      var applicantNameInp = document.getElementById('applicant-name');
+      var ceremonyLocInp = document.getElementById('ceremony-location');
+      var applicantName = applicantNameInp ? applicantNameInp.value.trim() : '';
+      var ceremonyLocation = ceremonyLocInp ? ceremonyLocInp.value.trim() : '';
+      var dateFrom = document.getElementById('date-from').value;
+      var dateTo = document.getElementById('date-to').value;
+
+      // Validation
+      if (!applicantName) {
+        showValidationAlert('Please enter the Applicant Name to proceed with the Muhurtham search.');
+        if (applicantNameInp) applicantNameInp.focus();
+        return;
+      }
+      if (!ceremonyLocation) {
+        showValidationAlert('Please specify the Ceremony Venue / Location Name.');
+        if (ceremonyLocInp) ceremonyLocInp.focus();
+        return;
+      }
+      if (!dateFrom || !dateTo) {
+        showValidationAlert('Please select both Start Date and End Date for your preferred date range.');
+        return;
+      }
+      if (new Date(dateFrom) > new Date(dateTo)) {
+        showValidationAlert('The Start Date cannot be later than the End Date. Please adjust your range.');
+        return;
+      }
+
       var submitBtn = document.getElementById('btn-submit-calc');
       var submitText = document.getElementById('btn-submit-text');
       if (submitBtn) submitBtn.disabled = true;
       if (submitText) submitText.textContent = 'Calculating Astronomical Windows…';
 
-      var dateFrom = document.getElementById('date-from').value;
-      var dateTo = document.getElementById('date-to').value;
       var city = document.getElementById('loc-city').value || 'Hyderabad';
       var state = document.getElementById('loc-state').value || 'Telangana';
       var lat = parseFloat(document.getElementById('loc-lat').value || '17.3850');
@@ -360,14 +493,19 @@
 
       var payload = {
         event: currentEventSlug,
+        mode: mode,
+        applicant_name: applicantName,
+        contact_email: (document.getElementById('contact-email') ? document.getElementById('contact-email').value.trim() : ''),
+        phone_number: (document.getElementById('phone-number') ? document.getElementById('phone-number').value.trim() : ''),
+        ceremony_location: ceremonyLocation,
         date_from: dateFrom,
         date_to: dateTo,
         language: 'en',
-        mode: mode,
         location: { city: city, state: state, latitude: lat, longitude: lon, timezone: tz },
         preferences: { time_of_day: timePref },
         participants: {},
-        form_data: {}
+        form_data: {},
+        djv_honey: (document.getElementById('djv_honey') ? document.getElementById('djv_honey').value : '')
       };
 
       // Collect schema inputs
@@ -380,8 +518,24 @@
       if (currentEventSlug === 'marriage') {
         var bDob = document.getElementById('bride-dob');
         var gDob = document.getElementById('groom-dob');
-        if (bDob && bDob.value && gDob && gDob.value) {
-          payload.participants = { bride_dob: bDob.value, groom_dob: gDob.value };
+        payload.participants = {
+          bride_name: (document.getElementById('bride-name') ? document.getElementById('bride-name').value : ''),
+          bride_dob: (bDob ? bDob.value : ''),
+          bride_time: (document.getElementById('bride-time') ? document.getElementById('bride-time').value : ''),
+          bride_place: (document.getElementById('bride-place') ? document.getElementById('bride-place').value : ''),
+          groom_name: (document.getElementById('groom-name') ? document.getElementById('groom-name').value : ''),
+          groom_dob: (gDob ? gDob.value : ''),
+          groom_time: (document.getElementById('groom-time') ? document.getElementById('groom-time').value : ''),
+          groom_place: (document.getElementById('groom-place') ? document.getElementById('groom-place').value : '')
+        };
+      } else {
+        var appDob = document.getElementById('applicant-dob');
+        if (appDob && appDob.value) {
+          payload.participants = {
+            applicant_dob: appDob.value,
+            applicant_time: (document.getElementById('applicant-time') ? document.getElementById('applicant-time').value : ''),
+            applicant_city: (document.getElementById('applicant-city') ? document.getElementById('applicant-city').value : '')
+          };
         }
       }
 
@@ -390,8 +544,12 @@
       var recapLoc = document.getElementById('recap-loc');
       var recapBadge = document.getElementById('recap-badge');
       if (recapRange) recapRange.textContent = dateFrom + ' to ' + dateTo;
-      if (recapLoc) recapLoc.textContent = city + ', ' + state;
+      if (recapLoc) recapLoc.textContent = ceremonyLocation + ' (' + city + ', ' + state + ')';
       if (recapBadge) recapBadge.textContent = (mode === 'personalized') ? 'Personalized Mode' : 'Basic Panchanga Mode';
+
+      // Hide prior error
+      var errBlock = document.getElementById('calc-error-block');
+      if (errBlock) errBlock.style.display = 'none';
 
       // Call API with local astronomical calculation fallback
       fetch('/wp-json/djv/v1/muhurtham', {
@@ -400,14 +558,44 @@
         body: JSON.stringify(payload)
       })
       .then(function(res) {
-        if (!res.ok) throw new Error('API unavailable, executing local astronomical engine');
-        return res.json();
+        return res.json().then(function(json) {
+          if (!res.ok) {
+            // Keep reference ID if returned
+            var subId = json.submission_id || (json.data && json.data.submission_id) || null;
+            if (subId) lastSubmissionId = subId;
+            throw new Error(json.message || ('Server error ' + res.status));
+          }
+          return json;
+        });
       })
       .then(function(json) {
-        renderCalculationResponse(json.data || json);
+        var data = json.data || json;
+        var subId = json.submission_id || (data && data.submission_id) || null;
+        if (subId) {
+          lastSubmissionId = subId;
+          var refBox = document.getElementById('recap-ref-box');
+          var refTxt = document.getElementById('recap-sub-id');
+          if (refBox && refTxt) {
+            refTxt.textContent = subId;
+            refBox.style.display = 'block';
+          }
+        }
+        renderCalculationResponse(data);
       })
       .catch(function(err) {
         console.warn('Backend API note:', err.message);
+        // If submission exists but calculation failed
+        if (lastSubmissionId) {
+          var errBlock = document.getElementById('calc-error-block');
+          var errMsg = document.getElementById('calc-error-message');
+          var errSub = document.getElementById('calc-error-sub-id');
+          if (errBlock && errMsg && errSub) {
+            errMsg.textContent = err.message || 'The calculation service encountered a temporary timeout.';
+            errSub.textContent = lastSubmissionId;
+            errBlock.style.display = 'block';
+          }
+        }
+        // Run astronomical calculations locally as client fallback
         calculateLocalAstronomical(payload);
       })
       .finally(function() {

@@ -702,11 +702,6 @@
         setText('val-illumination', data.lunar.illuminationPercent ? `${data.lunar.illuminationPercent}%` : (data.lunar.illumination ? `${data.lunar.illumination}` : '—'));
       }
 
-      // ── 6. Engine Metadata Box ──
-      const metaJsonEl = document.getElementById('pc-meta-json');
-      if (metaJsonEl && data.meta) {
-        metaJsonEl.textContent = JSON.stringify(data.meta, null, 2);
-      }
 
       // ── 7. Dynamic SEO Updates ──
       // Retain Rank Math SEO metadata. Do not overwrite document.title or meta description

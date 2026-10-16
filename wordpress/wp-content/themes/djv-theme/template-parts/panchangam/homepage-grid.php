@@ -150,7 +150,6 @@ $today_str = date( 'l, F j, Y' );
           <span id="fp-meta-location">📍 <span class="global-location-name"><?php esc_html_e( 'Hyderabad', 'djv-theme' ); ?></span> (17.3850°N, 78.4867°E)</span>
           <span>🕐 Asia/Kolkata (IST, UTC+5:30)</span>
           <span>📖 <?php esc_html_e( 'Lahiri Ayanamsa · Amanta', 'djv-theme' ); ?></span>
-          <span id="fp-meta-engine">⚙️ <?php esc_html_e( 'Engine v1.0.0 · Rules: telugu-1.0', 'djv-theme' ); ?></span>
           <span style="color: #B5241A; font-style: italic;">⚠️ <?php esc_html_e( 'For informational purposes — consult a Jyotishi for ceremonial muhurtham', 'djv-theme' ); ?></span>
         </div>
       </div>
@@ -199,7 +198,7 @@ $today_str = date( 'l, F j, Y' );
           </div>
           <div class="sidebar-card-body">
             <p style="font-size: 0.78rem; color: var(--clr-text-muted); line-height: 1.6;">
-              <?php esc_html_e( 'Calculated dynamically via DJV Panchangam Core utilizing Jean Meeus astronomical algorithms and Chitrapaksha Lahiri Ayanamsa. Zero hardcoding.', 'djv-theme' ); ?>
+              <?php esc_html_e( 'Calculated dynamically via PujaPanchang utilizing Jean Meeus astronomical algorithms and Chitrapaksha Lahiri Ayanamsa. Zero hardcoding.', 'djv-theme' ); ?>
             </p>
           </div>
         </div>

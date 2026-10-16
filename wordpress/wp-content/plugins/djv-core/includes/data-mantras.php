@@ -77,7 +77,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Om Namah Shivaya Meaning & Lyrics in Telugu & English | Shiva Mantra',
-			'meta_description'=> 'Learn Om Namah Shivaya with authentic Sanskrit verses, Telugu script, meaning, and significance for daily meditation at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Learn Om Namah Shivaya with authentic Sanskrit verses, Telugu script, meaning, and significance for daily meditation at PujaPanchang.',
 			'focus_keyword'  => 'Om Namah Shivaya',
 		],
 		[
@@ -167,7 +167,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Shiva Moola Mantra Lyrics in Telugu & English | Meaning & Benefits',
-			'meta_description'=> 'Shiva Moola Mantra text with Telugu transliteration, meaning, and chanting guidance at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Shiva Moola Mantra text with Telugu transliteration, meaning, and chanting guidance at PujaPanchang.',
 			'focus_keyword'  => 'Shiva Moola Mantra',
 		],
 
@@ -205,7 +205,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Hanuman Chalisa in Telugu & English | Lyrics, Meaning & Benefits',
-			'meta_description'=> 'Read Sri Hanuman Chalisa in Telugu & English with complete lyrics, word-by-word meaning, chanting count, and spiritual benefits at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Read Sri Hanuman Chalisa in Telugu & English with complete lyrics, word-by-word meaning, chanting count, and spiritual benefits at PujaPanchang.',
 			'focus_keyword'  => 'Hanuman Chalisa',
 		],
 		[
@@ -265,7 +265,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Hanuman Gayatri Mantra in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Recite Hanuman Gayatri Mantra with Telugu script, Roman transliteration, and spiritual meaning at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Recite Hanuman Gayatri Mantra with Telugu script, Roman transliteration, and spiritual meaning at PujaPanchang.',
 			'focus_keyword'  => 'Hanuman Gayatri Mantra',
 		],
 		[
@@ -359,7 +359,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Vakratunda Mahakaya Sloka Meaning in Telugu & English | Ganesha Mantra',
-			'meta_description'=> 'Understand the deep spiritual meaning of Vakratunda Mahakaya with Telugu script and pronunciation at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Understand the deep spiritual meaning of Vakratunda Mahakaya with Telugu script and pronunciation at PujaPanchang.',
 			'focus_keyword'  => 'Vakratunda Mahakaya',
 		],
 		[
@@ -543,7 +543,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Lakshmi Moola Mantra in Telugu & English | Lyrics, Meaning & Benefits',
-			'meta_description'=> 'Read Sri Lakshmi Moola Mantra with Telugu script, transliteration, and benefits at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Read Sri Lakshmi Moola Mantra with Telugu script, transliteration, and benefits at PujaPanchang.',
 			'focus_keyword'  => 'Lakshmi Mantra',
 		],
 		[
@@ -663,7 +663,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Lakshmi Gayatri Mantra in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Lakshmi Gayatri Mantra lyrics in Telugu and English with pronunciation and meaning at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Lakshmi Gayatri Mantra lyrics in Telugu and English with pronunciation and meaning at PujaPanchang.',
 			'focus_keyword'  => 'Lakshmi Gayatri Mantra',
 		],
 
@@ -727,7 +727,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Saraswati Gayatri Mantra in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Recite Saraswati Gayatri Mantra with Telugu script, transliteration, and spiritual benefits at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Recite Saraswati Gayatri Mantra with Telugu script, transliteration, and spiritual benefits at PujaPanchang.',
 			'focus_keyword'  => 'Saraswati Gayatri Mantra',
 		],
 		[
@@ -821,7 +821,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Durga Moola Mantra in Telugu & English | Om Dum Durgayai Namah',
-			'meta_description'=> 'Chant the powerful Durga Moola Mantra with Telugu script, transliteration, and spiritual meaning at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Chant the powerful Durga Moola Mantra with Telugu script, transliteration, and spiritual meaning at PujaPanchang.',
 			'focus_keyword'  => 'Durga Mantra',
 		],
 		[
@@ -881,7 +881,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Durga Gayatri Mantra in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Explore Durga Gayatri Mantra with Telugu script, Roman transliteration, and spiritual meaning at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Explore Durga Gayatri Mantra with Telugu script, Roman transliteration, and spiritual meaning at PujaPanchang.',
 			'focus_keyword'  => 'Durga Gayatri Mantra',
 		],
 		[
@@ -975,7 +975,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Vishnu Sahasranama Stotram in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Recite Sri Vishnu Sahasranama Stotram with Telugu script, transliteration, and spiritual benefits at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Recite Sri Vishnu Sahasranama Stotram with Telugu script, transliteration, and spiritual benefits at PujaPanchang.',
 			'focus_keyword'  => 'Vishnu Sahasranama',
 		],
 		[
@@ -1133,7 +1133,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Gayatri Mantra in Telugu & English | Lyrics, Meaning & Benefits',
-			'meta_description'=> 'Chant Gayatri Maha Mantra with authentic Sanskrit verses, Telugu script, English transliteration, word-by-word meaning, and spiritual significance at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Chant Gayatri Maha Mantra with authentic Sanskrit verses, Telugu script, English transliteration, word-by-word meaning, and spiritual significance at PujaPanchang.',
 			'focus_keyword'  => 'Gayatri Mantra',
 		],
 		[
@@ -1197,7 +1197,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Navagraha Stotram in Telugu & English | Lyrics, Meaning & Chanting Guide',
-			'meta_description'=> 'Complete Navagraha Stotram text by Sage Vyasa in Telugu and English with spiritual meaning at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Complete Navagraha Stotram text by Sage Vyasa in Telugu and English with spiritual meaning at PujaPanchang.',
 			'focus_keyword'  => 'Navagraha Mantras',
 		],
 		[
@@ -1257,7 +1257,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Chandra Mantra in Telugu & English | Lyrics & Meaning | Moon Mantra',
-			'meta_description'=> 'Learn Chandra Mantra with Telugu script, Roman transliteration, and emotional benefits at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Learn Chandra Mantra with Telugu script, Roman transliteration, and emotional benefits at PujaPanchang.',
 			'focus_keyword'  => 'Chandra Mantra',
 		],
 		[
@@ -1347,7 +1347,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Guru Brihaspati Mantra in Telugu & English | Lyrics & Meaning',
-			'meta_description'=> 'Chant Guru Mantra (Om Brim Brihaspataye Namah) with Telugu script and transliteration at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Chant Guru Mantra (Om Brim Brihaspataye Namah) with Telugu script and transliteration at PujaPanchang.',
 			'focus_keyword'  => 'Guru Mantra',
 		],
 		[
@@ -1407,7 +1407,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Rahu Mantra in Telugu & English | Lyrics & Meaning | Rahu Shanti',
-			'meta_description'=> 'Recite Rahu Moola Mantra with Telugu script, transliteration, and remedial guidance at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Recite Rahu Moola Mantra with Telugu script, transliteration, and remedial guidance at PujaPanchang.',
 			'focus_keyword'  => 'Rahu Mantra',
 		],
 		[
@@ -1437,7 +1437,7 @@ function djv_get_canonical_mantras(): array {
 				]
 			],
 			'seo_title'      => 'Ketu Mantra Lyrics in Telugu & English | Moksha Karaka Mantra',
-			'meta_description'=> 'Learn Ketu Mantra with Telugu transliteration, meaning, and spiritual significance at Dharma Jyothi Vedika.',
+			'meta_description'=> 'Learn Ketu Mantra with Telugu transliteration, meaning, and spiritual significance at PujaPanchang.',
 			'focus_keyword'  => 'Ketu Mantra',
 		]
 	];

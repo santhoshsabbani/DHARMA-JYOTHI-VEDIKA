@@ -61,7 +61,7 @@ if ( strpos( $deity_lower, 'hanuman' ) !== false || strpos( $deity_lower, 'anjan
 
 $thumb_url = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : '';
 $share_url = urlencode( get_permalink() );
-$share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | Dharma Jyothi Vedika' );
+$share_txt = urlencode( get_the_title() . ' - ' . ( $telugu_title ?: '' ) . ' | PujaPanchang' );
 ?>
 
 <div class="single-mantra-page">

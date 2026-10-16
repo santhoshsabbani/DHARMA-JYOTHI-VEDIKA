@@ -34,7 +34,7 @@ add_action( 'pre_get_posts', 'djv_filter_search_cpts' );
  */
 function djv_get_seo_description(): string {
 	if ( is_front_page() || is_home() ) {
-		return __( 'Dharma Jyothi Vedika (DJV) — Authentic Daily Hindu Panchangam, Festival Dates, Shubh Muhurtham, Pooja Vidhi, Vedic Mantras, and Sacred Temples across India.', 'djv-theme' );
+		return __( 'PujaPanchang — Authentic Daily Hindu Panchangam, Festival Dates, Shubh Muhurtham, Pooja Vidhi, Vedic Mantras, and Sacred Temples across India.', 'djv-theme' );
 	}
 
 	if ( is_page( 'today' ) || is_page( 'panchangam' ) || is_page_template( 'page-panchangam-today.php' ) || is_page_template( 'template-panchangam-today.php' ) ) {
@@ -77,11 +77,11 @@ function djv_get_seo_description(): string {
 		}
 
 		if ( $lang === 'te' && $title_te ) {
-			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. ధర్మ జ్యోతి వేదిక.";
+			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. పూజా పంచాంగ్.";
 		} elseif ( $lang === 'hi' && $title_hi ) {
-			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। धर्म ज्योति वेदिका पर अपनी लोकेशन अनुसार देखें।";
+			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। पूजा पंचांग पर अपनी लोकेशन अनुसार देखें।";
 		} else {
-			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
+			return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on PujaPanchang.";
 		}
 	}
 
@@ -377,7 +377,7 @@ add_filter( 'pre_get_document_title', 'djv_filter_mantra_document_title', 20 );
 
 /**
  * Dynamic SEO Document Title for Festivals (Adapts to selected year and language)
- * Structure: [FESTIVAL] [YEAR] – Date, Puja Time & Muhurat | Dharma Jyothi Vedika
+ * Structure: [FESTIVAL] [YEAR] – Date, Puja Time & Muhurat | PujaPanchang
  */
 function djv_filter_festival_document_title( string $title ): string {
 	if ( is_singular( 'djv_festival' ) ) {
@@ -391,9 +391,9 @@ function djv_filter_festival_document_title( string $title ): string {
 		$title_hi = get_post_meta( $post_id, '_djv_title_hi', true );
 
 		if ( $lang === 'te' && $title_te ) {
-			return "{$title_te} {$year} – పండుగ తేదీ, పూజా సమయం & ముహూర్తం | ధర్మ జ్యోతి వేదిక";
+			return "{$title_te} {$year} – పండుగ తేదీ, పూజా సమయం & ముహూర్తం | పూజా పంచాంగ్";
 		} elseif ( $lang === 'hi' && $title_hi ) {
-			return "{$title_hi} {$year} – तिथि, पूजा का शुभ मुहूर्त एवं विधि | धर्म ज्योति वेदिका";
+			return "{$title_hi} {$year} – तिथि, पूजा का शुभ मुहूर्त एवं विधि | पूजा पंचांग";
 		}
 
 		// Custom postmeta override if explicitly set (English / Primary Rank Math title)
@@ -403,7 +403,7 @@ function djv_filter_festival_document_title( string $title ): string {
 		}
 
 		$title_en = get_post_meta( $post_id, '_djv_title_en', true ) ?: $post->post_title;
-		return "{$title_en} {$year} – Date, Puja Time & Muhurat | Dharma Jyothi Vedika";
+		return "{$title_en} {$year} – Date, Puja Time & Muhurat | PujaPanchang";
 	}
 	return $title;
 }
@@ -434,9 +434,9 @@ add_filter( 'rank_math/frontend/description', function( $desc ) {
 		}
 
 		if ( $lang === 'te' && $title_te ) {
-			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. ధర్మ జ్యోతి వేదిక.";
+			return "{$title_te} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " విశిష్టత, ఖచ్చితమైన పూజా సమయం, శుభ ముహూర్తం, తిథి, వ్రత నియమాలు మరియు పూజా విధానం. పూజా పంచాంగ్.";
 		} elseif ( $lang === 'hi' && $title_hi ) {
-			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। धर्म ज्योति वेदिका पर अपनी लोकेशन अनुसार देखें।";
+			return "{$title_hi} {$year}" . ( $date_str ? " ({$date_str})" : "" ) . " की सही तिथि, शुभ पूजा मुहूर्त, व्रत नियम, मंत्र, एवं संपूर्ण पूजा विधि। पूजा पंचांग पर अपनी लोकेशन अनुसार देखें।";
 		}
 
 		$custom_rm_desc = get_post_meta( $post_id, 'rank_math_description', true );
@@ -444,7 +444,7 @@ add_filter( 'rank_math/frontend/description', function( $desc ) {
 			return str_replace( [ '%currentyear%', '%year%' ], (string) $year, $custom_rm_desc );
 		}
 
-		return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on Dharma Jyothi Vedika.";
+		return "{$title_en} {$year}" . ( $date_str ? " falls on {$date_str}." : "." ) . " Check exact puja timings, auspicious muhurat, tithi, panchang, vidhi, and spiritual significance on PujaPanchang.";
 	}
 	return $desc ?: djv_get_seo_description();
 }, 15 );

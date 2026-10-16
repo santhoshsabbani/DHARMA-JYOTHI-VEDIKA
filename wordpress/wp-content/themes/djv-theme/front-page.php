@@ -357,7 +357,7 @@ get_header();
       else :
       ?>
         <p style="grid-column:1/-1;text-align:center;color:var(--clr-text-muted);">
-          <?php esc_html_e( 'Welcome to Dharma Jyothi Vedika. Publish your first Vedic article in WordPress Admin to display here.', 'djv-theme' ); ?>
+          <?php esc_html_e( 'Welcome to PujaPanchang. Publish your first Vedic article in WordPress Admin to display here.', 'djv-theme' ); ?>
         </p>
       <?php endif; ?>
     </div>

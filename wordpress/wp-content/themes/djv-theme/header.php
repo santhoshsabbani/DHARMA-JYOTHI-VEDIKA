@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
   <div class="mobile-nav-drawer" id="mobile-nav-drawer">
     <div class="mobile-nav-header">
       <div class="mobile-nav-brand">
-        <div class="brand-title"><?php echo esc_html( function_exists( 'djv__' ) ? djv__( 'DHARMA JYOTHI VEDIKA' ) : get_bloginfo( 'name' ) ); ?></div>
+        <div class="brand-title"><?php echo esc_html( function_exists( 'djv__' ) ? djv__( 'PujaPanchang' ) : ( get_bloginfo( 'name' ) ?: 'PujaPanchang' ) ); ?></div>
         <div class="brand-sub">Vedic Panchangam &amp; Devotion</div>
       </div>
       <button id="mobile-nav-close-btn" class="mobile-nav-close" aria-label="<?php esc_attr_e( 'Close navigation menu', 'djv-theme' ); ?>">✕</button>

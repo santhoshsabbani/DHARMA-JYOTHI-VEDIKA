@@ -46,9 +46,13 @@ require_once DJV_PLUGIN_DIR . 'includes/data-temple-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-temple-master.php';
 require_once DJV_PLUGIN_DIR . 'includes/data-muhurtham-events.php';
 require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-service.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-muhurtham-submissions.php';
+require_once DJV_PLUGIN_DIR . 'includes/class-djv-content-strategy.php';
 
 /* ─── Init ───────────────────────────────────────────────────── */
 function djv_load(): void {
+	DJV_Muhurtham_Submissions::maybe_auto_init();
+	DJV_Content_Strategy::init();
 	DJV_REST_API::init();
 	if ( is_admin() ) {
 		new DJV_Admin();
@@ -102,6 +106,7 @@ function djv_run_nightly_precalculate(): void {
 /* ─── Activation ─────────────────────────────────────────────── */
 function djv_activate(): void {
 	DJV_Post_Types::register();
+	DJV_Muhurtham_Submissions::init_table();
 	flush_rewrite_rules();
 	if ( ! wp_next_scheduled( DJV_CRON_HOOK ) ) {
 		wp_schedule_event( time(), 'djv_nightly', DJV_CRON_HOOK );

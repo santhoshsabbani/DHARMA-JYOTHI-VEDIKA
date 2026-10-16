@@ -35,9 +35,9 @@ if ( ! empty( $_GET['lang'] ) && in_array( $_GET['lang'], [ 'en', 'te', 'hi' ], 
 // Multilingual UI strings
 $i18n = [
 	'hero_title' => [
-		'en' => 'DJV Shubh Muhurtham Finder',
-		'te' => 'డి.జె.వి శుభ ముహూర్త దర్శిని',
-		'hi' => 'डी.जे.वी शुभ मुहूर्त दर्शक',
+		'en' => 'PujaPanchang Shubh Muhurtham Finder',
+		'te' => 'పూజా పంచాంగ్ శుభ ముహూర్త దర్శిని',
+		'hi' => 'पूजा पंचांग शुभ मुहूर्त दर्शक',
 	],
 	'hero_sub' => [
 		'en' => 'Event-based Vedic auspicious timing finder. Calculate precise, personalized Muhurtham windows for sacred ceremonies, house warming, marriages, and new beginnings grounded in classical Jyotish Shastra.',
@@ -55,9 +55,9 @@ $i18n = [
 		'hi' => 'वैदिक ज्योतिष में मुहूर्त वह विशिष्ट कालखंड है जब ब्रह्मांडीय ग्रह ऊर्जाएं किसी कार्य के शुभारंभ हेतु अत्यंत अनुकूल होती हैं। एक अहोरात्र (दिन-रात) में 30 मुहूर्त (प्रत्येक लगभग 48 मिनट) होते हैं। शुभ मुहूर्त में आरंभ किया गया कार्य विघ्नरहित होकर चिरस्थायी सुख और समृद्धि प्रदान करता है।',
 	],
 	'what_p2' => [
-		'en' => 'Unlike static calendar date lists that generalize entire days, DJV calculates exact time windows for your precise geographical coordinates by evaluating the five limbs of Panchangam (Tithi, Vara, Nakshatra, Yoga, Karana), carving out malefic periods like Rahu Kalam and Varjyam, and respecting regional tradition differences.',
-		'te' => 'సాధారణ క్యాలెండర్ల మాదిరిగా రోజంతా శుభప్రదం అని భావించకుండా, మీ ప్రాంతపు ఖచ్చితమైన అక్షాంశ, రేఖాంశాల ఆధారంగా రాహుకాలం, యమగండం, వర్జ్యం వంటి దోషాలను తొలగించి ఖచ్చితమైన ముహూర్త సమయాన్ని DJV గణిస్తుంది.',
-		'hi' => 'सामान्य कैलेंडरों की भांति केवल तिथि बताने के बजाय, DJV आपके नगर के वास्तविक अक्षांश-देशांतर के आधार पर राहुकाल, यमगंड एवं वर्ज्यम् दोषों का त्याग कर सटीक समय अवधि प्रदान करता है।',
+		'en' => 'Unlike static calendar date lists that generalize entire days, PujaPanchang calculates exact time windows for your precise geographical coordinates by evaluating the five limbs of Panchangam (Tithi, Vara, Nakshatra, Yoga, Karana), carving out malefic periods like Rahu Kalam and Varjyam, and respecting regional tradition differences.',
+		'te' => 'సాధారణ క్యాలెండర్ల మాదిరిగా రోజంతా శుభప్రదం అని భావించకుండా, మీ ప్రాంతపు ఖచ్చితమైన అక్షాంశ, రేఖాంశాల ఆధారంగా రాహుకాలం, యమగండం, వర్జ్యం వంటి దోషాలను తొలగించి ఖచ్చితమైన ముహూర్త సమయాన్ని పూజా పంచాంగ్ గణిస్తుంది.',
+		'hi' => 'सामान्य कैलेंडरों की भांति केवल तिथि बताने के बजाय, पूजा पंचांग आपके नगर के वास्तविक अक्षांश-देशांतर के आधार पर राहुकाल, यमगंड एवं वर्ज्यम् दोषों का त्याग कर सटीक समय अवधि प्रदान करता है।',
 	],
 	'choose_title' => [
 		'en' => 'Choose Your Event',
@@ -70,9 +70,9 @@ $i18n = [
 		'hi' => "7 प्रमुख वैदिक श्रेणियों में से {$total_count} पारंपरिक संस्कारों में से चुनें। प्रत्येक कार्य हेतु स्वतंत्र शास्त्रोक्त नियम एवं गणना प्रपत्र उपलब्ध है।",
 	],
 	'how_title' => [
-		'en' => 'How DJV Finds Your Auspicious Muhurtham',
-		'te' => 'DJV ముహూర్తాన్ని ఎలా గణిస్తుంది?',
-		'hi' => 'DJV शुभ मुहूर्त की गणना कैसे करता है?',
+		'en' => 'How PujaPanchang Finds Your Auspicious Muhurtham',
+		'te' => 'పూజా పంచాంగ్ ముహూర్తాన్ని ఎలా గణిస్తుంది?',
+		'hi' => 'पूजा पंचांग शुभ मुहूर्त की गणना कैसे करता है?',
 	],
 	'notes_title' => [
 		'en' => 'Important Vedic Principles & Advisories',
@@ -302,7 +302,7 @@ function djv_get_i18n( array $i18n, string $key, string $lang ): string {
 				</div>
 				<div style="background: var(--clr-bg); border-radius: 1rem; padding: 1.75rem; border: 1px solid var(--clr-border);">
 					<div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
-					<h3 style="font-size: 1.1rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">2. Event Rule Engine</h3>
+					<h3 style="font-size: 1.1rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">2. Event-Specific Rules</h3>
 					<p style="font-size: 0.875rem; color: var(--clr-text-secondary); line-height: 1.6; margin: 0;">
 						Applies event-specific Vedic rules: evaluates favorable & prohibited Tithis, Nakshatras, Weekdays, Yogas, and Karanas.
 					</p>
@@ -333,7 +333,7 @@ function djv_get_i18n( array $i18n, string $key, string $lang ): string {
 				<li><strong><?php esc_html_e( 'Guru & Shukra Tara Asta:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Major samskaras such as Vivaha (Marriage) and Griha Pravesha are traditionally deferred when Jupiter or Venus is combust (Maudhyami / Asta).', 'djv-theme' ); ?></li>
 				<li><strong><?php esc_html_e( 'Rikta Tithis Avoidance:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Chaturthi (4th), Navami (9th), and Chaturdashi (14th) lunar tithis are considered Rikta (empty) and excluded for auspicious beginnings.', 'djv-theme' ); ?></li>
 				<li><strong><?php esc_html_e( 'Solar Sankranti & Shunya Masa:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Dhanu Sankranti (Dhanurmasa) and Meena Sankranti are traditionally avoided for marriage and new house warming in South Indian traditions.', 'djv-theme' ); ?></li>
-				<li><strong><?php esc_html_e( 'Priest Consultation Advisory:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Calculated using DJV Panchangam and event-specific Muhurtham rules. Regional and sampradaya practices may vary. Consult your family priest/acharya for final confirmation.', 'djv-theme' ); ?></li>
+				<li><strong><?php esc_html_e( 'Priest Consultation Advisory:', 'djv-theme' ); ?></strong> <?php esc_html_e( 'Calculated using PujaPanchang and event-specific Muhurtham rules. Regional and sampradaya practices may vary. Consult your family priest/acharya for final confirmation.', 'djv-theme' ); ?></li>
 			</ul>
 		</section>
 
@@ -351,7 +351,7 @@ function djv_get_i18n( array $i18n, string $key, string $lang ): string {
 			<div class="faq-accordion" style="display: flex; flex-direction: column; gap: 1rem; max-width: 900px; margin: 0 auto;">
 				<details style="background: var(--clr-bg); border: 1px solid var(--clr-border); border-radius: 0.75rem; padding: 1.25rem; cursor: pointer;">
 					<summary style="font-weight: 700; color: var(--clr-primary); font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; align-items: center;">
-						<span><?php esc_html_e( 'Why does DJV provide multiple Muhurtham options instead of just one?', 'djv-theme' ); ?></span>
+						<span><?php esc_html_e( 'Why does PujaPanchang provide multiple Muhurtham options instead of just one?', 'djv-theme' ); ?></span>
 						<span style="font-size: 1.2rem; color: var(--clr-secondary);">+</span>
 					</summary>
 					<p style="margin-top: 0.75rem; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.7;">
@@ -385,7 +385,7 @@ function djv_get_i18n( array $i18n, string $key, string $lang ): string {
 						<span style="font-size: 1.2rem; color: var(--clr-secondary);">+</span>
 					</summary>
 					<p style="margin-top: 0.75rem; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.7;">
-						<?php esc_html_e( 'DJV strictly adheres to Vedic rules and never fabricates invalid dates. If no candidate passes all criteria in a short date range (for instance, during a month of inauspicious transits or combustions), simply use the "Search Next 30 Days" or "Search Next 60 Days" quick expanders to examine the upcoming cycle.', 'djv-theme' ); ?>
+						<?php esc_html_e( 'PujaPanchang strictly adheres to Vedic rules and never fabricates invalid dates. If no candidate passes all criteria in a short date range (for instance, during a month of inauspicious transits or combustions), simply use the "Search Next 30 Days" or "Search Next 60 Days" quick expanders to examine the upcoming cycle.', 'djv-theme' ); ?>
 					</p>
 				</details>
 			</div>

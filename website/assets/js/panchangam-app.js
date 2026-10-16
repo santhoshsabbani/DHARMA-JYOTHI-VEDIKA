@@ -324,11 +324,6 @@
       setElementText('val-brahmamuhurtham', formatIntervalDisplay(p.timings.brahmaMuhurtham, tz, is12h));
     }
 
-    // 7. Metadata Inspection Display
-    const metaContainer = document.getElementById('pc-meta-json');
-    if (metaContainer && p.meta) {
-      metaContainer.textContent = JSON.stringify(p.meta, null, 2);
-    }
   }
 
   function setElementText(id, text) {

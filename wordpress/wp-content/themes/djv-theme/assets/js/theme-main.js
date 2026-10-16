@@ -145,23 +145,69 @@
     // ── Mobile Navigation Drawer ─────────────────────────────
     const menuToggle      = document.getElementById('menu-toggle-btn');
     const mobileNav       = document.getElementById('mobile-nav');
+    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
     const mobileNavClose  = document.getElementById('mobile-nav-close-btn');
+
+    function openMobileNav() {
+      if (!mobileNav) return;
+      mobileNav.classList.add('open');
+      document.body.classList.add('mobile-nav-active');
+      document.body.style.overflow = 'hidden';
+      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true');
+      if (mobileNavClose) {
+        setTimeout(function () { mobileNavClose.focus(); }, 50);
+      }
+    }
+
+    function closeMobileNav() {
+      if (!mobileNav) return;
+      mobileNav.classList.remove('open');
+      document.body.classList.remove('mobile-nav-active');
+      document.body.style.overflow = '';
+      if (menuToggle) {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.focus();
+      }
+    }
 
     if (menuToggle && mobileNav) {
       menuToggle.addEventListener('click', function () {
-        mobileNav.classList.add('open');
-        menuToggle.setAttribute('aria-expanded', 'true');
+        if (mobileNav.classList.contains('open')) {
+          closeMobileNav();
+        } else {
+          openMobileNav();
+        }
       });
+
       if (mobileNavClose) {
-        mobileNavClose.addEventListener('click', function () {
-          mobileNav.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
-        });
+        mobileNavClose.addEventListener('click', closeMobileNav);
       }
+
       mobileNav.addEventListener('click', function (e) {
         if (e.target === mobileNav) {
-          mobileNav.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
+          closeMobileNav();
+        }
+      });
+
+      // Trap focus inside drawer when open
+      mobileNav.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') {
+          const focusable = mobileNav.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          if (focusable.length === 0) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
         }
       });
     }
@@ -618,12 +664,24 @@
 
     syncGlobalLanguageUI(activeGlobalLang);
 
-    // ESC key closes modals
+    // ESC key closes modals with focus restore
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        if (searchOverlay) searchOverlay.classList.remove('open');
-        closeLocationModal();
-        if (mobileNav) mobileNav.classList.remove('open');
+        if (mobileNav && mobileNav.classList.contains('open')) {
+          closeMobileNav();
+          return;
+        }
+        if (searchOverlay && searchOverlay.classList.contains('open')) {
+          searchOverlay.classList.remove('open');
+          if (searchOpenBtn) searchOpenBtn.focus();
+          return;
+        }
+        if (locModal && locModal.classList.contains('open')) {
+          closeLocationModal();
+          const locBtn = document.getElementById('global-location-btn');
+          if (locBtn) locBtn.focus();
+          return;
+        }
       }
     });
   });

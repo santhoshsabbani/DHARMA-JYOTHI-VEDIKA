@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 <div class="footer-bottom">
   <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;font-size:0.8rem;color:#A08070;">
     <div>
-      <p style="margin:0;">&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?> (DJV). <?php esc_html_e( 'All rights reserved.', 'djv-theme' ); ?></p>
+      <p style="margin:0;">&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'djv-theme' ); ?></p>
       <div style="display:flex;gap:1rem;margin-top:0.35rem;">
         <a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>" style="color:#A08070;text-decoration:none;"><?php esc_html_e( 'Privacy Policy', 'djv-theme' ); ?></a>
         <span>•</span>

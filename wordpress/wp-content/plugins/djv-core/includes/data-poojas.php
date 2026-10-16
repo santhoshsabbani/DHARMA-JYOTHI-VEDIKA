@@ -210,7 +210,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Maha Ganapati Pooja Vidhanam: Step-by-Step Procedure, Samagri & Mantras',
 			'seo_title_te'     => 'మహా గణపతి పూజా విధానం: సంపూర్ణ షోడశోపచార పూజ, సామగ్రి, మంత్రాలు',
 			'seo_title_hi'     => 'महा गणपति पूजा विधान: संपूर्ण षोडशोपचार विधि, सामग्री एवं मंत्र',
-			'seo_desc_en'      => 'Complete step-by-step Vedic Ganapati Puja Vidhanam at home with Haridra Ganapati invocation, 21 Durva archana, Modak naivedyam, and Atharvashirsha at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Complete step-by-step Vedic Ganapati Puja Vidhanam at home with Haridra Ganapati invocation, 21 Durva archana, Modak naivedyam, and Atharvashirsha at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో పసుపు గణపతి పూజ, షోడశోపచార పూజా విధానం, ఏకవింశతి పత్ర పూజ, నైవేద్యం మరియు గణేశ మంత్రాల సంపూర్ణ వివరణ.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर प्रामाणिक गणपति पूजा विधि, हल्दी गणेश स्थापना, 21 दुर्वा अर्चन, मोदक नैवेद्य और मंत्र जाप की संपूर्ण जानकारी।'
 		],
@@ -256,7 +256,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Sri Satyanarayana Swamy Pooja Vidhi & Vratham Procedure: Step-by-Step Guide',
 			'seo_title_te'     => 'శ్రీ సత్యనారాయణ స్వామి వ్రత విధానం: సంపూర్ణ పూజా విధానం, కథలు, ప్రసాదం',
 			'seo_title_hi'     => 'श्री सत्यनारायण स्वामी व्रत विधि: संपूर्ण पूजन प्रक्रिया, सपाद नैवेद्य एवं कथा',
-			'seo_desc_en'      => 'Detailed Satyanarayana Swamy Vratham vidhi with Kalasha sthapana, Sapada Prasadam recipe, 5 Katha guidelines, and mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Detailed Satyanarayana Swamy Vratham vidhi with Kalasha sthapana, Sapada Prasadam recipe, 5 Katha guidelines, and mantras at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో సత్యనారాయణ వ్రత సామగ్రి, కలశ స్థాపన, సపాద ప్రసాదం తయారీ, పూజా విధానం మరియు నారాయణ మంత్రాల సంపూర్ణ సమాచారం.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर श्री सत्यनारायण स्वामी व्रत की संपूर्ण शास्त्रीय विधि, कलश स्थापना, सपाद प्रसाद और कथा श्रवण के नियम पढ़ें।'
 		],
@@ -302,7 +302,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Varalakshmi Vratham Puja Vidhi: Complete Step-by-Step Guide, Samagri & Toram Vidhi',
 			'seo_title_te'     => 'వరలక్ష్మీ వ్రత పూజా విధానం: తోరం కట్టే విధానం, కలశ స్థాపన, నైవేద్యాలు, మంత్రాలు',
 			'seo_title_hi'     => 'वरलक्ष्मी व्रत पूजा विधि: कलश स्थापना, तोरम बंधन, सामग्री एवं अष्टलक्ष्मी मंत्र',
-			'seo_desc_en'      => 'Authentic Varalakshmi Vratham step-by-step puja procedure, Kalasha decoration, 9-knot toram ritual, 9 naivedyam list, and Lakshmi Suktam at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Authentic Varalakshmi Vratham step-by-step puja procedure, Kalasha decoration, 9-knot toram ritual, 9 naivedyam list, and Lakshmi Suktam at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో వరలక్ష్మీ వ్రత కలశ అలంకరణ, తొమ్మిది ముడుల తోరం మంత్రాలు, అష్టలక్ష్మి పూజ మరియు వాయనం సమర్పించే శాస్త్రీయ పద్ధతి.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर वरलक्ष्मी व्रत की प्रामाणिक पूजा विधि, कलश सजावट, तोरम पूजा, नैवेद्य और लक्ष्मी मंत्रों की विस्तृत जानकारी।'
 		],
@@ -348,7 +348,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Shiva Linga Abhishekam & Rudrabhishekam Vidhi: Step-by-Step at Home',
 			'seo_title_te'     => 'శివ లింగాభిషేక విధానం: పంచామృత అభిషేకం, బిల్వపత్ర పూజ, రుద్ర మంత్రాలు',
 			'seo_title_hi'     => 'शिवलिंग अभिषेक एवं रुद्राभिषेक विधि: पंचामृत, बेलपत्र पूजन एवं मंत्र',
-			'seo_desc_en'      => 'Complete Shiva Linga Abhishekam procedure at home with Panchamrita sequence, Bilva patra rules, Maha Mrityunjaya japa, and Aarti at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Complete Shiva Linga Abhishekam procedure at home with Panchamrita sequence, Bilva patra rules, Maha Mrityunjaya japa, and Aarti at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో ఇంట్లోనే శివలింగానికి పంచామృత అభిషేకం, బిల్వార్చన, రుద్ర మంత్రాలు మరియు తీర్థ స్వీకరణ నియమాలు తెలుసుకోండి.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर घर में शिवलिंग के पंचामृत अभिषेक की संपूर्ण शास्त्रीय विधि, बेलपत्र अर्पण नियम और महामृत्युंजय मंत्र पढ़ें।'
 		],
@@ -394,7 +394,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Sri Rama Navami Pooja Vidhi: Sita Rama Kalyanam Procedure & Panakam Recipe',
 			'seo_title_te'     => 'శ్రీ సీతారామ కల్యాణం & శ్రీరామనవమి పూజా విధానం: పానకం, వడపప్పు తయారీ',
 			'seo_title_hi'     => 'श्री राम नवमी पूजा विधि: सीता-राम विवाह, पनाकम नैवेद्य एवं तारक मंत्र',
-			'seo_desc_en'      => 'Step-by-step Sri Rama Navami Puja Vidhanam at home with Sita Rama Kalyanam talambralu, Panakam recipe, Vadapappu naivedyam, and Taraka mantra at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Step-by-step Sri Rama Navami Puja Vidhanam at home with Sita Rama Kalyanam talambralu, Panakam recipe, Vadapappu naivedyam, and Taraka mantra at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో శ్రీరామనవమి మధ్యాహ్న పూజ, సీతారాముల కల్యాణోత్సవం, పానకం వడపప్పు నైవేద్యం మరియు తారక మంత్ర వివరణ.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर श्री राम नवमी की संपूर्ण पूजन विधि, सीता-राम कल्याण उत्सव, पारंपरिक पनाकम और तारक मंत्र पाठ की जानकारी।'
 		],
@@ -440,7 +440,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Krishna Janmashtami Pooja Vidhi: Midnight Janmotsav, Makkhan Naivedyam & Mantras',
 			'seo_title_te'     => 'శ్రీకృష్ణ జన్మాష్టమి పూజా విధానం: అర్ధరాత్రి పూజ, వెన్న నైవేద్యం, బాలగోపాల పూజ',
 			'seo_title_hi'     => 'श्री कृष्ण जन्माष्टमी पूजा विधि: मध्यरात्रि जन्मोत्सव, माखन-मिश्री भोग एवं मंत्र',
-			'seo_desc_en'      => 'Complete Krishna Janmashtami Puja Vidhanam at home with midnight Laddoo Gopal abhishekam, swing ritual, Makhan Mishri naivedyam, and mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Complete Krishna Janmashtami Puja Vidhanam at home with midnight Laddoo Gopal abhishekam, swing ritual, Makhan Mishri naivedyam, and mantras at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో జన్మాష్టమి అర్ధరాత్రి బాలకృష్ణ పూజ, ఉయ్యాల సేవ, వెన్న అటుకుల నైవేద్యం మరియు కృష్ణ మంత్రాల సంపూర్ణ సమాచారం.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर बाल गोपाल के मध्यरात्रि जन्मोत्सव की शास्त्रीय विधि, पंचामृत अभिषेक, माखन भोग और कृष्ण मंत्र पढ़ें।'
 		],
@@ -486,7 +486,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Sri Hanuman Puja Vidhi: Sindoor Archana, Aku Pooja & Chalisa Japa',
 			'seo_title_te'     => 'శ్రీ హనుమాన్ పూజా విధానం: సింధూరార్చన, ఆకుల పూజ, వడమాల, చాలీసా పఠనం',
 			'seo_title_hi'     => 'श्री हनुमान पूजा विधि: सिन्दूर अर्चन, पान माला, वड़ा भोग एवं चालीसा पाठ',
-			'seo_desc_en'      => 'Complete Tuesday and Saturday Hanuman Puja Vidhanam with Sindoor offering, betel leaf garland, Hanuman Chalisa japa, and Aarti at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Complete Tuesday and Saturday Hanuman Puja Vidhanam with Sindoor offering, betel leaf garland, Hanuman Chalisa japa, and Aarti at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో ఆంజనేయ స్వామి సింధూరార్చన, తమలపాకుల మాల పూజ, శని దోష నివారణ మరియు హనుమాన్ చాలీసా విశేషాలు.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर श्री हनुमान पूजा की प्रामाणिक विधि, सिन्दूर अर्पण, चमेली का तेल, संकटमोचन अष्टक और आरती पढ़ें।'
 		],
@@ -532,7 +532,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Diwali Lakshmi & Kubera Puja Vidhi: Muhurat, Samagri & Step-by-Step Procedure',
 			'seo_title_te'     => 'దీపావళి లక్ష్మీ కుబేర పూజా విధానం: ప్రదోష ముహూర్తం, పూజా సామగ్రి, మంత్రాలు',
 			'seo_title_hi'     => 'दीपावली लक्ष्मी एवं कुबेर पूजा विधि: प्रदोष मुहूर्त, सामग्री एवं संपूर्ण मंत्र',
-			'seo_desc_en'      => 'Step-by-step Diwali Lakshmi and Kubera Puja Vidhanam at home with Pradosha muhurat, Lotus offering, Bahi-Khata pooja, and Kubera mantras at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Step-by-step Diwali Lakshmi and Kubera Puja Vidhanam at home with Pradosha muhurat, Lotus offering, Bahi-Khata pooja, and Kubera mantras at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో దీపావళి లక్ష్మీ పూజా విధానం, కుబేర మంత్రం, కమల పుష్పార్చన మరియు దీపారాధన నియమాలు తెలుసుకోండి.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर दीपावली प्रदोष काल में महालक्ष्मी एवं कुबेर पूजन की शास्त्रीय विधि, श्री सूक्त पाठ और आरती पढ़ें।'
 		],
@@ -578,7 +578,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Vasant Panchami Saraswati Puja Vidhi & Aksharabhyasam Procedure',
 			'seo_title_te'     => 'సరస్వతీ పూజ & అక్షరాభ్యాస విధానం: వసంత పంచమి పూజా నియమాలు, మంత్రాలు',
 			'seo_title_hi'     => 'सरस्वती पूजा एवं विद्यारम्भ विधि: वसंत पंचमी पूजन, सामग्री एवं मंत्र',
-			'seo_desc_en'      => 'Step-by-step Vasant Panchami Saraswati Puja Vidhanam at home with Aksharabhyasam guidelines, yellow dress significance, and Saraswati Beeja mantra at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Step-by-step Vasant Panchami Saraswati Puja Vidhanam at home with Aksharabhyasam guidelines, yellow dress significance, and Saraswati Beeja mantra at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో వసంత పంచమి సరస్వతీ పూజా విధానం, అక్షరాభ్యాసం చేయించే పద్ధతి, పసుపు నైవేద్యం మరియు వాగ్దేవి స్తోత్రాలు.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर मां सरस्वती की प्रामाणिक पूजा विधि, बच्चों के विद्यारम्भ के नियम, पीला भोग और सरस्वती द्वादश नाम पढ़ें।'
 		],
@@ -624,7 +624,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Sharad Navratri Durga Puja Vidhi: Ghatasthapana, Akhanda Jyot & Navarna Mantra',
 			'seo_title_te'     => 'శరన్నవరాత్రి దుర్గా పూజా విధానం: కలశ స్థాపన, అఖండ దీపం, కుంకుమార్చన, నవార్ణ మంత్రం',
 			'seo_title_hi'     => 'शारदीय नवरात्रि दुर्गा पूजा विधि: घटस्थापना, अखंड ज्योति, सप्तशती पाठ एवं कन्या पूजन',
-			'seo_desc_en'      => 'Step-by-step Navratri Durga Puja Vidhanam at home with Ghatasthapana, Kumkumarchana, 9 Navadurga days, Navarna mantra, and Kanya puja at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Step-by-step Navratri Durga Puja Vidhanam at home with Ghatasthapana, Kumkumarchana, 9 Navadurga days, Navarna mantra, and Kanya puja at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో శరన్నవరాత్రుల ఘటస్థాపన, అఖండ జ్యోతి వెలిగించే విధానం, లలితా సహస్రనామ కుంకుమార్చన మరియు కన్యా పూజా విశేషాలు.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर नवरात्रि घटस्थापना, अखंड दीपक के नियम, नवार्ण मंत्र जप और नवमी कन्या पूजन की संपूर्ण विधि पढ़ें।'
 		],
@@ -670,7 +670,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Sri Subrahmanya Swamy Pooja Vidhi: Kuja Dosha Nivarana & Skanda Shashti Procedure',
 			'seo_title_te'     => 'శ్రీ సుబ్రహ్మణ్య స్వామి పూజా విధానం: కుజ దోష నివారణ, వేల్ పూజ, షష్ఠి వ్రతం',
 			'seo_title_hi'     => 'श्री सुब्रह्मण्य स्वामी पूजा विधि: मंगल दोष निवारण, स्कन्द षष्ठी एवं षण्मुख मंत्र',
-			'seo_desc_en'      => 'Complete Subrahmanya Swamy Puja Vidhanam at home with Vel abhishekam, Sarpa dosha nivarana, Sharavana Bhava mantra, and Skanda Shashti vrat rules at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Complete Subrahmanya Swamy Puja Vidhanam at home with Vel abhishekam, Sarpa dosha nivarana, Sharavana Bhava mantra, and Skanda Shashti vrat rules at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో సుబ్రహ్మణ్య స్వామి అభిషేకం, వేల్ ఆరాధన, షడక్షరీ మంత్రం మరియు సర్ప దోష పరిహార పూజా నియమాలు.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर भगवान कार्तिकेय की प्रामाणिक पूजा विधि, षडानन मंत्र, मंगल शांति और स्कन्द षष्ठी व्रत पढ़ें।'
 		],
@@ -716,7 +716,7 @@ function djv_get_canonical_poojas(): array {
 			'seo_title_en'     => 'Surya Puja & Ratha Saptami Vidhi: Arghya Procedure, 12 Names & Aditya Mantras',
 			'seo_title_te'     => 'సూర్య పూజా విధానం & రథసప్తమి: అర్ఘ్య ప్రదానం, ద్వాదశ నామాలు, ఆదిత్య హృదయ స్తోత్రం',
 			'seo_title_hi'     => 'सूर्य पूजा एवं रथ सप्तमी विधि: तांबे के लोटे से अर्घ्य, 12 सूर्य नाम एवं मंत्र',
-			'seo_desc_en'      => 'Authentic Surya Puja Vidhanam with copper vessel Arghya rules, 12 Surya Namaskara mantras, Ratha Saptami Calotropis leaf bath, and health benefits at Dharma Jyothi Vedika.',
+			'seo_desc_en'      => 'Authentic Surya Puja Vidhanam with copper vessel Arghya rules, 12 Surya Namaskara mantras, Ratha Saptami Calotropis leaf bath, and health benefits at PujaPanchang.',
 			'seo_desc_te'      => 'ధర్మ జ్యోతి వేదికలో సూర్య నమస్కారాలు, అర్ఘ్యం ఇచ్చే విధానం, జిల్లేడు ఆకుల రథసప్తమి స్నానం మరియు ఆదిత్య మంత్రాల సంపూర్ణ సమాచారం.',
 			'seo_desc_hi'      => 'धर्मा ज्योति वेदिका पर भगवान सूर्य के अर्घ्य की संपूर्ण विधि, द्वादश नाम, रथ सप्तमी खीर भोग और आदित्य हृदय स्तोत्र पढ़ें।'
 		]

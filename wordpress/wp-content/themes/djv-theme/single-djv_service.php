@@ -89,7 +89,7 @@ $contact  = get_post_meta( $post_id, '_djv_contact', true );
         <!-- Consultation Commitment Box -->
         <div style="background: #FFF9F0; border-left: 4px solid var(--clr-primary); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 3.5rem;">
           <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--clr-primary); margin: 0 0 0.5rem 0;">
-            🕉 <?php esc_html_e( 'The Dharma Jyothi Vedika Commitment', 'djv-theme' ); ?>
+            🕉 <?php esc_html_e( 'The PujaPanchang Commitment', 'djv-theme' ); ?>
           </h3>
           <p style="margin: 0; color: var(--clr-text-secondary); font-size: 0.95rem; line-height: 1.6;">
             <?php esc_html_e( 'All homams and consultations are performed strictly according to Vedic scriptures by verified scholars holding formal Veda Pathashala credentials.', 'djv-theme' ); ?>
